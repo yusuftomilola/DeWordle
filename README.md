@@ -144,7 +144,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For inquiries, reach out to us on TG at [https://t.me/dewordle](https://t.me/dewordle).
+For inquiries, reach out to us on TG at [https://t.me/DeWprdle](https://t.me/+GNI5Wz3xioZhYzE8).
 
 ---
 
