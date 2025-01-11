@@ -30,12 +30,12 @@ DeWordle is a decentralized, blockchain-based word-guessing game built on the St
     ```
 
 ## Code of Conduct
-- Be respectful and inclusive.
-- Do not submit a Pull request unless you are assigned.
-- Maintain professional communication with the maintainer if you need help.
 - Follow ethical coding practices.
-- Request reviews from maintainers.
+- Do not submit a Pull request unless you are assigned.
+- Tasks must be completed within the specified deadline.
+- Always reach out with the maintainer if you get stuck.
 - Ensure all tests passes.
+- Request reviews from maintainers, when you submit a PR.
 
 ## How to Contribute
 1. In your forked repo, Create a new branch:
