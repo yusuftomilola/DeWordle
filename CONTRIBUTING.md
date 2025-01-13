@@ -3,6 +3,7 @@
 Thank you for your interest in contributing to DeWordle! This guide will help you get started.
 
 ## What is DeWordle?
+
 DeWordle is a decentralized, blockchain-based word-guessing game built on the StarkNet ecosystem. It merges the fun and challenge of Wordle with the transparency and security of blockchain technology.
 
 ## Features
@@ -14,22 +15,26 @@ DeWordle is a decentralized, blockchain-based word-guessing game built on the St
 - **Leaderboards**: Track top players with a decentralized leaderboard.
 
 ## Setup Instructions
+
 1. Fork the repository
 2. Clone your fork locally:
 
-    ```bash
-    git clone https://github.com/your-username/dewordle.git
-    cd dewordle
-    ```
+   ```bash
+   git clone https://github.com/your-username/dewordle.git
+   cd dewordle
+   ```
+
 3. Install dependencies:
 
-    To install the dependencies for the frontend
-    ```bash
-    cd frontend
-    npm install
-    ```
+   To install the dependencies for the frontend
+
+   ```bash
+   cd frontend
+   npm install
+   ```
 
 ## Code of Conduct
+
 - Follow ethical coding practices.
 - Do not submit a Pull request unless you are assigned.
 - Tasks must be completed within the specified deadline.
@@ -38,30 +43,36 @@ DeWordle is a decentralized, blockchain-based word-guessing game built on the St
 - Request reviews from maintainers, when you submit a PR.
 
 ## How to Contribute
+
 1. In your forked repo, Create a new branch:
 
-    ```bash
-    git checkout -b feature/your-feature-name
-    ```
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
 2. Make your changes
 3. Commit with clear messages:
 
-    ```bash
-    git commit -m "Add: brief description of changes"
-    ```
+   ```bash
+   git commit -m "Add: brief description of changes"
+   ```
+
 4. Push to your fork:
 
-    ```bash
-    git push origin feature-name
-    ```
+   ```bash
+   git push origin feature-name
+   ```
+
 5. Submit a Pull Request that properly describes your changes
 
 ## Testing Guidelines
+
 1. Run existing tests:
 
-    ```bash
-    npm test
-    ```
+   ```bash
+   npm test
+   ```
+
 2. Write tests for new features.
 3. Document test cases.
 
@@ -71,6 +82,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For inquiries, reach out to us on Telegram at [https://t.me/DeWprdle](https://t.me/+GNI5Wz3xioZhYzE8).
+For inquiries, reach out to us on Telegram at [https://t.me/DeWordle](https://t.me/+GNI5Wz3xioZhYzE8).
 
 ---
