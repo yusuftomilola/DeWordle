@@ -78,16 +78,7 @@ Again, In the comment, Add a quick introduction about yourself, The ETA, and how
 - Request reviews from maintainers, when you submit a PR.
 
 
-## Testing Guidelines
 
-1. Run existing tests:
-
-   ```bash
-   npm test
-   ```
-
-2. Write tests for new features.
-3. Document test cases.
 
 ## License
 
