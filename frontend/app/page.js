@@ -1,10 +1,13 @@
-import DeWordle from "../components/DeWordle.jsx";
+// import DeWordle from "../components/DeWordle.jsx";
+import Navbar from "../components/Navbar.jsx"
 
 
 export default function Home() {
   return (
-    <main className="flex justify-center">
-      <DeWordle />
+    <main className="">
+    <Navbar/>
+    
+    {/* <DeWordle /> */}
     </main>
   );
 }
