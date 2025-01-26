@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-
+// update code to implement corrections
 export default function Footer() {
   return (
     <footer className="bg-[#282c34] text-white/90 py-2 px-1 sm:py-4 sm:px-6 min-w-[280px]">
@@ -11,6 +11,7 @@ export default function Footer() {
           <Link href="#" className="hover:text-white transition-colors whitespace-nowrap" aria-label="View Sitemap">
             Sitemap
           </Link>
+          update code 
           <span aria-hidden="true">|</span>
           <Link
             href="#"
