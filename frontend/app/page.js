@@ -1,10 +1,8 @@
-import Navbar from "../components/Navbar.jsx"
-
-export default function Home() {
+import Keyboard from "@/components/Keyboard.jsx";
+export default function page() {
   return (
-    <main className="">
-    <Navbar/>
-    
-    </main>
+    <div>
+      <Keyboard />
+    </div>
   );
 }
