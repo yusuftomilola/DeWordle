@@ -27,7 +27,7 @@ export default function Footer() {
             <button
               onClick={() => {
                 console.log("Manage Privacy Preferences clicked")
-                // Implement the logic to open privacy preferences modal or navigate to settings page
+                
               }}
               className="hover:text-white transition-colors whitespace-nowrap"
             >
