@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import Image from "next/image";
 import DewordleIcon from "../assets/dewordleIcon.svg";
 import { ChartNoAxesColumn, Settings, CircleHelp } from "lucide-react";
+import LeaderBoardModal from "./LeaderBoardModal";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -28,11 +30,13 @@ const Navbar = () => {
         {/* Navbar End: Icons and Connect Button */}
         <div className="navbar-end hidden md:flex items-center gap-6">
           {/* Icons */}
-          <ChartNoAxesColumn
-            color="#29296E"
-            size={24}
-            className="hover:scale-110 hover:shadow-lg transition-transform"
-          />
+          <button onClick={() => setIsModalOpen(true)}>
+            <ChartNoAxesColumn
+              color="#29296E"
+              size={24}
+              className="hover:scale-110 hover:shadow-lg transition-transform"
+            />
+          </button>
           <Settings
             color="#29296E"
             size={24}
@@ -67,11 +71,7 @@ const Navbar = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                d={
-                  isOpen
-                    ? "M6 18L18 6M6 6l12 12"
-                    : "M4 6h16M4 12h16M4 18h16"
-                }
+                d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
               />
             </svg>
           </button>
@@ -83,11 +83,13 @@ const Navbar = () => {
             <div className="flex flex-col items-center gap-4 py-2">
               {/* Icons */}
               <div className="flex justify-center gap-6">
-                <ChartNoAxesColumn
-                  color="#29296E"
-                  size={32}
-                  className="hover:scale-110 hover:shadow-lg transition-transform cursor-pointer"
-                />
+                <button onClick={() => setIsModalOpen(true)}>
+                  <ChartNoAxesColumn
+                    color="#29296E"
+                    size={32}
+                    className="hover:scale-110 hover:shadow-lg transition-transform cursor-pointer"
+                  />
+                </button>
                 <Settings
                   color="#29296E"
                   size={32}
@@ -107,6 +109,11 @@ const Navbar = () => {
             </div>
           </div>
         )}
+
+        <LeaderBoardModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );
