@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState } from "react"
 import Image from "next/image"
 import DewordleIcon from "../assets/dewordleIcon.svg"
@@ -16,8 +17,10 @@ const Navbar = () => {
   }
 
   return (
+
     <div className="navbar bg-[#FAF7F7] shadow-md h-[70px]">
       <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between px-4 lg:px-14">
+
         {/* Navbar Start: Dewordle Icon */}
         <div className="navbar-start flex items-center">
           <Image
@@ -104,8 +107,11 @@ const Navbar = () => {
             </div>
           </div>
         )}
-
+        
+        {/* Leaderboard Modal */}
         <LeaderBoardModal isOpen={isLeaderboardOpen} onClose={() => setIsLeaderboardOpen(false)} />
+
+          {/* Help Guide Modal */}
         <HelpGuide isOpen={isHelpGuideOpen} onClose={() => setIsHelpGuideOpen(false)} />
       </div>
     </div>
