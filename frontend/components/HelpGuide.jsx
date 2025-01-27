@@ -15,21 +15,21 @@ function LetterTile({ letter, state = "absent" }) {
   const stateStyles = {
     correct: "bg-green-600 text-white border-green-600",
     present: "bg-yellow-500 text-white border-yellow-500",
-    absent: "dark:bg-gray-700 dark:text-white dark:border-gray-600 bg-gray-200 text-gray-700 border-gray-300",
+    absent: "dark:bg-gray-900 dark:text-white dark:border-gray-600 bg-gray-700 text-white border-gray-300",
   }
 
   return <div className={`${baseStyles} ${stateStyles[state]}`}>{letter}</div>
 }
 
 // Component for rendering a word example with colored tiles
-function WordExample({ word, correctIndex, presentIndex }) {
+function WordExample({ word, correctIndex, presentIndex, absentIndex }) {
   return (
     <div className="flex gap-1">
       {word.map((letter, index) => (
         <LetterTile
           key={index}
           letter={letter}
-          state={index === correctIndex ? "correct" : index === presentIndex ? "present" : "absent"}
+          state={index === correctIndex ? "correct" : index === presentIndex ? "present" : index === absentIndex ? "absent" : " "}
         />
       ))}
     </div>
@@ -114,9 +114,10 @@ export function HelpGuide({ isOpen, onClose }) {
                               word={item.word}
                               correctIndex={item.correctIndex}
                               presentIndex={item.presentIndex}
+                              absentIndex={item.absentIndex}
                             />
                             <p className="text-sm">
-                              <strong>{item.word[item.correctIndex || item.presentIndex || 0]}</strong>{" "}
+                              <strong>{item.word[item.absentIndex || item.correctIndex || item.presentIndex || 0]}</strong>{" "}
                               {item.explanation}
                             </p>
                           </div>

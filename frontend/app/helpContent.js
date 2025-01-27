@@ -36,16 +36,18 @@ export const helpContent = {
           {
             word: ["W", "O", "R", "D", "Y"],
             correctIndex: 0,
-            explanation: "W is in the word and in the correct spot.",
+            explanation: " is in the word and in the correct spot.",
           },
           {
             word: ["L", "I", "G", "H", "T"],
             presentIndex: 1,
-            explanation: "I is in the word but in the wrong spot.",
+            explanation: " is in the word but in the wrong spot.",
           },
           {
             word: ["R", "O", "G", "U", "E"],
-            explanation: "U is not in the word in any spot.",
+            absentIndex: 3,
+            // correctIndex: 0,
+            explanation: " is not in the word in any spot.",
           },
         ],
       },
