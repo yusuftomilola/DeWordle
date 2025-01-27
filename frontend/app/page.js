@@ -1,10 +1,10 @@
-import WordGrid from "@/components/WordGrid.jsx";
-import DeWordle from "../components/DeWordle.jsx";
-
-export default function Home() {
+import Keyboard from "@/components/Keyboard.jsx";
+import Navbar from "@/components/Navbar";
+export default function page() {
   return (
-    <main className="flex flex-col items-center justify-center">
-      <WordGrid />
-    </main>
+    <div>
+    <Navbar/>
+    <Keyboard />
+    </div>
   );
 }
