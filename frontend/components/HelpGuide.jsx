@@ -68,10 +68,10 @@ export function HelpGuide({ isOpen, onClose }) {
             <div className="text-sm text-muted-foreground mb-4">
               Welcome! Let's help you get started with our platform.
             </div>
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion type="single" collapsible className="w-full hover:no-underline">
               {helpContent.gettingStarted.map((item, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger>{item.title}</AccordionTrigger>
+                  <AccordionTrigger className="hover:no-underline">{item.title}</AccordionTrigger>
                   <AccordionContent>{item.content}</AccordionContent>
                 </AccordionItem>
               ))}
@@ -159,7 +159,7 @@ export function HelpGuide({ isOpen, onClose }) {
             <Accordion type="single" collapsible className="w-full">
               {helpContent.troubleshooting.map((item, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger>{item.title}</AccordionTrigger>
+                  <AccordionTrigger className="hover:no-underline">{item.title}</AccordionTrigger>
                   <AccordionContent>{item.content}</AccordionContent>
                 </AccordionItem>
               ))}
