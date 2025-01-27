@@ -1,12 +1,10 @@
-import DeWordle from "../components/DeWordle.jsx";
-import { AppProvider } from "@/context/AppContext.jsx";
-
-export default function Home() {
+import Keyboard from "@/components/Keyboard.jsx";
+import Navbar from "@/components/Navbar";
+export default function page() {
   return (
-    <AppProvider>
-      <main className="flex justify-center">
-        <DeWordle />
-      </main>
-    </AppProvider>
+    <div>
+      <Navbar />
+      <Keyboard />
+    </div>
   );
 }
