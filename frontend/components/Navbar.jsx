@@ -1,17 +1,19 @@
-"use client";
-import React, { useState } from "react";
-import Image from "next/image";
-import DewordleIcon from "../assets/dewordleIcon.svg";
-import { ChartNoAxesColumn, Settings, CircleHelp } from "lucide-react";
-import LeaderBoardModal from "./LeaderBoardModal";
+"use client"
+import React, { useState } from "react"
+import Image from "next/image"
+import DewordleIcon from "../assets/dewordleIcon.svg"
+import { BarChartIcon as ChartNoAxesColumn, Settings, CircleHelp } from "lucide-react"
+import LeaderBoardModal from "./LeaderBoardModal"
+import { HelpGuide } from "./HelpGuide"
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
+  const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false)
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   return (
     <div className="navbar bg-[#FAF7F7] shadow-md h-[70px]">
@@ -19,7 +21,7 @@ const Navbar = () => {
         {/* Navbar Start: Dewordle Icon */}
         <div className="navbar-start flex items-center">
           <Image
-            src={DewordleIcon}
+            src={DewordleIcon }
             alt="Dewordle icon"
             width={200}
             height={150}
@@ -30,23 +32,17 @@ const Navbar = () => {
         {/* Navbar End: Icons and Connect Button */}
         <div className="navbar-end hidden md:flex items-center gap-6">
           {/* Icons */}
-          <button onClick={() => setIsModalOpen(true)}>
+          <button onClick={() => setIsLeaderboardOpen(true)}>
             <ChartNoAxesColumn
               color="#29296E"
               size={24}
               className="hover:scale-110 hover:shadow-lg transition-transform"
             />
           </button>
-          <Settings
-            color="#29296E"
-            size={24}
-            className="hover:scale-110 hover:shadow-lg transition-transform"
-          />
-          <CircleHelp
-            color="#29296E"
-            size={24}
-            className="hover:scale-110 hover:shadow-lg transition-transform"
-          />
+          <Settings color="#29296E" size={24} className="hover:scale-110 hover:shadow-lg transition-transform" />
+          <button onClick={() => setIsHelpGuideOpen(true)}>
+            <CircleHelp color="#29296E" size={24} className="hover:scale-110 hover:shadow-lg transition-transform" />
+          </button>
 
           {/* Connect Button */}
           <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-[15px] flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg">
@@ -56,10 +52,7 @@ const Navbar = () => {
 
         {/* Hamburger Menu */}
         <div className="md:hidden">
-          <button
-            onClick={toggleMenu}
-            className="btn btn-square btn-ghost text-[#29296E]"
-          >
+          <button onClick={toggleMenu} className="btn btn-square btn-ghost text-[#29296E]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -83,7 +76,7 @@ const Navbar = () => {
             <div className="flex flex-col items-center gap-4 py-2">
               {/* Icons */}
               <div className="flex justify-center gap-6">
-                <button onClick={() => setIsModalOpen(true)}>
+                <button onClick={() => setIsLeaderboardOpen(true)}>
                   <ChartNoAxesColumn
                     color="#29296E"
                     size={32}
@@ -95,11 +88,13 @@ const Navbar = () => {
                   size={32}
                   className="hover:scale-110 hover:shadow-lg transition-transform cursor-pointer"
                 />
-                <CircleHelp
-                  color="#29296E"
-                  size={32}
-                  className="hover:scale-110 hover:shadow-lg transition-transform cursor-pointer"
-                />
+                <button onClick={() => setIsHelpGuideOpen(true)}>
+                  <CircleHelp
+                    color="#29296E"
+                    size={32}
+                    className="hover:scale-110 hover:shadow-lg transition-transform cursor-pointer"
+                  />
+                </button>
               </div>
 
               {/* Connect Button */}
@@ -110,13 +105,12 @@ const Navbar = () => {
           </div>
         )}
 
-        <LeaderBoardModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
+        <LeaderBoardModal isOpen={isLeaderboardOpen} onClose={() => setIsLeaderboardOpen(false)} />
+        <HelpGuide isOpen={isHelpGuideOpen} onClose={() => setIsHelpGuideOpen(false)} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
+
