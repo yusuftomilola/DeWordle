@@ -1,10 +1,15 @@
-import Keyboard from "../components/Keyboard";
-import Navbar from "../components/Navbar";
+
+import Keyboard from "@/components/Keyboard.jsx";
+import Navbar from "@/components/Navbar";
+import WordGrid from "@/components/WordGrid";
+
 export default function page() {
   return (
     <div>
-      <Navbar />
-      <Keyboard />
+    <Navbar/>
+    <WordGrid/>
+    <Keyboard />
     </div>
   );
 }
+

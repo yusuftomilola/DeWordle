@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { Switch } from "@headlessui/react";
-import { Copyright } from "lucide-react";
+import Copywrite from "./Copywrite";
 
 export const Setting = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
@@ -76,9 +76,8 @@ export const Setting = ({ isOpen, onClose }) => {
         ))}
 
         <div className='flex items-center gap-1 py-3'>
-          <Copyright className='w-4' />
 
-          <p className='text-sm'>2025 Lead Studios</p>
+        <Copywrite/>
         </div>
 
       </div>
