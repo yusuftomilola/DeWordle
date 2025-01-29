@@ -10,11 +10,13 @@ import {
 } from "lucide-react";
 import LeaderBoardModal from "./LeaderBoardModal";
 import { HelpGuide } from "./HelpGuide";
+import { Setting } from "./Settings";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -37,7 +39,7 @@ const Navbar = () => {
         {/* Navbar End: Icons and Connect Button */}
         <div className="navbar-end hidden md:flex items-center gap-6">
           {/* Icons */}
-          <button onClick={() => setIsLeaderBoardOpen(true)}>
+          <button onClick={() => setIsLeaderboardOpen(true)}>
             <ChartNoAxesColumn
               color="#29296E"
               size={24}
