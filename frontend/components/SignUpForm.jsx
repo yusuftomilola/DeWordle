@@ -22,62 +22,62 @@ const SignUpForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // useEffect hide toast after 3 seconds
-  useEffect(() => {
-    if (toast.show) {
-      const timer = setTimeout(() => {
-        setToast({ ...toast, show: false });
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast.show]);
+  // useEffect(() => {
+  //   if (toast.show) {
+  //     const timer = setTimeout(() => {
+  //       setToast({ ...toast, show: false });
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [toast.show]);
 
-  const validateForm = () => {
-    let tempErrors = {
-      userName: "",
-      email: "",
-      password: "",
-      terms: "",
-    };
-    let isValid = true;
+  // const validateForm = () => {
+  //   let tempErrors = {
+  //     userName: "",
+  //     email: "",
+  //     password: "",
+  //     terms: "",
+  //   };
+  //   let isValid = true;
 
-    if (!formData.userName.trim() || formData.userName.length < 3) {
-      tempErrors.userName = "Username must be at least 3 characters";
-      setToast({
-        message: "Username must be at least 3 characters",
-        type: "error",
-        show: true,
-      });
-      isValid = false;
-    }
+  //   if (!formData.userName.trim() || formData.userName.length < 3) {
+  //     tempErrors.userName = "Username must be at least 3 characters";
+  //     setToast({
+  //       message: "Username must be at least 3 characters",
+  //       type: "error",
+  //       show: true,
+  //     });
+  //     isValid = false;
+  //   }
 
-    if (!formData.email) {
-      tempErrors.email = "Please enter your email address";
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      tempErrors.email = "Please enter a valid email address";
-      isValid = false;
-    }
+  //   if (!formData.email) {
+  //     tempErrors.email = "Please enter your email address";
+  //     isValid = false;
+  //   } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+  //     tempErrors.email = "Please enter a valid email address";
+  //     isValid = false;
+  //   }
 
-    if (!formData.password) {
-      tempErrors.password = "Please enter a password";
-      isValid = false;
-    } else if (formData.password.length < 6) {
-      tempErrors.password = "Password must be at least 6 characters";
-      isValid = false;
-    }
+  //   if (!formData.password) {
+  //     tempErrors.password = "Please enter a password";
+  //     isValid = false;
+  //   } else if (formData.password.length < 6) {
+  //     tempErrors.password = "Password must be at least 6 characters";
+  //     isValid = false;
+  //   }
 
-    if (!formData.terms) {
-      tempErrors.terms = "Please agree to the Terms & Policy";
-      isValid = false;
-    }
+  //   if (!formData.terms) {
+  //     tempErrors.terms = "Please agree to the Terms & Policy";
+  //     isValid = false;
+  //   }
 
-    setErrors(tempErrors);
-    // Show toast with error message if validation fails
-    if (!isValid) {
-      setToast("Please fill in all required fields correctly", "error");
-    }
-    return isValid;
-  };
+  //   setErrors(tempErrors);
+  //   // Show toast with error message if validation fails
+  //   if (!isValid) {
+  //     setToast("Please fill in all required fields correctly", "error");
+  //   }
+  //   return isValid;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
