@@ -1,27 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateUsersProvider } from './providers/create-users-provider';
 import { Repository } from 'typeorm';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-     /* 
-     * inject create user provider
-     */
-     private readonly createUserProvider: CreateUsersProvider,
-     @InjectRepository(User)
-         private userRepository: Repository<User>,
+    private readonly createUserProvider: CreateUsersProvider,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService, 
   ) {}
+
   create(createUserDto: CreateUserDto) {
-    return this.createUserProvider.createUser(createUserDto)
+    return this.createUserProvider.createUser(createUserDto);
   }
 
   findAll() {
-    return `This action returns all users`;
+    return 'This action returns all users';
   }
 
   findOne(id: number) {
