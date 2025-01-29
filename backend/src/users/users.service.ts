@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { CreateUsersProvider } from './providers/create-users-provider';
 import { Repository } from 'typeorm';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from 'src/auth/providers/auth.service';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +14,7 @@ export class UsersService {
     /*
      * inject create user provider
      */
+    @InjectRepository(User)
     private userRepository: Repository<User>,
 
     private readonly findOneByEmailProvider: FindOneByEmailProvider,
