@@ -1,7 +1,8 @@
-'use client'
+"use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import GoogleIcon from "./ui/googleIcon";
+import Link from "next/link";
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -21,7 +22,6 @@ const SignUpForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -209,19 +209,19 @@ const SignUpForm = () => {
 
             {/* Google Sign In Button */}
             <button className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-2 px-4 hover:bg-gray-50">
-              <GoogleIcon/>
+              <GoogleIcon />
               Sign in with Google
             </button>
 
             {/* Login Link */}
             <p className="mt-4 text-center text-sm text-gray-600">
               Have an account?{" "}
-              <a
-                href="/login"
+              <Link
+                href="/signin"
                 className="text-indigo-600 hover:text-indigo-500"
               >
                 Sign in
-              </a>
+              </Link>
             </p>
           </div>
 
