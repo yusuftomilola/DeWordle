@@ -8,7 +8,10 @@ import { UsersModule } from 'src/users/users.module';
 @Module({
   imports: [forwardRef(() => UsersModule)],
   controllers: [AuthController],
-  providers: [AuthService, { provide: HashingProvider, useClass: BcryptProvider }],
-  exports: [HashingProvider]
+  providers: [
+    AuthService,
+    { provide: HashingProvider, useClass: BcryptProvider },
+  ],
+  exports: [AuthService, HashingProvider], 
 })
 export class AuthModule {}
