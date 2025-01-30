@@ -2,109 +2,123 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [agreed, setAgreed] = useState(false);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log('Form submitted:', formData);
+  };
   return (
     <div className="w-full h-full flex items-center justify-center px-4">
       <div className="w-full max-w-[1200px] flex items-center justify-center space-x-8">
-        <div className="bg-white rounded-3xl p-8 w-full max-w-[450px] shadow-sm">
-          <div className="text-center mb-6">
-            <h1 className="text-[24px] font-[800] mb-2">Sign in</h1>
-            <p className="text-black">
-              Hey, Enter your details to login <br /> to your account
-            </p>
-          </div>
+        <div className="bg-white rounded-3xl w-full max-w-md mx-auto p-6 shadow-sm">
+          
+        <h1 className="text-2xl font-bold mb-8">Sign In</h1>
 
           <form className="space-y-4">
-            <div>
-              <input
-                type="text"
-                placeholder="Enter Email / Phone No"
-                className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-[#5D5D5D]"
-              />
-            </div>
+          <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm font-medium">
+            Email address
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
 
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Passcode"
-                className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-[#5D5D5D]"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-black font-[400]"
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-gray-300 text-[#B4DBCA] focus:ring-[#B4DBCA]"
-                />
-                <span>Remember me</span>
-              </label>
-              <a href="#" className="text-gray-600 hover:text-gray-800">
-                Forgot Password?
-              </a>
-            </div>
-
+        <div className="space-y-2">
+          <label htmlFor="password" className="block text-sm font-medium">
+            Password
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+              placeholder="Enter your password"
+              required
+            />
             <button
-              type="submit"
-              className="w-full bg-[#AED6B3] text-white py-3 rounded-lg hover:bg-opacity-90 transition-colors"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              Sign in
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
+          </div>
+        </div>
 
-            <div className="relative text-center my-6">
+
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            id="terms"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300"
+          />
+          <label htmlFor="terms" className="ml-2 text-sm">
+            I agree to the <a href="#" className="text-blue-[#000000] hover:underline">terms & policy</a>
+          </label>
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-[#29296E] border border-[#29296E] text-white py-2 px-4 rounded-md font-[700] hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Sign in
+        </button>
+
+        <div className="relative text-center my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-black"></div>
+                <div className="w-full border-t border-2 border-[#F5F5F5]"></div>
               </div>
               <span className="relative bg-white px-4 text-sm text-[#000000] font-[500]">
-                Or Sign in with
+                Or 
               </span>
             </div>
 
-            <div className="grid grid-cols-3 gap-1 md:gap-4">
-              <button
-                type="button"
-                className="flex items-center justify-center px-2 sm:px-3 py-2 sm:border sm:border-black rounded-full hover:bg-gray-50 active:scale-95 transition-all duration-200"
-              >
-                <Image src="/google.svg" alt="Google-icon" width={20} height={20} />
-                <span className="hidden sm:inline-block ml-2 text-[16px] font-[700]">Google</span>
-              </button>
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-2 px-4 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        >
+          <img src="/google.svg" alt="Google logo" className="w-5 h-5" />
+          Sign in with Google
+        </button>
 
-              <button
-                type="button"
-                className="flex items-center justify-center px-2 sm:px-3 py-2 sm:border sm:border-black rounded-full hover:bg-gray-50 active:scale-95 transition-all duration-200"
-              >
-                <Image src="/apple.svg" alt="apple-icon" width={20} height={20} />
-                <span className="hidden sm:inline-block ml-2 text-[16px] font-[700]">Apple ID</span>
-              </button>
-
-              <button
-                type="button"
-                className="flex items-center justify-center px-2 sm:px-3 py-2 sm:border sm:border-black rounded-full hover:bg-gray-50 active:scale-95 transition-all duration-200"
-              >
-                <Image src="/facebook.svg" alt="facebook-icon" width={20} height={20} />
-                <span className="hidden sm:inline-block ml-2 text-[16px] font-[700]">Facebook</span>
-              </button>
-            </div>
-
-            <p className="text-center text-sm text-black font-[500]">
-              Don't have an account?{' '}
-              <a href="#" className="text-[#000000] font-[700] ml-1">
-                Register Now
-              </a>
-            </p>
+        <div className="text-center text-sm">
+         Don't have an account?
+          <a href="#" className="text-[#0F3DDE] font-[500] hover:underline">
+            Sign Up
+          </a>
+        </div>
           </form>
         </div>
 
@@ -122,3 +136,4 @@ export default function SignIn() {
     </div>
   );
 }
+

@@ -14,7 +14,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           <button className="flex items-center text-[#000000]">
             <span className="ml-1">Sign up</span>
           </button>
-          <button className="bg-[#AED6B3] text-black px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
+          <button className="bg-[#29296E] border border-[#29296E] text-white  px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
             Request Demo →
           </button>
         </div>
