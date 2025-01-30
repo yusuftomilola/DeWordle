@@ -58,7 +58,7 @@ const LeaderBoardModal = ({ isOpen, onClose }) => {
   ];
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white shadow-lg px-6 pb-5 w-[80%] sm:w-[50%] lg:w-[40%]">
+      <div className="bg-white dark:bg-gray-800 shadow-lg px-6 pb-5 w-[80%] sm:w-[50%] lg:w-[40%]">
         <div className="p-4 flex text-black justify-between items-center">
           <h2 className="text-lg font-bold">Statistics</h2>
           <button onClick={onClose} className="text-xl font-bold">
