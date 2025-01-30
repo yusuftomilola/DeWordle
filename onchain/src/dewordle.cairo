@@ -6,7 +6,7 @@ mod DeWordle {
 
     use starknet::storage::{
         StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map, Vec,
-        MutableVecTrait, VecTrait
+        MutableVecTrait, VecTrait,
     };
 
     use dewordle::constants::LetterStates::{CORRECT, PRESENT, ABSENT};
@@ -17,7 +17,7 @@ mod DeWordle {
         letters_in_word: Vec<felt252>, //TODO: hash letters
         word_len: u8,
         player_stat: Map<ContractAddress, PlayerStat>,
-        daily_player_stat: Map<ContractAddress, DailyPlayerStat>, // TODO: track day
+        daily_player_stat: Map<ContractAddress, DailyPlayerStat> // TODO: track day
     }
 
     #[abi(embed_v0)]
@@ -48,12 +48,12 @@ mod DeWordle {
         // TODO
         fn submit_guess(ref self: ContractState, guessed_word: ByteArray) {}
 
-        // TODO
+
         fn is_correct_word(ref self: ContractState, guessed_word: ByteArray) -> bool {
-            true
+            let correct_word: ByteArray = self.word_of_the_day.read();
+            guessed_word == correct_word
         }
 
-        // TODO
         fn compare_word(ref self: ContractState, guessed_word: ByteArray) -> Span<u8> {
             let guessed_word_len = guessed_word.len();
             let word = self.get_daily_word();
