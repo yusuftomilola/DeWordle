@@ -1,4 +1,6 @@
+"use client";
 import React, { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 function WordGrid() {
   // const inputs = Array.from({ length: 25 });
   const { gridData } = useContext(AppContext);

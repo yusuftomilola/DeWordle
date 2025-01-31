@@ -1,9 +1,17 @@
-import React, { useContext, useEffect } from "react";
+"use client";
+import React, { useContext, useEffect, useCallback } from "react";
 import { Delete } from "lucide-react";
+import { AppContext } from "../context/AppContext";
 
 const Keyboard = () => {
-  const { currentRow, currentCol, gridData, setGridData } =
-    useContext(AppContext);
+  const {
+    currentRow,
+    setCurrentRow,
+    currentCol,
+    setCurrentCol,
+    gridData,
+    setGridData,
+  } = useContext(AppContext);
 
   const rows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -21,41 +29,50 @@ const Keyboard = () => {
     ],
   ];
 
-  const handleKeyPress = (key) => {
-    if (currentRow >= 5) return; // Game is complete
+  const handleKeyPress = useCallback(
+    (key) => {
+      if (currentRow >= 5) return; // Game is complete
 
-    const currentPosition = currentRow * 5 + currentCol;
+      const currentPosition = currentRow * 5 + currentCol;
 
-    if (
-      key === "Backspace" ||
-      (typeof key === "object" && key.type === "icon")
-    ) {
-      if (currentCol > 0) {
+      if (
+        key === "Backspace" ||
+        (typeof key === "object" && key.type === "icon")
+      ) {
+        if (currentCol > 0) {
+          const newGridData = [...gridData];
+          newGridData[currentPosition - 1] = "";
+          setGridData(newGridData);
+          setCurrentCol((prev) => prev - 1);
+        }
+        return;
+      }
+
+      if (key === "Enter") {
+        if (currentCol === 5) {
+          setCurrentRow((prev) => prev + 1);
+          setCurrentCol(0);
+        }
+        return;
+      }
+
+      if (currentCol < 5) {
         const newGridData = [...gridData];
-        newGridData[currentPosition - 1] = "";
+        newGridData[currentPosition] = key;
         setGridData(newGridData);
-        if (currentCol > 0) setCurrentCol((prev) => prev - 1);
+        setCurrentCol((prev) => prev + 1);
       }
-      return;
-    }
+    },
+    [
+      currentRow,
+      currentCol,
+      gridData,
+      setGridData,
+      setCurrentCol,
+      setCurrentRow,
+    ]
+  );
 
-    if (key === "Enter") {
-      if (currentCol === 5) {
-        setCurrentRow((prev) => prev + 1);
-        setCurrentCol(0);
-      }
-      return;
-    }
-
-    if (currentCol < 5) {
-      const newGridData = [...gridData];
-      newGridData[currentPosition] = key;
-      setGridData(newGridData);
-      setCurrentCol((prev) => prev + 1);
-    }
-  };
-
-  // physical keyboard input
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Backspace") {
@@ -69,7 +86,7 @@ const Keyboard = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentCol, currentRow]);
+  }, [handleKeyPress]);
 
   return (
     <div className="w-full max-w-xl mx-auto mt-10">
