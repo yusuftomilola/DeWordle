@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Delete } from "lucide-react";
 
 const Keyboard = () => {
+  const { currentRow, currentCol, gridData, setGridData } =
+    useContext(AppContext);
+
   const rows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
     [
       "Enter",
+      "Z",
       "X",
       "C",
       "V",
@@ -16,6 +20,56 @@ const Keyboard = () => {
       { label: "", icon: <Delete />, type: "icon" },
     ],
   ];
+
+  const handleKeyPress = (key) => {
+    if (currentRow >= 5) return; // Game is complete
+
+    const currentPosition = currentRow * 5 + currentCol;
+
+    if (
+      key === "Backspace" ||
+      (typeof key === "object" && key.type === "icon")
+    ) {
+      if (currentCol > 0) {
+        const newGridData = [...gridData];
+        newGridData[currentPosition - 1] = "";
+        setGridData(newGridData);
+        if (currentCol > 0) setCurrentCol((prev) => prev - 1);
+      }
+      return;
+    }
+
+    if (key === "Enter") {
+      if (currentCol === 5) {
+        setCurrentRow((prev) => prev + 1);
+        setCurrentCol(0);
+      }
+      return;
+    }
+
+    if (currentCol < 5) {
+      const newGridData = [...gridData];
+      newGridData[currentPosition] = key;
+      setGridData(newGridData);
+      setCurrentCol((prev) => prev + 1);
+    }
+  };
+
+  // physical keyboard input
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Backspace") {
+        handleKeyPress("Backspace");
+      } else if (event.key === "Enter") {
+        handleKeyPress("Enter");
+      } else if (/^[a-zA-Z]$/.test(event.key)) {
+        handleKeyPress(event.key.toUpperCase());
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentCol, currentRow]);
 
   return (
     <div className="w-full max-w-xl mx-auto mt-10">
@@ -27,6 +81,7 @@ const Keyboard = () => {
                 return (
                   <button
                     key={keyIndex}
+                    onClick={() => handleKeyPress(key)}
                     className="bg-[#939b9f]/30 hover:bg-gray-400 text-gray-800 font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md flex items-center space-x-2 transition-all text-xs sm:text-sm"
                   >
                     {key.icon}
@@ -38,6 +93,7 @@ const Keyboard = () => {
               return (
                 <button
                   key={keyIndex}
+                  onClick={() => handleKeyPress(key)}
                   className="bg-[#939b9f]/30 hover:bg-gray-400 text-gray-800 font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md transition-all text-xs sm:text-sm"
                 >
                   {key}
