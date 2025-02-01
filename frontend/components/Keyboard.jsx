@@ -38,8 +38,8 @@ const Keyboard = () => {
               return (
                 <button
                   key={keyIndex}
-                  className="bg-[#939b9f]/30 hover:bg-gray-400 text-gray-800 font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md transition-all text-xs sm:text-sm"
-                >
+                  className={`bg-[#939b9f]/30 hover:bg-gray-400 text-gray-800 font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md transition-all text-xs sm:text-sm 
+                    ${key === "W" ? 'text-gray-800 dark:text-yellow-300' : ''}`}                 >
                   {key}
                 </button>
               );

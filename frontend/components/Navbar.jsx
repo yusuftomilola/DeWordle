@@ -23,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-[#FAF7F7] shadow-md h-[70px]">
+    <div className="navbar bg-[#FAF7F7] shadow-md h-[70px] dark:bg-gray-800 ">
       <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between px-4 lg:px-14">
         {/* Navbar Start: Dewordle Icon */}
         <div className="navbar-start flex items-center">
