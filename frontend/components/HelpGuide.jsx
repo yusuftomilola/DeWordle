@@ -22,7 +22,7 @@ import {
 } from "../components/ui/accordion";
 import { BookOpen, Settings, Gamepad2 } from "lucide-react";
 import Link from "next/link";
-import { helpContent } from "../app/helpContent";
+import { helpContent } from "../utils/helpContent";
 
 // Component for rendering individual letter tiles
 function LetterTile({ letter, state = "absent" }) {
