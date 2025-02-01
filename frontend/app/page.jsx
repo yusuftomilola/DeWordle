@@ -1,7 +1,7 @@
-import Keyboard from "../components/Keyboard";
-import Navbar from "../components/Navbar";
-import WordGrid from "../components/WordGrid.jsx";
+import LandingPage from "../components/LandingPage";
 
 export default function page() {
-  return <div>landing page</div>;
+  return <div>
+    <LandingPage/>
+  </div>;
 }

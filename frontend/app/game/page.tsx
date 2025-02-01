@@ -1,13 +1,14 @@
-import Keyboard from "../../components/Keyboard";
-import Navbar from "../../components/Navbar.jsx";
-import WordGrid from "../../components/WordGrid.jsx";
+import React from "react";
+import Navbar from "../../components/Navbar"
+import WordGrid from "../../components/WordGrid"
+import Keyboard from "../../components/Keyboard"
 
-export default function page() {
-  return (
-    <div>
-      <Navbar />
-      <WordGrid />
-      <Keyboard />
-    </div>
-  );
-}
+const Game = () => {
+  return <div>
+    <Navbar/>
+    <WordGrid/>
+    <Keyboard/>
+  </div>;
+};
+
+export default Game;
