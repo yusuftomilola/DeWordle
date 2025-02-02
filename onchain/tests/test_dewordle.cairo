@@ -1,12 +1,17 @@
 use starknet::ContractAddress;
-
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
-
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address};
 use dewordle::interfaces::{IDeWordleDispatcher, IDeWordleDispatcherTrait};
+
+fn OWNER() -> ContractAddress {
+    'OWNER'.try_into().unwrap()
+}
 
 fn deploy_contract() -> ContractAddress {
     let contract = declare("DeWordle").unwrap().contract_class();
-    let (contract_address, _) = contract.deploy(@ArrayTrait::new()).unwrap();
+    let mut constructor_calldata = array![];
+    let owner: ContractAddress = OWNER().try_into().unwrap();
+    owner.serialize(ref constructor_calldata);
+    let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
     contract_address
 }
 
@@ -15,6 +20,8 @@ fn test_set_daily_word() {
     // Deploy the contract
     let contract_address = deploy_contract();
     let dewordle = IDeWordleDispatcher { contract_address: contract_address };
+
+    start_cheat_caller_address(contract_address, OWNER());
 
     // Define and set the daily word
     let daily_word = "test";
@@ -25,10 +32,33 @@ fn test_set_daily_word() {
 }
 
 #[test]
+fn test_is_correct_word() {
+    // Deploy the contract
+    let contract_address = deploy_contract();
+    let dewordle = IDeWordleDispatcher { contract_address: contract_address };
+
+    start_cheat_caller_address(contract_address, OWNER());
+    // Set the correct word in the contract state
+    let correct_word = "hello";
+    dewordle.set_daily_word(correct_word.clone());
+
+    // Test case 1: Correct guess
+    let guessed_word = "hello";
+    let result = dewordle.is_correct_word(guessed_word.clone());
+    assert(result, 'Test case 1 failed');
+
+    // Test case 2: Incorrect guess
+    let guessed_word = "world";
+    let result = dewordle.is_correct_word(guessed_word.clone());
+    assert(!result, 'Test case 2 failed');
+}
+
+#[test]
 fn test_compare_word_when_all_letters_are_correct() {
     let contract_address = deploy_contract();
     let dewordle = IDeWordleDispatcher { contract_address: contract_address };
 
+    start_cheat_caller_address(contract_address, OWNER());
     // Define and set the daily word
     let daily_word = "test";
     dewordle.set_daily_word(daily_word.clone());
@@ -46,6 +76,7 @@ fn test_compare_word_when_some_letters_are_misplaced() {
     let contract_address = deploy_contract();
     let dewordle = IDeWordleDispatcher { contract_address: contract_address };
 
+    start_cheat_caller_address(contract_address, OWNER());
     // Define and set the daily word
     let daily_word = "test";
     dewordle.set_daily_word(daily_word.clone());
@@ -63,6 +94,7 @@ fn test_compare_word_when_some_letters_are_absent() {
     let contract_address = deploy_contract();
     let dewordle = IDeWordleDispatcher { contract_address: contract_address };
 
+    start_cheat_caller_address(contract_address, OWNER());
     // Define and set the daily word
     let daily_word = "test";
     dewordle.set_daily_word(daily_word.clone());
@@ -81,6 +113,7 @@ fn test_compare_word_panics() {
     let contract_address = deploy_contract();
     let dewordle = IDeWordleDispatcher { contract_address: contract_address };
 
+    start_cheat_caller_address(contract_address, OWNER());
     // Define and set the daily word
     let daily_word = "slept";
     dewordle.set_daily_word(daily_word.clone());
@@ -96,6 +129,7 @@ fn test_compare_word_when_some_letters_are_repeated() {
     let contract_address = deploy_contract();
     let dewordle = IDeWordleDispatcher { contract_address: contract_address };
 
+    start_cheat_caller_address(contract_address, OWNER());
     // Define and set the daily word
     let daily_word = "slept";
     dewordle.set_daily_word(daily_word.clone());
@@ -115,7 +149,7 @@ fn test_compare_word_when_some_letters_are_repeated() {
     // Verify that the daily word was set correctly
     assert(dewordle.get_daily_word() == daily_word, 'Daily word not stored correctly');
 
-    //  verify the word was compared correctly
+    // Verify the word was compared correctly
     assert(
         dewordle.compare_word("less") == array![2, 0, 0, 2].span(), 'Word not compared correctly'
     );
