@@ -1,26 +1,22 @@
-
-
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
 const LandingPage = () => {
   return (
-    <div 
+    <div
       className="flex items-center justify-center w-full min-h-screen bg-center bg-cover bg-no-repeat"
-      style={{ backgroundImage: "url('/wordleBg.svg')" }}
-    > 
+      style={{ backgroundImage: "url('/dewordle-bg.jpg')" }}
+    >
       <div className="z-10 text-center max-w-[90%] sm:max-w-[80%] md:max-w-[60%]">
         {/* Logo */}
-        <Image 
-          src="/icon.svg" 
-          alt="DEW-RDLE" 
-          width={200} 
-          height={50} 
-    
+        <Image
+          src="/icon.svg"
+          alt="DEW-RDLE"
+          width={200}
+          height={50}
           className="mx-auto"
         />
 
-      
         <p className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-700">
           Get 6 Chances to <br /> guess a 5-letter word.
         </p>
