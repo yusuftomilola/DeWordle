@@ -4,20 +4,23 @@ import Link from "next/link";
 const LandingPage = () => {
   return (
     <div
-      className="flex items-center justify-center w-full min-h-screen bg-center bg-cover bg-no-repeat"
+      className="relative flex items-center justify-center w-full min-h-screen bg-center bg-cover bg-no-repeat"
       style={{ backgroundImage: "url('/dewordle-bg.jpg')" }}
     >
-      <div className="z-10 text-center max-w-[90%] sm:max-w-[80%] md:max-w-[60%]">
+      {/* Lilac overlay */}
+      <div className="absolute inset-0 bg-[#726c72] opacity-70"></div>
+
+      <div className="z-10 md:mt-0 text-center max-w-[90%] sm:max-w-[80%] md:max-w-[60%]">
         {/* Logo */}
         <Image
           src="/icon.svg"
           alt="DEW-RDLE"
-          width={200}
+          width={350}
           height={50}
           className="mx-auto"
         />
 
-        <p className="mt-4 text-lg sm:text-xl md:text-2xl text-gray-700">
+        <p className="mt-4 text-3xl md:text-5xl text-white font-semibold">
           Get 6 Chances to <br /> guess a 5-letter word.
         </p>
 
