@@ -99,7 +99,7 @@ const Keyboard = () => {
                   <button
                     key={keyIndex}
                     onClick={() => handleKeyPress(key)}
-                    className="bg-[#939b9f]/30 hover:bg-gray-400 text-gray-800 font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md flex items-center space-x-2 transition-all text-xs sm:text-sm"
+                    className="bg-[#939b9f]/30 hover:bg-gray-400 text-foreground font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md flex items-center space-x-2 transition-all text-xs sm:text-sm"
                   >
                     {key.icon}
                     <span>{key.label}</span>
@@ -111,7 +111,7 @@ const Keyboard = () => {
                 <button
                   key={keyIndex}
                   onClick={() => handleKeyPress(key)}
-                  className="bg-[#939b9f]/30 hover:bg-gray-400 text-gray-800 font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md transition-all text-xs sm:text-sm"
+                  className="bg-[#939b9f]/30 hover:bg-gray-400 text-foreground font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md transition-all text-xs sm:text-sm"
                 >
                   {key}
                 </button>

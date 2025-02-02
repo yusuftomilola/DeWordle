@@ -23,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-[#FAF7F7] shadow-md h-[70px]">
+    <div className="navbar bg-[#FAF7F7] shadow-md h-[70px] bg-background ">
       <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between px-4 lg:px-14">
         {/* Navbar Start: Dewordle Icon */}
         <div className="navbar-start flex items-center">
@@ -37,7 +37,7 @@ const Navbar = () => {
         </div>
 
         {/* Navbar End: Icons and Connect Button */}
-        <div className="navbar-end hidden md:flex items-center gap-6">
+        <div className="navbar-end hidden md:flex items-center gap-6 text-[#29296E]  dark:text-[#B14CF9]">
           {/* Icons */}
           <button onClick={() => setIsLeaderboardOpen(true)}>
             <ChartNoAxesColumn
@@ -96,7 +96,7 @@ const Navbar = () => {
           <div className="absolute top-[85px] left-0 w-full bg-white shadow-lg rounded-lg py-2 z-50">
             <div className="flex flex-col items-center gap-4 py-2">
               {/* Icons */}
-              <div className="flex justify-center gap-6">
+              <div className="flex justify-center gap-6 text-[#29296E] dark:text-[#B14CF9]">
                 <button onClick={() => setIsLeaderboardOpen(true)}>
                   <ChartNoAxesColumn
                     color="#29296E"
