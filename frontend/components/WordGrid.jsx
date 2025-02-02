@@ -5,7 +5,7 @@ function WordGrid() {
 
   return (
     <div className='mt-5'>
-      <div className="grid grid-cols-5 gap-2 md:gap-4 place-content-center mx-auto bg-white w-[250px] md:w-[350px] dark:bg-gray-800 ">
+      <div className="grid grid-cols-5 gap-2 md:gap-4 place-content-center mx-auto  md:w-[350px]  ">
         {inputs.map((_, index) => (
           <input
             key={index}
