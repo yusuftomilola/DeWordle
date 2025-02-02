@@ -1,7 +1,21 @@
-import React, { createContext } from "react";
+"use client";
+import React, { createContext, useState } from "react";
 
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  return <AppContext.Provider value={{}}>{children}</AppContext.Provider>;
+  const [currentRow, setCurrentRow] = useState(0);
+  const [currentCol, setCurrentCol] = useState(0);
+  const [gridData, setGridData] = useState(Array(25).fill(""));
+
+  const value = {
+    currentRow,
+    setCurrentRow,
+    currentCol,
+    setCurrentCol,
+    gridData,
+    setGridData,
+  };
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
