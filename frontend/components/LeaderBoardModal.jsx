@@ -58,51 +58,57 @@ const LeaderBoardModal = ({ isOpen, onClose }) => {
   ];
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white shadow-lg px-6 pb-5 w-[80%] sm:w-[50%] lg:w-[40%]">
-        <div className="p-4 flex text-black justify-between items-center">
+      <div className="bg-background shadow-lg px-6 pb-5 w-[80%] sm:w-[50%] lg:w-[40%]">
+        <div className="p-4 flex text-black text-foreground justify-between items-center">
           <h2 className="text-lg font-bold">Statistics</h2>
           <button onClick={onClose} className="text-xl font-bold">
             &times;
           </button>
         </div>
 
-        <div className="p-4 bg-[#fafafc] shadow-lg rounded-[16px]">
+        <div className="p-4 bg-[#fafafc] bg-background shadow-lg rounded-[16px]">
           <div className="grid grid-cols-4 text-center gap-4">
             <div>
-              <p className="text-4xl font-medium text-[#29296e]">
+              <p className="text-4xl font-medium text-[#29296e] text-foreground">
                 {stats.played}
               </p>
-              <p className="text-gray-500 text-sm">Played</p>
+              <p className="text-gray-500 text-sm text-foreground">Played</p>
             </div>
             <div>
-              <p className="text-4xl font-medium text-[#29296e]">
+              <p className="text-4xl font-medium text-[#29296e] text-foreground">
                 {stats.winPercentage}
               </p>
-              <p className="text-gray-500 text-sm">win %</p>
+              <p className="text-gray-500 text-sm dark:text-gray-30">win %</p>
             </div>
             <div>
-              <p className="text-4xl font-medium text-[#29296e]">
+              <p className="text-4xl font-medium text-[#29296e] text-foreground">
                 {stats.currentStreak}
               </p>
-              <p className="text-gray-500 text-sm">Current Streak</p>
+              <p className="text-gray-500 text-sm text-foreground">
+                Current Streak
+              </p>
             </div>
             <div>
-              <p className="text-4xl font-medium text-[#29296e]">
+              <p className="text-4xl font-medium text-[#29296e] text-foreground">
                 {stats.maxStreak}
               </p>
-              <p className="text-gray-500 text-sm">Max Streak</p>
+              <p className="text-gray-500 text-sm text-foreground">
+                Max Streak
+              </p>
             </div>
           </div>
-          <p className="mt-4 text-black">
+          <p className="mt-4 text-black text-foreground">
             Points{" "}
-            <span className="text-[#29296e] font-bold">{stats.points} pst</span>
+            <span className="text-[#29296e] text-foreground font-bold">
+              {stats.points} pst
+            </span>
           </p>
         </div>
 
-        <div className="overflow-y-scroll no-scrollbar max-h-60 rounded-[16px] mt-4 bg-[#fafafc] px-4 border-collapse border border-[#dbe2e7]">
+        <div className="overflow-y-scroll no-scrollbar max-h-60 rounded-[16px] mt-4 bg-[#fafafc] bg-background px-4 border-collapse border border-[#dbe2e7] dark:border-[#444]">
           <table className="w-full text-left  ">
-            <thead className="bg-[#fafafc] border-b border-[#dbe2e7]">
-              <tr className="text-[#29296e] bg-">
+            <thead className="bg-[#fafafc] bg-background border-b border-[#dbe2e7] dark:border-[#444]">
+              <tr className="text-[#29296e] text-foreground">
                 <th className="p-2">Username</th>
                 <th className="p-2">Points</th>
               </tr>
@@ -111,7 +117,7 @@ const LeaderBoardModal = ({ isOpen, onClose }) => {
               {leaderboard.map((player, index) => (
                 <tr
                   key={index}
-                  className="p-2 hover:bg-[#29296e] hover:text-white text-[#29296e] border-b border-[#dbe2e7]"
+                  className="p-2 hover:bg-[#29296e] hover:text-white dark:hover:bg-[#444] text-foreground text-[#29296e]  border-b border-[#dbe2e7] dark:border-[#444]"
                 >
                   <td className="p-2 flex items-center gap-2">
                     <span className="text-sm font-medium">{index + 1}</span>
