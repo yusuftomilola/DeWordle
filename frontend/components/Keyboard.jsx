@@ -1,21 +1,9 @@
 "use client";
 import React, { useContext, useEffect, useCallback } from "react";
-"use client";
-import React, { useContext, useEffect, useCallback } from "react";
 import { Delete } from "lucide-react";
-import { AppContext } from "../context/AppContext";
 import { AppContext } from "../context/AppContext";
 
 const Keyboard = () => {
-  const {
-    currentRow,
-    setCurrentRow,
-    currentCol,
-    setCurrentCol,
-    gridData,
-    setGridData,
-  } = useContext(AppContext);
-
   const {
     currentRow,
     setCurrentRow,
@@ -31,7 +19,6 @@ const Keyboard = () => {
     [
       "Enter",
       "Z",
-      "Z",
       "X",
       "C",
       "V",
@@ -41,65 +28,6 @@ const Keyboard = () => {
       { label: "", icon: <Delete />, type: "icon" },
     ],
   ];
-
-  const handleKeyPress = useCallback(
-    (key) => {
-      if (currentRow >= 5) return; // Game is complete
-
-      const currentPosition = currentRow * 5 + currentCol;
-
-      if (
-        key === "Backspace" ||
-        (typeof key === "object" && key.type === "icon")
-      ) {
-        if (currentCol > 0) {
-          const newGridData = [...gridData];
-          newGridData[currentPosition - 1] = "";
-          setGridData(newGridData);
-          setCurrentCol((prev) => prev - 1);
-        }
-        return;
-      }
-
-      if (key === "Enter") {
-        if (currentCol === 5) {
-          setCurrentRow((prev) => prev + 1);
-          setCurrentCol(0);
-        }
-        return;
-      }
-
-      if (currentCol < 5) {
-        const newGridData = [...gridData];
-        newGridData[currentPosition] = key;
-        setGridData(newGridData);
-        setCurrentCol((prev) => prev + 1);
-      }
-    },
-    [
-      currentRow,
-      currentCol,
-      gridData,
-      setGridData,
-      setCurrentCol,
-      setCurrentRow,
-    ]
-  );
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === "Backspace") {
-        handleKeyPress("Backspace");
-      } else if (event.key === "Enter") {
-        handleKeyPress("Enter");
-      } else if (/^[a-zA-Z]$/.test(event.key)) {
-        handleKeyPress(event.key.toUpperCase());
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyPress]);
 
   const handleKeyPress = useCallback(
     (key) => {
