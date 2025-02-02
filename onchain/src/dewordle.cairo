@@ -5,8 +5,7 @@ mod DeWordle {
     use starknet::{ContractAddress};
 
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map, Vec,
-        MutableVecTrait, VecTrait,
+        StoragePointerReadAccess, StoragePointerWriteAccess, Map, Vec, MutableVecTrait,
     };
     use openzeppelin::access::accesscontrol::{AccessControlComponent};
     use openzeppelin::access::ownable::OwnableComponent;
@@ -88,12 +87,28 @@ mod DeWordle {
             self.word_of_the_day.read()
         }
 
-        //TODO
-        // fn get_player_daily_stat(self: @ContractState, player: ContractAddress) ->
-        // DailyPlayerStat {}
+        fn get_player_daily_stat(self: @ContractState, player: ContractAddress) -> DailyPlayerStat {
+            let daily_stat = self.daily_player_stat.read(player);
 
-        // TODO
-        fn play(ref self: ContractState) {}
+            // A player without a stat will have 0 attempts remaining
+            if daily_stat.attempt_remaining == 0 {
+                DailyPlayerStat {
+                    player: player, attempt_remaining: 6, has_won: false, won_at_attempt: 0,
+                }
+            } else {
+                daily_stat
+            }
+        }
+
+        fn play(ref self: ContractState) {
+            let caller: ContractAddress = starknet::get_caller_address();
+
+            let new_daily_stat = DailyPlayerStat {
+                player: caller, attempt_remaining: 6, has_won: false, won_at_attempt: 0,
+            };
+
+            self.daily_player_stat.write(caller, new_daily_stat);
+        }
 
         // TODO
         fn submit_guess(ref self: ContractState, guessed_word: ByteArray) {}
