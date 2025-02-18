@@ -11,9 +11,6 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       <header className="p-4 flex justify-end">
         <div className="flex items-center gap-4">
           <Image src="/world-icon.svg" alt="world" width={20} height={20} />
-          <button className="flex items-center text-[#000000]">
-            <span className="ml-1">Sign up</span>
-          </button>
           <button className="bg-[#29296E] border border-[#29296E] text-white  px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors">
             Request Demo →
           </button>
