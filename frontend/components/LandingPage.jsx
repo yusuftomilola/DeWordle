@@ -27,9 +27,11 @@ const LandingPage = () => {
         {/* Buttons */}
         <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
           {/* Log In Button */}
+          <Link href="/signup" passHref>
           <button className="px-6 py-3 w-full sm:w-[180px] md:w-[200px] h-[40px] md:h-[55px] text-base md:text-lg font-medium text-[#29296E] bg-gray-300 rounded-full shadow-md hover:bg-gray-400 transition border border-gray-400">
             Log In
           </button>
+          </Link>
 
           {/* Play Button */}
           <Link href="/game" passHref>

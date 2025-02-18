@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
+import Link from "next/link";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -143,7 +144,7 @@ export default function SignIn() {
                   disabled={isSubmitting}
                   className="w-full bg-[#29296E] border border-[#29296E] text-white py-2 px-4 rounded-md font-[700] hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  {isSubmitting ? 'Signing ip...' : 'Sign ip'}
+                  {isSubmitting ? 'Signing in...' : 'Sign in'}
                 </button>
 
                 <div className="relative text-center my-6">
@@ -169,12 +170,13 @@ export default function SignIn() {
 
                 <div className="text-center text-sm">
                   Don't have an account?
-                  <a
-                    href="#"
+                  <Link
+                    href="/signup"
                     className="text-[#0F3DDE] font-[500] hover:underline"
+                    passHref
                   >
                     Sign Up
-                  </a>
+                  </Link>
                 </div>
               </Form>
             )}
