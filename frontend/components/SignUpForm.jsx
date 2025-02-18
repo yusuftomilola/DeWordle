@@ -1,11 +1,11 @@
-'use client';
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import Link from 'next/link';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+"use client";
+import React from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -13,62 +13,50 @@ const SignUpForm = () => {
 
   const SignUpSchema = Yup.object().shape({
     userName: Yup.string()
-      .min(2, 'Username must be at least 2 characters')
-      .max(50, 'Username must be less than 50 characters')
-      .required('Username is required'),
+      .min(2, "Username must be at least 2 characters")
+      .max(50, "Username must be less than 50 characters")
+      .required("Username is required"),
     email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
+      .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
       )
-      .required('Password is required'),
+      .required("Password is required"),
     terms: Yup.boolean()
-      .oneOf([true], 'You must accept the terms and conditions')
-      .required('You must accept the terms and conditions'),
+      .oneOf([true], "You must accept the terms and conditions")
+      .required("You must accept the terms and conditions"),
   });
 
   const initialValues = {
-    userName: '',
-    email: '',
-    password: '',
+    userName: "",
+    email: "",
+    password: "",
     terms: false,
   };
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
-      console.log('Form submitted with values:', values);
+      console.log("Form submitted with values:", values);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      router.push('/');
+      router.push("/");
     } catch (error) {
-      console.error('Submission error:', error);
-      setStatus({ error: 'Something went wrong. Please try again.' });
+      console.error("Submission error:", error);
+      setStatus({ error: "Something went wrong. Please try again." });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FDF8F5]">
-      <header className="w-full py-4 px-6 flex justify-end items-center gap-4">
-        <Link href="/login" className="text-gray-600 hover:text-gray-900">
-          Sign In
-        </Link>
-        <button
-          onClick={() => router.push('/')}
-          className="bg-[#29296E] text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-        >
-          Request Demo
-        </button>
-      </header>
-
+    <div className="min-h-screen ">
       <div className="flex items-center justify-center p-4">
         <div className="max-w-6xl w-full mx-auto flex items-center justify-between">
-          <div className="bg-white p-8 rounded-lg shadow-sm w-full max-w-md">
-            <h1 className="text-2xl font-medium mb-6">Get Started Now</h1>
+          <div className="bg-white p-8 rounded-xl shadow-sm w-full max-w-md">
+            <h1 className="text-3xl font-medium mb-2">Get Started Now</h1>
             <p className="mb-6">
               Enter your credentials to access your account
             </p>
@@ -92,8 +80,8 @@ const SignUpForm = () => {
                       type="text"
                       className={`w-full px-3 py-2 border ${
                         touched.userName && errors.userName
-                          ? 'border-red-500'
-                          : 'border-gray-300'
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                       placeholder="Enter your username"
                     />
@@ -116,8 +104,8 @@ const SignUpForm = () => {
                       type="email"
                       className={`w-full px-3 py-2 border ${
                         touched.email && errors.email
-                          ? 'border-red-500'
-                          : 'border-gray-300'
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                       placeholder="Enter your email"
                     />
@@ -137,11 +125,11 @@ const SignUpForm = () => {
                     </label>
                     <Field
                       name="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       className={`w-full px-3 py-2 border ${
                         touched.password && errors.password
-                          ? 'border-red-500'
-                          : 'border-gray-300'
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                       placeholder="Create a password"
                     />
@@ -150,7 +138,7 @@ const SignUpForm = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                       aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
+                        showPassword ? "Hide password" : "Show password"
                       }
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -191,7 +179,7 @@ const SignUpForm = () => {
                     disabled={isSubmitting}
                     className="w-full bg-[#29296E] text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
                   >
-                    {isSubmitting ? 'Signing up...' : 'Sign up'}
+                    {isSubmitting ? "Signing up..." : "Sign up"}
                   </button>
                 </Form>
               )}
@@ -210,7 +198,7 @@ const SignUpForm = () => {
             </button>
 
             <p className="mt-4 text-center text-sm text-gray-600">
-              Have an account?{' '}
+              Have an account?{" "}
               <Link
                 href="/signin"
                 className="text-indigo-600 hover:text-indigo-500"
