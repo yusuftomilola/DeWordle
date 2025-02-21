@@ -2,9 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Status } from '../enums/status.enum';
@@ -18,8 +16,7 @@ export class Result {
   @ManyToOne(() => User, (user) => user.result)
   userId: User;
 
-  @ManyToOne(() => User, (user) => user.result)
-  @JoinTable()
+  @ManyToOne(() => User, (user) => user.result, { onDelete: 'CASCADE', eager: true })
   user: User;
 
   @Column('varchar', { nullable: false })

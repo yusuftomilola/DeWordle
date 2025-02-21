@@ -3,11 +3,13 @@ import { Result } from 'src/result/entities/result.entity';
 import {
   Column,
   CreateDateColumn,
+  Entity,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,11 +23,11 @@ export class User {
   @Column('varchar', { nullable: false })
   password: string;
 
-  @OneToMany(() => Result, (result) => result.user)
-  result: Result;
+  @OneToMany(() => Result, (result) => result.user, { cascade: true, eager: true })
+  result: Result[];
 
-  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user)
-  leaderboard: Leaderboard;
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, { cascade: true, eager: true })
+  leaderboard: Leaderboard[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -33,3 +35,4 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
