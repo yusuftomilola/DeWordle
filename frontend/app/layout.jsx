@@ -5,7 +5,13 @@ import "./globals.css";
 import Footer from "../components/footer";
 import { useState, useEffect } from "react";
 import { metadata } from "./metadata";
+import { Manrope } from "next/font/google";
 
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-manrope",
+});
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,8 +21,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-
 
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -45,12 +49,15 @@ export default function RootLayout({ children }) {
   }, [isDarkMode]);
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable}`}
+    >
       <head>
         <meta name="title" content={metadata.title} />
         <meta name="description" content={metadata.description} />
       </head>
-      <body className="flex flex-col min-h-screen antialiased">
+      <body className=" min-h-screen w-full antialiased">
         <main className="flex-grow">{children}</main>
         {/* footerpage */}
         <Footer />
