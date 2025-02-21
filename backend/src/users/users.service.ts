@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, forwardRef } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,8 +33,32 @@ export class UsersService {
     return await this.findOneByEmailProvider.FindByEmail(email);
   }
 
-  findAll() {
-    return 'This action returns all users';
+  // Find all users with pagination
+  async findAll(page: number, limit: number) {
+    const [users, total] = await this.userRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { id: 'ASC' },
+    });
+
+    return {
+      total,
+      page,
+      limit,
+      data: users,
+    };
+  }
+
+   // Soft delete a user by ID
+   async softDelete(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    await this.userRepository.softDelete(id);
+    return { message: `User with ID ${id} has been deleted.` };
   }
 
   public async findOneById(id: number): Promise<User | null> {
