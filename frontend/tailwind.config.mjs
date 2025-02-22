@@ -10,6 +10,7 @@ export default {
     extend: {
       fontFamily: {
         manrope: ["var(--font-manrope)"],
+        roboto: ["var(--font-roboto)", "sans-serif"],
       },
       colors: {
         background: "hsl(var(--background))",

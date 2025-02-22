@@ -6,7 +6,13 @@ import Footer from "../components/footer";
 import { useState, useEffect } from "react";
 import { metadata } from "./metadata";
 import { Manrope } from "next/font/google";
+import { Roboto } from "next/font/google";
 
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-roboto",
+});
 const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -51,7 +57,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${roboto.variable}`}
     >
       <head>
         <meta name="title" content={metadata.title} />
