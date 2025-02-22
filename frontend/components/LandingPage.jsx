@@ -3,14 +3,27 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
 const navigation = [{ name: "How to play", href: "#" }];
 
 const LandingPage = () => {
+  const [hasShadow, setHasShadow] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasShadow(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
     <div className="w-full h-full relative px-4 pb-2  sm:px-10 xl:px-20">
       <header
-        className={`fixed inset-x-0 top-0 z-50 py-2 lg:py-4 sm:px-10 xl:px-20 bg-white transition-shadow `}
+        className={`fixed inset-x-0 top-0 z-50 py-4 lg:py-5 sm:px-10 xl:px-20 bg-white transition-shadow ${
+          hasShadow ? "shadow-[0_1px_4px_rgba(0,0,0,0.05)]" : "shadow-none"
+        }`}
       >
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex lg:flex-1 gap-16 items-center">
