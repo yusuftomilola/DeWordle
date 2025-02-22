@@ -83,7 +83,7 @@ const LandingPage = () => {
                 href="/game"
                 className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
               >
-                Play as Quest
+                Play as Guest
               </Link>
             </div>
           </div>
