@@ -5,7 +5,19 @@ import "./globals.css";
 import Footer from "../components/footer";
 import { useState, useEffect } from "react";
 import { metadata } from "./metadata";
+import { Manrope } from "next/font/google";
+import { Roboto } from "next/font/google";
 
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-roboto",
+});
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-manrope",
+});
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,8 +27,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-
 
 export default function RootLayout({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -45,13 +55,16 @@ export default function RootLayout({ children }) {
   }, [isDarkMode]);
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${manrope.variable} ${roboto.variable}`}
+    >
       <head>
         <meta name="title" content={metadata.title} />
         <meta name="description" content={metadata.description} />
       </head>
-      <body className="flex flex-col min-h-screen antialiased">
-        <main className="flex-grow">{children}</main>
+      <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
+        <main className="flex-grow ">{children}</main>
         {/* footerpage */}
         <Footer />
       </body>
