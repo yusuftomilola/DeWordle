@@ -3,28 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
 
 const navigation = [{ name: "How to play", href: "#" }];
 
 const LandingPage = () => {
-  const [hasShadow, setHasShadow] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setHasShadow(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <div className="w-full relative px-4 pb-10 lg:pb-20 sm:px-10 xl:px-20">
+    <div className="w-full h-full relative px-4 pb-2  sm:px-10 xl:px-20">
       <header
-        className={`fixed inset-x-0 top-0 z-50 py-4 lg:py-5 sm:px-10 xl:px-20 bg-white transition-shadow ${
-          hasShadow ? "shadow-[0_1px_4px_rgba(0,0,0,0.05)]" : "shadow-none"
-        }`}
+        className={`fixed inset-x-0 top-0 z-50 py-2 lg:py-4 sm:px-10 xl:px-20 bg-white transition-shadow `}
       >
         <nav className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex lg:flex-1 gap-16 items-center">
@@ -42,7 +28,7 @@ const LandingPage = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-black font-normal text-[20px] leading-[28px] "
+                  className="text-black hover:text-accent-foreground font-normal text-[20px] leading-[28px] "
                 >
                   {item.name}
                 </Link>
@@ -60,8 +46,8 @@ const LandingPage = () => {
           </div>
           <div className="hidden lg:flex lg:flex-1 gap-7 items-center lg:justify-end">
             <Link
-              href="/"
-              className="text-[#3a3a3a] font-normal text-[20px] leading-[28px]"
+              href="/signup"
+              className="text-[#3a3a3a] hover:text-accent-foreground font-normal text-[20px] leading-[28px]"
             >
               Sign Up
             </Link>
@@ -76,10 +62,10 @@ const LandingPage = () => {
         </nav>
       </header>
 
-      <div className="lg:pb-10 w-full h-full max-w-7xl mx-auto">
-        <div className="mx-auto justify-between lg:flex gap-10 xl:gap-24 lg:mt-28 mt-20">
+      <div className="w-full h-full max-w-7xl mx-auto">
+        <div className="mx-auto justify-between lg:flex gap-10 xl:gap-24 mt-8 ">
           <div className="lg:mx-0 pt-8 sm:pt-10 lg:pb-1 xl:max-w-[548px] ">
-            <h1 className="mt-10 lg:mt-32 text-3xl text-[#29296E] font-roboto sm:pr-20 break-words lg:pr-0 sm:text-5xl font-semibold sm:leading-[58px] lg:leading-[76px] tracking-[1.2px]">
+            <h1 className="mt-10 lg:mt-32 text-3xl text-[#29296E] font-roboto sm:pr-20 break-words lg:pr-0 sm:text-5xl font-semibold sm:leading-[58px] lg:leading-[70px] tracking-[1.2px]">
               Get 6 Chances to guess a 5-letter word.
             </h1>
             <p className="mt-6 text-lg text-black sm:text-[24px] font-normal break-words leading-[40px] w-full">
@@ -88,8 +74,8 @@ const LandingPage = () => {
             </p>
             <div className="lg:mt-16 mt-8 flex items-center gap-5">
               <Link
-                href="/"
-                className="border border-[#29296E] font-bold text-[#29296E]  inline-flex items-center justify-center rounded-3xl w-[12rem]  px-4 py-2 text-lg "
+                href="/signin"
+                className="border hover:bg-accent border-[#29296E] font-bold text-[#29296E]  inline-flex items-center justify-center rounded-3xl w-[12rem]  px-4 py-2 text-lg "
               >
                 Log In
               </Link>
@@ -97,7 +83,7 @@ const LandingPage = () => {
                 href="/game"
                 className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
               >
-                Play
+                Play as Quest
               </Link>
             </div>
           </div>

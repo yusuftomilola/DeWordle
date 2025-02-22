@@ -63,7 +63,7 @@ export default function RootLayout({ children }) {
         <meta name="title" content={metadata.title} />
         <meta name="description" content={metadata.description} />
       </head>
-      <body className=" min-h-screen w-full antialiased">
+      <body className="h-auto w-full antialiased">
         <main className="flex-grow">{children}</main>
         {/* footerpage */}
         <Footer />
