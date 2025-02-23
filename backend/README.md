@@ -65,6 +65,9 @@ $ npm run test:cov
 ```bash
 # copy .env.example to .env
 $ npm run setup:env
+
+# validate  .env
+$ npm run validate:env
 ```
 
 ## Deployment
