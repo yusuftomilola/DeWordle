@@ -4,7 +4,7 @@ import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
 
 @Injectable()
 export class LeaderboardService {
-  create(createLeaderboardDto: CreateLeaderboardDto) {
+  create(_createLeaderboardDto: CreateLeaderboardDto) {
     return 'This action adds a new leaderboard';
   }
 
@@ -16,7 +16,7 @@ export class LeaderboardService {
     return `This action returns a #${id} leaderboard`;
   }
 
-  update(id: number, updateLeaderboardDto: UpdateLeaderboardDto) {
+  update(id: number, _updateLeaderboardDto: UpdateLeaderboardDto) {
     return `This action updates a #${id} leaderboard`;
   }
 

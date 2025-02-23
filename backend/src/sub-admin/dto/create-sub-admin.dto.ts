@@ -1,25 +1,20 @@
-import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsString,
   MinLength,
+  IsOptional,
   Matches,
-  MaxLength,
-  IsArray,
-  ValidateNested,
 } from 'class-validator';
-import { Result } from 'src/result/entities/result.entity';
 
-export class CreateUserDto {
+export class CreateSubAdminDto {
   @IsString()
-  @MinLength(3)
-  userName: string;
+  name: string;
 
   @IsEmail()
   email: string;
 
   @IsString()
-  @MaxLength(225)
+  @MinLength(8)
   @Matches(
     /^(?=.*[!@#$%^&])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{8,16}$/,
     {
@@ -29,8 +24,7 @@ export class CreateUserDto {
   )
   password: string;
 
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Result)
-  results: Result[];
+  @IsString()
+  @IsOptional()
+  role?: string = 'sub-admin';
 }

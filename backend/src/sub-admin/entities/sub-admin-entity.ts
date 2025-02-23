@@ -1,19 +1,19 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsEmail, IsBoolean } from 'class-validator';
 
 @Entity()
-export class Admin {
+export class SubAdmin {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  username: string;
+  name: string;
 
   @Column({ unique: true })
-  @IsEmail()
   email: string;
 
-  @Column({ default: false })
-  @IsBoolean()
-  isSuperAdmin: boolean;
+  @Column()
+  password: string;
+
+  @Column()
+  role: string;
 }

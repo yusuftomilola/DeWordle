@@ -8,7 +8,7 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   Query,
-  ParseIntPipe
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -32,11 +32,11 @@ export class UsersController {
     return this.usersService.findAll(page, limit);
   }
 
-   // DELETE /users/:id
-   @Delete(':id')
-   async softDelete(@Param('id', ParseIntPipe) id: number) {
-     return this.usersService.softDelete(id);
-   }
+  // DELETE /users/:id
+  @Delete(':id')
+  async softDelete(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.softDelete(id);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

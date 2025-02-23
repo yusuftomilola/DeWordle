@@ -4,7 +4,7 @@ import { UpdateResultDto } from './dto/update-result.dto';
 
 @Injectable()
 export class ResultService {
-  create(createResultDto: CreateResultDto) {
+  create(_createResultDto: CreateResultDto) {
     return 'This action adds a new result';
   }
 
@@ -16,7 +16,7 @@ export class ResultService {
     return `This action returns a #${id} result`;
   }
 
-  update(id: number, updateResultDto: UpdateResultDto) {
+  update(id: number, _updateResultDto: UpdateResultDto) {
     return `This action updates a #${id} result`;
   }
 

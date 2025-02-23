@@ -13,10 +13,7 @@ export class Result {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.result)
-  userId: User;
-
-  @ManyToOne(() => User, (user) => user.result, { onDelete: 'CASCADE', eager: true })
+  @ManyToOne(() => User, (user) => user.results)
   user: User;
 
   @Column('varchar', { nullable: false })
