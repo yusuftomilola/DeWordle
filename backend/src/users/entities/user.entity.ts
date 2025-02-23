@@ -3,6 +3,7 @@ import { Result } from 'src/result/entities/result.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -23,11 +24,17 @@ export class User {
   @Column('varchar', { nullable: false })
   password: string;
 
-  @OneToMany(() => Result, (result) => result.user, { cascade: true, eager: true })
-  result: Result[];
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  leaderboards: Leaderboard[];
 
-  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, { cascade: true, eager: true })
-  leaderboard: Leaderboard[];
+  @OneToMany(() => Result, (result) => result.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  results: Result[];
 
   @CreateDateColumn()
   createdAt: Date;
@@ -35,7 +42,6 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn({ nullable: true })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }
-
