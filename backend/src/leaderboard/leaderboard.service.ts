@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +12,7 @@ export class LeaderboardService {
     @InjectRepository(Leaderboard)
     private leaderboardRepository: Repository<Leaderboard>,
 
+    @Inject(forwardRef(() => UsersService))
     private readonly userServices: UsersService,
   ) {}
   async createLeaderboard(
@@ -25,7 +26,7 @@ export class LeaderboardService {
     }
     const leaderboardEntry = this.leaderboardRepository.create({
       ...createLeaderboardDto,
-      userId: user,
+      user,
     });
     return this.leaderboardRepository.save(leaderboardEntry);
   }
