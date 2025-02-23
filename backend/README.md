@@ -62,12 +62,10 @@ $ npm run test:cov
 
 ### Local Development
 
-1. Clone the repository
-2. Copy `.env.example` to `.env`:
-
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+# copy .env.example to .env
+$ npm run setup:env
+```
 
 ## Deployment
 
