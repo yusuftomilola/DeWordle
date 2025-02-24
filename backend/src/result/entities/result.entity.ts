@@ -14,6 +14,12 @@ export class Result {
   id: number;
 
   @ManyToOne(() => User, (user) => user.results)
+  userId: User;
+
+  @ManyToOne(() => User, (user) => user.result, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   user: User;
 
   @Column('varchar', { nullable: false })
