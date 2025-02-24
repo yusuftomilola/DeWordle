@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HashingProvider } from 'src/auth/providers/hashing-provider';
+import { LeaderboardService } from 'src/leaderboard/leaderboard.service';
 
 @Injectable()
 export class CreateUsersProvider {
@@ -24,10 +25,12 @@ export class CreateUsersProvider {
      */
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private leaderboardService: LeaderboardService,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto): Promise<User> {
-    let existingUser;
+    let existingUser: User;
 
     try {
       existingUser = await this.userRepository.findOne({
@@ -54,13 +57,25 @@ export class CreateUsersProvider {
     const newUser: DeepPartial<User> = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
+      result: [], // Ensure it's an array
+      leaderboard: [],
+    });
+
+    const savedUser = await this.userRepository.save(newUser);
+
+    await this.leaderboardService.createLeaderboard({
+      userId: savedUser.id,
+      totalWins: 0,
+      totalAttempts: 0,
+      averageScore: 0,
+
       results: Array.isArray(createUserDto.results)
         ? createUserDto.results
         : [],
     });
 
     try {
-      return await this.userRepository.save(newUser);
+      return savedUser;
     } catch (error) {
       console.error('Error saving user:', error);
       throw new RequestTimeoutException('Error connecting to the database');

@@ -26,8 +26,8 @@ export class UsersService {
 
     private readonly createUserProvider: CreateUsersProvider,
 
-    @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
+    // @Inject(forwardRef(() => AuthService))
+    // private readonly authService: AuthService,
   ) {}
 
   create(createUserDto: CreateUserDto) {

@@ -19,6 +19,8 @@ import { Admin } from './admin/entities/admin.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      load: [envConfiguration],
+      validate,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -38,6 +40,7 @@ import { Admin } from './admin/entities/admin.entity';
     AdminModule,
     ResultModule,
     SubAdminModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -24,6 +24,18 @@ export class User {
   @Column('varchar', { nullable: false })
   password: string;
 
+  @OneToMany(() => Result, (result) => result.user, {
+    cascade: true,
+    // eager: true,
+  })
+  result: Result[];
+
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
+    cascade: true,
+    // eager: true,
+  })
+  leaderboard: Leaderboard[];
+
   @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -35,6 +47,7 @@ export class User {
     onDelete: 'CASCADE',
   })
   results: Result[];
+
 
   @CreateDateColumn()
   createdAt: Date;

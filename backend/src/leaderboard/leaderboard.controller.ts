@@ -16,8 +16,10 @@ export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 
   @Post()
-  create(@Body() createLeaderboardDto: CreateLeaderboardDto) {
-    return this.leaderboardService.create(createLeaderboardDto);
+  async createleadboard(@Body() createLeaderboardDto: CreateLeaderboardDto) {
+    return await this.leaderboardService.createLeaderboard(
+      createLeaderboardDto,
+    );
   }
 
   @Get()
