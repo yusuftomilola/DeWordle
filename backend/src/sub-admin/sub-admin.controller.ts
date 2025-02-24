@@ -20,30 +20,31 @@ export class SubAdminController {
   constructor(private readonly subAdminService: SubAdminService) {}
 
   @Post()
-  create(@Body() createSubAdminDto: CreateSubAdminDto) {
-    return this.subAdminService.create(createSubAdminDto);
+  async create(@Body() createSubAdminDto: CreateSubAdminDto) {
+    return await this.subAdminService.create(createSubAdminDto);
   }
 
   @Get()
-  findAll() {
-    return this.subAdminService.findAll();
+  async findAll() {
+    return await this.subAdminService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subAdminService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.subAdminService.findOne(+id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateSubAdminDto: UpdateSubAdminDto,
   ) {
-    return this.subAdminService.update(+id, updateSubAdminDto);
+    return await this.subAdminService.update(+id, updateSubAdminDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subAdminService.remove(+id);
+  async remove(@Param('id') id: string) {
+    await this.subAdminService.remove(+id);
+    return { message: 'Sub-admin deleted successfully' };
   }
 }

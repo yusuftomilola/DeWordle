@@ -15,7 +15,10 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
   imports: [
     forwardRef(() => UsersModule),
     ConfigModule.forFeature(jwtConfig),
-    JwtModule.registerAsync(jwtConfig.asProvider()),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'yourSecretKey',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AuthController],
   providers: [

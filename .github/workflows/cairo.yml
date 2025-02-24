@@ -17,7 +17,7 @@ jobs:
         working-directory: onchain
       - run: scarb build
         working-directory: onchain
-  
+
   test:
     runs-on: ubuntu-latest
     steps:

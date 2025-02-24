@@ -7,10 +7,9 @@ export default function page() {
   return (
     <div>
       <AppProvider>
-      <Navbar />
-      <WordGrid />
-      <Keyboard />
-
+        <Navbar />
+        <WordGrid />
+        <Keyboard />
       </AppProvider>
     </div>
   );
