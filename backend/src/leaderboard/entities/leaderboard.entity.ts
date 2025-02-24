@@ -12,9 +12,6 @@ export class Leaderboard {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => User, (user) => user.leaderboard)
-  // user: User;
-
   @ManyToOne(() => User, (user) => user.leaderboard, {
     onDelete: 'CASCADE',
     eager: true,
