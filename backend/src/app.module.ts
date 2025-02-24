@@ -16,6 +16,8 @@ import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 import { Admin } from './admin/entities/admin.entity';
 import envConfiguration from 'config/envConfiguration';
 import { validate } from '../config/env.validation';
+import { GuestModule } from './guest/guest.module';
+import { GuestController } from './guest/guest.controller';
 
 @Module({
   imports: [
@@ -42,8 +44,9 @@ import { validate } from '../config/env.validation';
     AdminModule,
     ResultModule,
     SubAdminModule,
+    GuestModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, GuestController],
   providers: [AppService],
 })
 export class AppModule {}
