@@ -1,10 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Leaderboard } from './entities/leaderboard.entity';
 import { UsersService } from 'src/users/users.service';
+import { DatabaseErrorException } from '../common/exceptions/database-error.exception';
 
 @Injectable()
 export class LeaderboardService {
@@ -42,9 +44,34 @@ export class LeaderboardService {
   findOne(id: number) {
     return `This action returns a #${id} leaderboard`;
   }
+  async update(
+    id: number,
+    updateDto: UpdateLeaderboardDto,
+  ): Promise<Leaderboard> {
+    const existingEntry = await this.leaderboardRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
 
-  update(id: number, _updateLeaderboardDto: UpdateLeaderboardDto) {
-    return `This action updates a #${id} leaderboard`;
+    if (!existingEntry) {
+      throw new NotFoundException(`Leaderboard entry with ID ${id} not found`);
+    }
+
+    try {
+      const updateData = {
+        totalWins: updateDto.totalWins,
+        totalAttempts: updateDto.totalAttempts,
+        averageScore: updateDto.averageScore,
+        user: updateDto.userId ? { id: updateDto.userId } : undefined,
+      };
+      const mergedEntry = this.leaderboardRepository.merge(
+        existingEntry,
+        updateData,
+      );
+      return await this.leaderboardRepository.save(mergedEntry);
+    } catch {
+      throw new DatabaseErrorException('Failed to update leaderboard entry');
+    }
   }
 
   remove(id: number) {
