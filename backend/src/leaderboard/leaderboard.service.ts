@@ -8,6 +8,7 @@ import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class LeaderboardService {
+
   constructor(
     @InjectRepository(Leaderboard)
     private leaderboardRepository: Repository<Leaderboard>,
@@ -29,6 +30,10 @@ export class LeaderboardService {
       user,
     });
     return this.leaderboardRepository.save(leaderboardEntry);
+
+  create(_createLeaderboardDto: CreateLeaderboardDto) {
+    return 'This action adds a new leaderboard';
+
   }
 
   findAll() {
@@ -39,7 +44,7 @@ export class LeaderboardService {
     return `This action returns a #${id} leaderboard`;
   }
 
-  update(id: number, updateLeaderboardDto: UpdateLeaderboardDto) {
+  update(id: number, _updateLeaderboardDto: UpdateLeaderboardDto) {
     return `This action updates a #${id} leaderboard`;
   }
 

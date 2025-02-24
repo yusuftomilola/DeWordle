@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HashingProvider } from 'src/auth/providers/hashing-provider';
 import { LeaderboardService } from 'src/leaderboard/leaderboard.service';
@@ -54,7 +54,7 @@ export class CreateUsersProvider {
       createUserDto.password,
     );
 
-    const newUser = this.userRepository.create({
+    const newUser: DeepPartial<User> = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
       result: [], // Ensure it's an array
@@ -68,6 +68,10 @@ export class CreateUsersProvider {
       totalWins: 0,
       totalAttempts: 0,
       averageScore: 0,
+
+      results: Array.isArray(createUserDto.results)
+        ? createUserDto.results
+        : [],
     });
 
     try {

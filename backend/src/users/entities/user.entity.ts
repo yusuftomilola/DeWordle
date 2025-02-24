@@ -36,12 +36,25 @@ export class User {
   })
   leaderboard: Leaderboard[];
 
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  leaderboards: Leaderboard[];
+
+  @OneToMany(() => Result, (result) => result.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  results: Result[];
+
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn({ nullable: true })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }
