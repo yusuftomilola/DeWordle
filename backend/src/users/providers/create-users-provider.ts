@@ -25,7 +25,7 @@ export class CreateUsersProvider {
      */
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
+    @Inject(forwardRef(() => LeaderboardService))
     private leaderboardService: LeaderboardService,
   ) {}
 

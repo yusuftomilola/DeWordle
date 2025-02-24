@@ -12,6 +12,6 @@ import { UsersModule } from 'src/users/users.module';
   ],
   controllers: [LeaderboardController],
   providers: [LeaderboardService],
-  exports: [LeaderboardService, TypeOrmModule],
+  exports: [LeaderboardService],
 })
 export class LeaderboardModule {}
