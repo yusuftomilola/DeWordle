@@ -1,4 +1,5 @@
-import { IsInt, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsInt, IsNumber, IsOptional } from 'class-validator';
+import { Result } from 'src/result/entities/result.entity';
 export class CreateLeaderboardDto {
   @IsInt()
   @IsOptional()
@@ -15,4 +16,7 @@ export class CreateLeaderboardDto {
 
   @IsNumber()
   readonly averageScore: number;
+
+  @IsArray()
+  readonly results: Result[];
 }

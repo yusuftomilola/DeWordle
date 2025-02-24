@@ -1,10 +1,12 @@
 import { plainToClass } from 'class-transformer';
 import { IsString, IsNumber, validateSync } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 class EnvironmentVariables {
   @IsString()
   DB_HOST: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNumber()
   DB_PORT: number;
 

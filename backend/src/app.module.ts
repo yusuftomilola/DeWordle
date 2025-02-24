@@ -14,6 +14,8 @@ import { Result } from './result/entities/result.entity';
 import { User } from './users/entities/user.entity';
 import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 import { Admin } from './admin/entities/admin.entity';
+import envConfiguration from 'config/envConfiguration';
+import { validate } from '../config/env.validation';
 
 @Module({
   imports: [
@@ -40,7 +42,6 @@ import { Admin } from './admin/entities/admin.entity';
     AdminModule,
     ResultModule,
     SubAdminModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],

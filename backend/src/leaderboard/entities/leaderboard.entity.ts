@@ -7,14 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
-
 @Entity()
 export class Leaderboard {
   @PrimaryGeneratedColumn()
   id: number;
-
 
   // @ManyToOne(() => User, (user) => user.leaderboard)
   // user: User;
@@ -24,7 +20,6 @@ export class Leaderboard {
     eager: true,
   })
   @JoinTable()
-
   @ManyToOne(() => User, (user) => user.leaderboards)
   user: User;
 
