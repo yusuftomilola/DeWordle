@@ -26,7 +26,6 @@ export class User {
 
   @OneToMany(() => Result, (result) => result.user, {
     cascade: true,
-    eager: true,
   })
   result: Result[];
 

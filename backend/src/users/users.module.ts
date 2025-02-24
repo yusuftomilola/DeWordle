@@ -11,6 +11,7 @@ import { LeaderboardModule } from 'src/leaderboard/leaderboard.module';
 @Module({
   imports: [
     forwardRef(() => AuthModule),
+    forwardRef(() => LeaderboardModule),
     TypeOrmModule.forFeature([User]),
     LeaderboardModule,
   ],

@@ -2,7 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateLeaderboardDto } from './create-leaderboard.dto';
 import { IsInt, IsNumber, IsOptional } from 'class-validator';
 
-PartialType(CreateLeaderboardDto) {}
+PartialType(CreateLeaderboardDto);
 export class UpdateLeaderboardDto extends PartialType(CreateLeaderboardDto) {
   @IsOptional()
   @IsInt()
