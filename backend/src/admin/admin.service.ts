@@ -1,27 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Admin } from './entities/admin.entity';
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
+import { UpdateAdminDto } from "./dto/update-admin.dto";
 
 @Injectable()
 export class AdminService {
-  constructor(
-    @InjectRepository(Admin)
-    private readonly adminRepository: Repository<Admin>,
-  ) {}
-
-  async createAdmin(dto: CreateAdminDto): Promise<Partial<Admin>> {
-    const newAdmin = this.adminRepository.create(dto);
-    const savedAdmin = await this.adminRepository.save(newAdmin);
-
-    return {
-      id: savedAdmin.id,
-      username: savedAdmin.username,
-      role: savedAdmin.role,
-      email: savedAdmin.email,
-    };
+  create(_createAdminDto: CreateAdminDto) {
+    return 'This action adds a new admin';
   }
 
   async findAll(): Promise<Partial<Admin>[]> {
@@ -37,17 +21,11 @@ export class AdminService {
     });
   }
 
-  async update(
-    id: number,
-    updateAdminDto: UpdateAdminDto,
-  ): Promise<Partial<Admin>> {
-    await this.adminRepository.update(id, updateAdminDto);
-    const updatedAdmin = await this.findOne(id);
-
-    return updatedAdmin ? updatedAdmin : null;
+  update(id: number, _updateAdminDto: UpdateAdminDto) {
+    return `This action updates a #${id} admin`;
   }
 
-  async remove(id: number): Promise<void> {
-    await this.adminRepository.delete(id);
+  remove(id: number) {
+    return `This action removes a #${id} admin`;
   }
 }
