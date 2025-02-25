@@ -25,7 +25,7 @@ const LandingPage = () => {
           hasShadow ? "shadow-[0_1px_4px_rgba(0,0,0,0.05)]" : "shadow-none"
         }`}
       >
-        <nav className="flex items-center justify-between max-w-7xl mx-auto">
+        {/* <nav className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex lg:flex-1 gap-16 items-center">
             <Link href="#" className="mt-1">
               <Image
@@ -72,7 +72,7 @@ const LandingPage = () => {
               Request Demo
             </Link>
           </div>
-        </nav>
+        </nav> */}
       </header>
 
       <div className="w-full h-full max-w-7xl mx-auto">
