@@ -1,10 +1,11 @@
+/* eslint-disable prettier/prettier */
 import { IsString, IsEmail, IsOptional, IsIn, MinLength } from "class-validator";
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateAdminDto } from './create-admin.dto';
 
 export class UpdateAdminDto extends PartialType(CreateAdminDto) {
     @IsOptional()
-    @IsString()
+  @IsString()
     username?: string;
   
     @IsOptional()

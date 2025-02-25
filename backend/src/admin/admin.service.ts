@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as bcrypt from "bcrypt";
+import * as bcrypt from "bcryptjs";
 import { Admin } from "./entities/admin.entity";
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from "./dto/update-admin.dto";
@@ -40,13 +40,10 @@ export class AdminService {
       throw new BadRequestException("Invalid email format"); // 400 Bad Request
     }
 
-    // Hash password if provided
-    if (dto.password) {
-      if (dto.password.length < 6) {
-        throw new BadRequestException("Password must be at least 6 characters long"); // 400 Bad Request
-      }
-      dto.password = await bcrypt.hash(dto.password, 10);
-    }
+        // Cannot update password via this endpoint
+        if (dto.password) {
+          throw new ForbiddenException("Password updates must be done via the password reset flow");
+        }
 
     // Update and save admin
     Object.assign(admin, dto);
