@@ -70,7 +70,7 @@ const Keyboard = () => {
       setGridData,
       setCurrentCol,
       setCurrentRow,
-    ]
+    ],
   );
 
   useEffect(() => {

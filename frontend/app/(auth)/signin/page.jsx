@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import * as Yup from 'yup';
-import { Field, Form, Formik } from 'formik';
+import Image from "next/image";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import * as Yup from "yup";
+import { Field, Form, Formik } from "formik";
 import Link from "next/link";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     terms: false,
   };
 
   const SignInSchema = Yup.object().shape({
     email: Yup.string()
-      .email('Invalid email address')
-      .required('Email is required'),
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
+      .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
       )
-      .required('Password is required'),
+      .required("Password is required"),
     terms: Yup.boolean()
-      .oneOf([true], 'You must accept the terms and conditions')
-      .required('You must accept the terms and conditions'),
+      .oneOf([true], "You must accept the terms and conditions")
+      .required("You must accept the terms and conditions"),
   });
 
   const handleInputChange = (e) => {
@@ -43,7 +43,7 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission logic here
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
   };
   return (
     <div className="w-full h-full flex items-center justify-center px-4">
@@ -70,8 +70,8 @@ export default function SignIn() {
                     type="email"
                     className={`w-full px-3 py-2 border ${
                       touched.email && errors.email
-                        ? 'border-red-500'
-                        : 'border-gray-300'
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                     placeholder="Enter your email"
                   />
@@ -91,12 +91,12 @@ export default function SignIn() {
                   </label>
                   <div className="relative items-center ">
                     <Field
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       className={`w-full px-3 py-2 border ${
                         touched.password && errors.password
-                          ? 'border-red-500'
-                          : 'border-gray-300'
+                          ? "border-red-500"
+                          : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                       placeholder="Enter a password"
                     />
@@ -105,7 +105,7 @@ export default function SignIn() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                       aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
+                        showPassword ? "Hide password" : "Show password"
                       }
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -144,7 +144,7 @@ export default function SignIn() {
                   disabled={isSubmitting}
                   className="w-full bg-[#29296E] border border-[#29296E] text-white py-2 px-4 rounded-md font-[700] hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  {isSubmitting ? 'Signing in...' : 'Sign in'}
+                  {isSubmitting ? "Signing in..." : "Sign in"}
                 </button>
 
                 <div className="relative text-center my-6">
@@ -175,8 +175,8 @@ export default function SignIn() {
                     className="text-[#0F3DDE] font-[500] hover:underline"
                     passHref
                   >
-                    Sign Up
-                  </Link>
+                    Sign Up          
+                  </Link>
                 </div>
               </Form>
             )}
