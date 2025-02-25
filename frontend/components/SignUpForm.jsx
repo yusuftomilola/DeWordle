@@ -23,7 +23,7 @@ const SignUpForm = () => {
       .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
       )
       .required("Password is required"),
     terms: Yup.boolean()

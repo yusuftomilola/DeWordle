@@ -50,10 +50,10 @@ function WordExample({ word, correctIndex, presentIndex, absentIndex }) {
             index === correctIndex
               ? "correct"
               : index === presentIndex
-              ? "present"
-              : index === absentIndex
-              ? "absent"
-              : " "
+                ? "present"
+                : index === absentIndex
+                  ? "absent"
+                  : " "
           }
         />
       ))}
@@ -193,7 +193,7 @@ export function HelpGuide({ isOpen, onClose }) {
                               </Link>
                               {part}
                             </React.Fragment>
-                          )
+                          ),
                         )}
                       </p>
                     );

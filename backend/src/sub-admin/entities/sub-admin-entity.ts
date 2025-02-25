@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity('sub_admin')
 export class SubAdmin {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,6 +14,6 @@ export class SubAdmin {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: 'sub-admin' })
   role: string;
 }

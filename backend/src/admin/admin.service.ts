@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from "@nestjs/common";
-import { Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
-import * as bcrypt from "bcryptjs";
-import { Admin } from "./entities/admin.entity";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Admin } from './entities/admin.entity';
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from "./dto/update-admin.dto";
+import { UpdateAdminDto } from './dto/update-admin.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -12,60 +12,70 @@ export class AdminService {
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
   ) {}
-  create(_createAdminDto: CreateAdminDto) {
-    return 'This action adds a new admin';
+
+  async createAdmin(createAdminDto: CreateAdminDto) {
+    const hashedPassword = await bcrypt.hash(createAdminDto.password, 10);
+
+    const newAdmin = this.adminRepository.create({
+      ...createAdminDto,
+      password: hashedPassword,
+    });
+
+    const savedAdmin = await this.adminRepository.save(newAdmin);
+    return {
+      message: 'Admin created successfully',
+      adminId: savedAdmin.id,
+    };
   }
 
-  findAll() {
-    return `This action returns all admin`;
+  async findAll(): Promise<Partial<Admin>[]> {
+    const admins = await this.adminRepository.find({
+      select: ['id', 'username', 'role', 'email'],
+    });
+    return admins.length > 0 ? admins : [];
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} admin`;
-  }
+  async findOne(id: number): Promise<Partial<Admin> | null> {
+    const admin = await this.adminRepository.findOne({
+      where: { id },
+      select: ['id', 'username', 'role', 'email'],
+    });
 
-  async update(id: number, dto: UpdateAdminDto): Promise<Admin> {
-    const admin = await this.adminRepository.findOne({ where: { id: Number(id) } });
     if (!admin) {
-      throw new NotFoundException("Admin not found"); // 404 Not Found
+      throw new NotFoundException(`Admin with ID ${id} not found`);
     }
 
-    // Prevent unauthorized role updates
-    if (dto.role && !admin.isSuperAdmin) {
-      throw new ForbiddenException("Only Super Admins can change roles"); // 403 Forbidden
-    }
-
-    // Validate data
-    if (dto.email && !dto.email.includes("@")) {
-      throw new BadRequestException("Invalid email format"); // 400 Bad Request
-    }
-
-        // Cannot update password via this endpoint. Must use password reset flow
-        if (dto.password) {
-          throw new ForbiddenException("Password updates must be done via the password reset flow");
-        }
-
-    // Update and save admin
-    Object.assign(admin, dto);
-    return this.adminRepository.save(admin);
+    return admin;
   }
 
-  async remove(id: number): Promise<{ message: string }> {
-    const admin = await this.adminRepository.findOne({ where: { id: Number(id) } });
+  async update(id: number, updateAdminDto: UpdateAdminDto) {
+    const admin = await this.adminRepository.findOne({ where: { id } });
+
     if (!admin) {
-      throw new NotFoundException("Admin not found");
+      throw new NotFoundException('Admin not found');
     }
 
-    // Prevent deletion of last super admin
-    if (admin.isSuperAdmin) {
-      const superAdminCount = await this.adminRepository.count({ where: { isSuperAdmin: true } });
-      if (superAdminCount <= 1) {
-        throw new BadRequestException("Cannot delete the last Super Admin");
-      }
+    if (updateAdminDto.password) {
+      updateAdminDto.password = await bcrypt.hash(updateAdminDto.password, 10);
     }
 
-    await this.adminRepository.remove(admin);
-    return { message: "Admin deleted successfully" };
+    await this.adminRepository.update(id, updateAdminDto);
+
+    return {
+      message: 'Admin details updated successfully',
+      adminId: id,
+    };
   }
 
+  async remove(id: number) {
+    const admin = await this.adminRepository.findOne({ where: { id } });
+
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    await this.adminRepository.delete(id);
+
+    return { message: 'Admin deleted successfully', adminId: id };
   }
+}

@@ -1,6 +1,8 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { SignInDto } from '../dto/create-auth.dto';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { SignInProvider } from './sign-in.provider';
+import { RefreshTokenProvider } from './refresh-token.provider';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -10,21 +12,14 @@ export class AuthService {
     private readonly usersService: UsersService,
 
     private readonly signInProvider: SignInProvider,
+    private readonly refreshTokenProvider: RefreshTokenProvider,
   ) {}
 
   public async SignIn(signInDto: SignInDto) {
     return await this.signInProvider.SignIn(signInDto);
   }
 
-  findAll() {
-    return 'This action returns all auth';
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  public async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    return await this.refreshTokenProvider.refreshToken(refreshTokenDto);
   }
 }

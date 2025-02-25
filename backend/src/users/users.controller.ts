@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller('users')
+@Controller('/api/v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -51,15 +51,18 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
-    /**Patch endpoint */
-    @Patch(':id')
-    public async updateUser( @Body() updateUserDto:UpdateUserDto, @Param('id', ParseIntPipe) id:number ){
-      const user = await this.usersService.updateUser(id, updateUserDto)
-      
-      /**if user does not exist */
-      if (!user){
-        throw new NotFoundException('No user was found')
-      }
-      return user
+  /**Patch endpoint */
+  @Patch(':id')
+  public async updateUser(
+    @Body() updateUserDto: UpdateUserDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const user = await this.usersService.updateUser(id, updateUserDto);
+
+    /**if user does not exist */
+    if (!user) {
+      throw new NotFoundException('No user was found');
     }
+    return user;
+  }
 }
