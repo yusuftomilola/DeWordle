@@ -89,18 +89,27 @@ const Keyboard = () => {
   }, [handleKeyPress]);
 
   return (
-    <div className="w-full max-w-xl mx-auto mt-10">
-      <div className="space-y-4">
+    <div className="w-full  mx-auto mt-10 mb-5">
+      <div className="space-y-4 p-[5px]">
         {rows.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex justify-center space-x-2">
+          <div
+            key={rowIndex}
+            className="flex justify-center items-center space-x-2">
             {row.map((key, keyIndex) => {
               if (typeof key === "object" && key.type === "icon") {
                 return (
                   <button
                     key={keyIndex}
                     onClick={() => handleKeyPress(key)}
-                    className="bg-[#939b9f]/30 hover:bg-gray-400 text-foreground font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md flex items-center space-x-2 transition-all text-xs sm:text-sm"
-                  >
+                    className={`bg-[#EAEAF1] hover:bg-gray-400/60 text-center flex justify-center items-center 
+                      ${
+                        key === "Enter"
+                        ? "w-[60px] sm:w-[80px] md:w-[119px]"
+                        : "w-[60px] sm:w-[80px] md:w-[119px]"
+                        } 
+                        text-[#29296E] h-[30px] sm:h-[60px] md:h-[72px] 
+                        font-semibold p-[6px] sm:p-[8px] md:p-[8px] 
+                        rounded-[6px] sm:rounded-[8px] shadow-md transition-all text-xs sm:text-sm`}>
                     {key.icon}
                     <span>{key.label}</span>
                   </button>
@@ -111,8 +120,15 @@ const Keyboard = () => {
                 <button
                   key={keyIndex}
                   onClick={() => handleKeyPress(key)}
-                  className="bg-[#939b9f]/30 hover:bg-gray-400 text-foreground font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-md shadow-md transition-all text-xs sm:text-sm"
-                >
+                  className={`bg-[#EAEAF1] hover:bg-gray-400/60  
+                    ${
+                      key === "Enter"
+                        ? "w-[60px] sm:w-[80px] md:w-[119px]"
+                        : "w-[40px] sm:w-[55px] md:w-[72px]"
+                    } 
+                    text-[#29296E] h-[30px] sm:h-[60px] md:h-[72px] 
+                    font-semibold p-[6px] sm:p-[8px] md:p-[8px] 
+                    rounded-[4px] sm:rounded-[8px] shadow-md transition-all text-xs sm:text-sm`}>
                   {key}
                 </button>
               );
