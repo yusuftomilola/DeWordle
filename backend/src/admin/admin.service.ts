@@ -40,7 +40,7 @@ export class AdminService {
       throw new BadRequestException("Invalid email format"); // 400 Bad Request
     }
 
-        // Cannot update password via this endpoint
+        // Cannot update password via this endpoint. Must use password reset flow
         if (dto.password) {
           throw new ForbiddenException("Password updates must be done via the password reset flow");
         }
