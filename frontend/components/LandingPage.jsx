@@ -25,54 +25,6 @@ const LandingPage = () => {
           hasShadow ? "shadow-[0_1px_4px_rgba(0,0,0,0.05)]" : "shadow-none"
         }`}
       >
-        {/* <nav className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex lg:flex-1 gap-16 items-center">
-            <Link href="#" className="mt-1">
-              <Image
-                src="/icon.svg"
-                alt="DEW-RDLE"
-                width={150}
-                height={45}
-                priority
-              />
-            </Link>
-            <div className="hidden lg:flex lg:gap-x-12">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-black hover:text-accent-foreground font-normal text-[20px] leading-[28px] "
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="flex lg:hidden">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-              aria-label="Open menu"
-            >
-              <Bars3Icon aria-hidden="true" className="size-8" />
-            </button>
-          </div>
-          <div className="hidden lg:flex lg:flex-1 gap-7 items-center lg:justify-end">
-            <Link
-              href="/signup"
-              className="text-[#3a3a3a] hover:text-accent-foreground font-normal text-[20px] leading-[28px]"
-            >
-              Sign Up
-            </Link>
-
-            <Link
-              href="/"
-              className="bg-[#29296E] leading-[26px]  text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl px-4 py-2 text-base font-semibold"
-            >
-              Request Demo
-            </Link>
-          </div>
-        </nav> */}
       </header>
 
       <div className="w-full h-full max-w-7xl mx-auto">

@@ -2,7 +2,6 @@
 
 import { Geist, Azeret_Mono as Geist_Mono } from "next/font/google";
 import "./globals.css";
-// import Footer from "../components/footer";
 import { metadata } from "./metadata";
 import { ThemeProvider } from "../context/ThemeContext";
 import { Manrope } from "next/font/google";
@@ -41,7 +40,6 @@ export default function RootLayout({ children }) {
         </head>
         <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
           <main className="flex-grow ">{children}</main>
-          {/* <Footer /> */}
         </body>
       </html>
     </ThemeProvider>
