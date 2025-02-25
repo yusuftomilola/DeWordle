@@ -18,6 +18,7 @@ import envConfiguration from 'config/envConfiguration';
 import { validate } from '../config/env.validation';
 import { GuestModule } from './guest/guest.module';
 import { GuestController } from './guest/guest.controller';
+import { GuestFeaturesModule } from './guest-features/guest-features.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { GuestController } from './guest/guest.controller';
     ResultModule,
     SubAdminModule,
     GuestModule,
+    GuestFeaturesModule,
   ],
   controllers: [AppController, GuestController],
   providers: [AppService],
