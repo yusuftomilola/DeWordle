@@ -34,17 +34,15 @@ export class ResultService {
     private readonly resultRepository: Repository<statusResult>,
   ) {}
 
-  async createResult(userId: string, res: Res): Promise<void> {
+  async createResult(userId: string): Promise<statusResult> {
     try {
       const existingResult = await this.resultRepository.findOne({
         where: { userId },
       });
       if (existingResult) {
-        res
-          .status(409)
-          .json({ message: 'Result already exists for this user.' });
-        return;
+        throw new Error('Result already exists for this user.');
       }
+
       const newResult = this.resultRepository.create({
         userId,
         timesPlayed: 0,
@@ -52,10 +50,10 @@ export class ResultService {
         maxStreak: 0,
         winPercentage: 0.0,
       });
-      const savedResult = await this.resultRepository.save(newResult);
-      res.status(201).json(savedResult);
+
+      return await this.resultRepository.save(newResult);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      throw new Error(`Error creating result: ${error.message}`);
     }
   }
 

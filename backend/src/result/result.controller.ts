@@ -52,14 +52,6 @@ export class ResultController {
 export class StatusResultController {
   constructor(private readonly resultService: ResultService) {}
 
-  @Post()
-  async create(
-    @Body() createResultDto: CreateStatusResultDto,
-    @Res() res: ResType,
-  ): Promise<void> {
-    await this.resultService.createResult(createResultDto.userId, res);
-  }
-
   @Get()
   async findAll(@Res() res: ResType): Promise<void> {
     await this.resultService.findAllResults(res);
