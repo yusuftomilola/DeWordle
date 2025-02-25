@@ -1,40 +1,23 @@
 "use client";
+
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
+import { signUpSchema } from '../utils/authValidationSchema';
 
 const SignUpForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-
-  const SignUpSchema = Yup.object().shape({
-    userName: Yup.string()
-      .min(2, "Username must be at least 2 characters")
-      .max(50, "Username must be less than 50 characters")
-      .required("Username is required"),
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-      )
-      .required("Password is required"),
-    terms: Yup.boolean()
-      .oneOf([true], "You must accept the terms and conditions")
-      .required("You must accept the terms and conditions"),
-  });
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const initialValues = {
-    userName: "",
+    username: "",
     email: "",
     password: "",
+    confirmPassword: "",
     terms: false,
   };
 
@@ -63,31 +46,31 @@ const SignUpForm = () => {
 
             <Formik
               initialValues={initialValues}
-              validationSchema={SignUpSchema}
+              validationSchema={signUpSchema}
               onSubmit={handleSubmit}
             >
               {({ errors, touched, isSubmitting, status }) => (
                 <Form className="space-y-4">
                   <div>
                     <label
-                      htmlFor="userName"
+                      htmlFor="username"
                       className="block text-sm font-medium mb-1"
                     >
                       Username
                     </label>
                     <Field
-                      name="userName"
+                      name="username"
                       type="text"
                       className={`w-full px-3 py-2 border ${
-                        touched.userName && errors.userName
+                        touched.username && errors.username
                           ? "border-red-500"
                           : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                       placeholder="Enter your username"
                     />
-                    {touched.userName && errors.userName && (
+                    {touched.username && errors.username && (
                       <div className="text-red-500 text-sm mt-1">
-                        {errors.userName}
+                        {errors.username}
                       </div>
                     )}
                   </div>
@@ -136,7 +119,7 @@ const SignUpForm = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                      className="absolute right-3 top-8 text-gray-500 hover:text-gray-700 focus:outline-none"
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
@@ -146,6 +129,40 @@ const SignUpForm = () => {
                     {touched.password && errors.password && (
                       <div className="text-red-500 text-sm mt-1">
                         {errors.password}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="items-center relative">
+                    <label
+                      htmlFor="confirmPassword"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Confirm Password
+                    </label>
+                    <Field
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      className={`w-full px-3 py-2 border ${
+                        touched.confirmPassword && errors.confirmPassword
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500`}
+                      placeholder="Confirm your password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-8 text-gray-500 hover:text-gray-700 focus:outline-none"
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                    {touched.confirmPassword && errors.confirmPassword && (
+                      <div className="text-red-500 text-sm mt-1">
+                        {errors.confirmPassword}
                       </div>
                     )}
                   </div>

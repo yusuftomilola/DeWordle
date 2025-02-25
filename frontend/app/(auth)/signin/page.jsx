@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import * as Yup from "yup";
 import { Field, Form, Formik } from "formik";
 import Link from "next/link";
+import { signInSchema } from "../../../utils/authValidationSchema";
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,37 +13,18 @@ export default function SignIn() {
   const initialValues = {
     email: "",
     password: "",
-    terms: false,
   };
 
-  const SignInSchema = Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-      )
-      .required("Password is required"),
-    terms: Yup.boolean()
-      .oneOf([true], "You must accept the terms and conditions")
-      .required("You must accept the terms and conditions"),
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form submitted:", formData);
+  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      setSubmitting(true);
+      console.log('Form submitted:', values);
+      setStatus(null);
+    } catch (error) {
+      setStatus({ error: error.message });
+    } finally {
+      setSubmitting(false);
+    }
   };
   return (
     <div className="w-full h-full flex items-center justify-center px-4">
@@ -53,7 +34,7 @@ export default function SignIn() {
 
           <Formik
             initialValues={initialValues}
-            validationSchema={SignInSchema}
+            validationSchema={signInSchema}
             onSubmit={handleSubmit}
           >
             {({ errors, touched, isSubmitting, status }) => (
@@ -118,24 +99,6 @@ export default function SignIn() {
                   </div>
                 </div>
 
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <Field
-                      name="terms"
-                      type="checkbox"
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-2">
-                    <label htmlFor="terms" className="text-sm text-gray-700">
-                      I agree to the Terms & Policy
-                    </label>
-                    {touched.terms && errors.terms && (
-                      <div className="text-red-500 text-sm">{errors.terms}</div>
-                    )}
-                  </div>
-                </div>
-
                 {status && status.error && (
                   <div className="text-red-500 text-sm">{status.error}</div>
                 )}
@@ -169,13 +132,13 @@ export default function SignIn() {
                 </button>
 
                 <div className="text-center text-sm">
-                  Don't have an account?
+                  Don't have an account?{" "}
                   <Link
                     href="/signup"
                     className="text-[#0F3DDE] font-[500] hover:underline"
                     passHref
                   >
-                    Sign Up          
+                    Sign Up
                   </Link>
                 </div>
               </Form>
