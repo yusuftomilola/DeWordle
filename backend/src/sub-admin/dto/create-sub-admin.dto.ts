@@ -1,10 +1,4 @@
-import {
-  IsEmail,
-  IsString,
-  MinLength,
-  IsOptional,
-  Matches,
-} from 'class-validator';
+import { IsEmail, IsString, MinLength, Matches } from 'class-validator';
 
 export class CreateSubAdminDto {
   @IsString()
@@ -25,6 +19,5 @@ export class CreateSubAdminDto {
   password: string;
 
   @IsString()
-  @IsOptional()
-  role?: string = 'sub-admin';
+  role?: string;
 }

@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsEmail, IsBoolean } from 'class-validator';
 
-@Entity()
+@Entity('admin')
 export class Admin {
   @PrimaryGeneratedColumn()
   id: number;
@@ -9,11 +8,12 @@ export class Admin {
   @Column()
   username: string;
 
-  @Column({ unique: true })
-  @IsEmail()
+  @Column()
   email: string;
 
-  @Column({ default: false })
-  @IsBoolean()
-  isSuperAdmin: boolean;
+  @Column()
+  password: string;
+
+  @Column({ default: 'admin' })
+  role: string;
 }
