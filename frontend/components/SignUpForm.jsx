@@ -3,7 +3,7 @@ import { FaApple } from "react-icons/fa";
 
 export default function SignUpForm() {
   return (
-    <div className=" min-h-screen flex items-center justify-center p-4 ">
+    <div className=" min-h-screen bg-[#ffffff] flex items-center justify-center p-4 ">
       <div className="w-full sm:max-w-md p-6 sm:p-8 rounded-lg ">
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3 text-[#29296E]">
           Get Started
