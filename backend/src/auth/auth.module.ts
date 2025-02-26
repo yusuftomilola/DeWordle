@@ -12,6 +12,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../security/jwt.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from 'security/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -30,6 +32,11 @@ import { JwtStrategy } from '../../security/jwt.strategy';
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
+    },
+    // globalizing auth guards
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
     SignInProvider,
     GenerateTokenProvider,
