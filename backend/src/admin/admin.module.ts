@@ -11,6 +11,8 @@ import { AdminJwtStrategy } from './strategies/admin-jwt.strategy';
 import { AdminLocalStrategy } from './strategies/admin-local.strategy';
 import { Admin } from './entities/admin.entity';
 import { AdminAuthService } from './providers/admin-auth.services';
+import { BcryptProvider } from './providers/bcrpt-provider';
+import { HashingProvider } from './providers/hashing-services';
 
 @Module({
   imports: [
@@ -33,6 +35,10 @@ import { AdminAuthService } from './providers/admin-auth.services';
     AdminAuthService,
     AdminJwtStrategy,
     AdminLocalStrategy,
+    {
+      provide: HashingProvider,
+      useClass: BcryptProvider,
+    },
   ],
   exports: [AdminService, AdminAuthService],
 })
