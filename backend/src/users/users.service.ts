@@ -1,8 +1,6 @@
 import {
   Injectable,
   NotFoundException,
-  Inject,
-  forwardRef,
   BadRequestException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,7 +10,6 @@ import { User } from './entities/user.entity';
 import { CreateUsersProvider } from './providers/create-users-provider';
 import { Repository } from 'typeorm';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
-import { AuthService } from 'src/auth/providers/auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -80,20 +77,25 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
 
-  public async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
+  public async updateUser(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       return null;
     }
-    
+
     // Check if email is unique before updating
     if (updateUserDto.email) {
-      const existingUser = await this.userRepository.findOne({ where: { email: updateUserDto.email } });
+      const existingUser = await this.userRepository.findOne({
+        where: { email: updateUserDto.email },
+      });
       if (existingUser && existingUser.id !== id) {
         throw new BadRequestException('Please check your email id');
       }
     }
-    
+
     // Ensure only specified fields are updated, excluding id
     const allowedUpdates = ['name', 'email'];
     for (const key of Object.keys(updateUserDto)) {
@@ -101,7 +103,7 @@ export class UsersService {
         (user as any)[key] = (updateUserDto as any)[key];
       }
     }
-    
+
     return this.userRepository.save(user);
   }
 }

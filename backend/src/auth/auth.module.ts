@@ -10,16 +10,25 @@ import jwtConfig from 'config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from '../../security/jwt.strategy';
+import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
+    forwardRef(() => SubAdminModule),
     ConfigModule.forFeature(jwtConfig),
-    JwtModule.registerAsync(jwtConfig.asProvider()),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'yourSecretKey',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
+    JwtStrategy,
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
@@ -28,6 +37,12 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
     GenerateTokenProvider,
     RefreshTokenProvider,
   ],
-  exports: [AuthService, HashingProvider],
+  exports: [
+    AuthService,
+    HashingProvider,
+    PassportModule,
+    JwtModule,
+    JwtStrategy,
+  ],
 })
 export class AuthModule {}
