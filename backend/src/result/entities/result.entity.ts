@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  Unique,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Status } from '../enums/status.enum';
@@ -36,4 +37,25 @@ export class Result {
 
   @CreateDateColumn()
   gameDate: Date;
+}
+
+@Entity()
+export class statusResult {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: 'varchar', unique: true })
+  userId: string;
+
+  @Column({ type: 'int', default: 0 })
+  timesPlayed: number;
+
+  @Column({ type: 'int', default: 0 })
+  currentStreak: number;
+
+  @Column({ type: 'int', default: 0 })
+  maxStreak: number;
+
+  @Column({ type: 'float', default: 0 })
+  winPercentage: number;
 }
