@@ -32,7 +32,7 @@ const SignInForm = () => {
   };
 
   return (
-    <div className="w-[498px] max-w-md mx-auto">
+    <div className="w-[498px] bg-[#ffffff] max-w-md mx-auto">
       <h1 className="text-[48px] md:text-[48px] text-[#29296E] font-[600] font-roboto text-center mb-10 text-3xl sm:text-4xl">Sign In</h1>
       <p className="text-[18px] md:text-[20px] font-[400] text-center text-[#373737] mb-6">Enter your details to Log In</p>
       

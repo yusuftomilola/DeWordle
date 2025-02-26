@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
 import { LeaderboardModule } from 'src/leaderboard/leaderboard.module';
+import { ResultService } from 'src/result/result.service';
+import { ResultModule } from 'src/result/result.module';
 
 @Module({
   imports: [
@@ -14,9 +16,15 @@ import { LeaderboardModule } from 'src/leaderboard/leaderboard.module';
     forwardRef(() => LeaderboardModule),
     TypeOrmModule.forFeature([User]),
     LeaderboardModule,
+    ResultModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, CreateUsersProvider, FindOneByEmailProvider],
-  exports: [UsersService],
+  providers: [
+    UsersService,
+    CreateUsersProvider,
+    FindOneByEmailProvider,
+    ResultService,
+  ],
+  exports: [UsersService, ResultService],
 })
 export class UsersModule {}

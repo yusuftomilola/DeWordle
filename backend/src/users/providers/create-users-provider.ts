@@ -11,6 +11,7 @@ import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HashingProvider } from 'src/auth/providers/hashing-provider';
 import { LeaderboardService } from 'src/leaderboard/leaderboard.service';
+import { ResultService } from '../../result/result.service';
 
 @Injectable()
 export class CreateUsersProvider {
@@ -27,6 +28,7 @@ export class CreateUsersProvider {
     private readonly userRepository: Repository<User>,
     @Inject(forwardRef(() => LeaderboardService))
     private leaderboardService: LeaderboardService,
+    private readonly resultService: ResultService,
   ) {}
 
   public async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -73,6 +75,8 @@ export class CreateUsersProvider {
         ? createUserDto.results
         : [],
     });
+    // Auto-create result entry for the new user
+    await this.resultService.createResult(savedUser.id.toString());
 
     try {
       return savedUser;
