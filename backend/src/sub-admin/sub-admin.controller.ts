@@ -8,8 +8,8 @@ import {
   Get,
   Put,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../security/jwt-auth.guard';
-import { RolesGuard } from '../../security/roles.guard';
+import { JwtAuthGuard } from '../../security/guards/jwt-auth.guard';
+import { RolesGuard } from '../../security/guards/rolesGuard/roles.guard';
 import { CreateSubAdminDto } from './dto/create-sub-admin.dto';
 import { UpdateSubAdminDto } from './dto/update-sub-admin.dto';
 import { SubAdminService } from './sub-admin.service';
