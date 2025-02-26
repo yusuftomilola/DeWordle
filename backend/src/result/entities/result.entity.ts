@@ -37,6 +37,21 @@ export class Result {
 
   @CreateDateColumn()
   gameDate: Date;
+
+  @Column('integer', { default: 0 })
+  timesPlayed: number;
+
+  @Column('integer', { default: 0 })
+  currentStreak: number;
+
+  @Column('integer', { default: 0 })
+  maxStreak: number;
+
+  @Column('integer', { default: 0 })
+  wins: number;
+
+  @Column('float', { default: 0 })
+  winPercentage: number;
 }
 
 @Entity()

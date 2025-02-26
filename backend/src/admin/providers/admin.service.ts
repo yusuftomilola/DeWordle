@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Admin } from './entities/admin.entity';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
+import { Admin } from '../entities/admin.entity';
+import { CreateAdminDto } from '../dto/create-admin.dto';
+import { UpdateAdminDto } from '../dto/update-admin.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -46,6 +46,53 @@ export class AdminService {
     }
 
     return admin;
+  }
+
+  async findOneByEmail(email: string): Promise<Admin | undefined> {
+    return this.adminRepository.findOne({ where: { email } });
+  }
+
+  async findOneById(id: number): Promise<Admin | undefined> {
+    return this.adminRepository.findOne({ where: { id } });
+  }
+
+  async setRefreshToken(id: number, refreshToken: string): Promise<void> {
+    await this.adminRepository.update(id, { refreshToken });
+  }
+
+  async setResetToken(
+    id: number,
+    resetToken: string,
+    resetTokenExpiry: Date,
+  ): Promise<void> {
+    await this.adminRepository.update(id, { resetToken, resetTokenExpiry });
+  }
+
+  async updatePassword(id: number, password: string): Promise<void> {
+    await this.adminRepository.update(id, {
+      password,
+      resetToken: null,
+      resetTokenExpiry: null,
+    });
+  }
+
+  async setVerificationToken(
+    id: number,
+    verificationToken: string,
+    verificationTokenExpiry: Date,
+  ): Promise<void> {
+    await this.adminRepository.update(id, {
+      verificationToken,
+      verificationTokenExpiry,
+    });
+  }
+
+  async verifyEmail(id: number): Promise<void> {
+    await this.adminRepository.update(id, {
+      emailVerified: true,
+      verificationToken: null,
+      verificationTokenExpiry: null,
+    });
   }
 
   async update(id: number, updateAdminDto: UpdateAdminDto) {

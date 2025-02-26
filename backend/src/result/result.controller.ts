@@ -7,6 +7,7 @@ import {
   Param,
   Res,
   Delete,
+  ParseIntPipe,
   HttpCode,
 } from '@nestjs/common';
 import { Response as ResType } from 'express';
@@ -37,14 +38,17 @@ export class ResultController {
     return this.resultService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateResultDto: UpdateResultDto) {
-    return this.resultService.update(+id, updateResultDto);
+  @Patch(':userId')
+  updateResult(
+    @Param('userId') userId: string,
+    @Body() updateResultDto: UpdateResultDto,
+  ) {
+    return this.resultService.updateResult(userId, updateResultDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resultService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.resultService.remove(id);
   }
 }
 

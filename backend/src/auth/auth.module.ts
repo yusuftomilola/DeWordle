@@ -12,12 +12,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../security/jwt.strategy';
+import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'security/jwt-auth.guard';
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
+    forwardRef(() => SubAdminModule),
     ConfigModule.forFeature(jwtConfig),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
