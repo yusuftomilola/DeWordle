@@ -18,7 +18,8 @@ import envConfiguration from 'config/envConfiguration';
 import { validate } from '../config/env.validation';
 import { GuestModule } from './guest/guest.module';
 import { GuestController } from './guest/guest.controller';
-import { PaginationModule } from './common/pagination/pagination-controller.controller';
+import { PaginationModule } from './common/pagination/pagination.module'; // Your change
+import { MailModule } from './mail/mail.module'; // Main branch change
 
 @Module({
   imports: [
@@ -46,7 +47,8 @@ import { PaginationModule } from './common/pagination/pagination-controller.cont
     ResultModule,
     SubAdminModule,
     GuestModule,
-    PaginationModule
+    PaginationModule, // Your change
+    MailModule, // Main branch change
   ],
   controllers: [AppController, GuestController],
   providers: [AppService],
