@@ -16,6 +16,9 @@ import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 import { Admin } from './admin/entities/admin.entity';
 import envConfiguration from 'config/envConfiguration';
 import { validate } from '../config/env.validation';
+import { GuestModule } from './guest/guest.module';
+import { GuestController } from './guest/guest.controller';
+import { GamemodeModule } from './gamemode/gamemode.module';
 import { GuestUserModule } from './guest/guest.module';
 import { GuestFeaturesModule } from './guest-features/guest-features.module';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -25,6 +28,7 @@ import { RedisService } from './guest/provider/redis.service';
 import { GuestUserController } from './guest/guest.controller';
 import { GuestUserService } from './guest/guest.service';
 import { MailModule } from './mail/mail.module';
+import { DictionaryModule } from './dictionary/dictionary.module';
 
 @Module({
   imports: [
@@ -57,9 +61,12 @@ import { MailModule } from './mail/mail.module';
     AdminModule,
     ResultModule,
     SubAdminModule,
+    GuestModule,
+    GamemodeModule,
     GuestUserModule,
     GuestFeaturesModule,
     MailModule,
+    // DictionaryModule,
   ],
   controllers: [AppController, GuestUserController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally

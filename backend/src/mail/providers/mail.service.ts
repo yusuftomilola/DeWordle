@@ -25,4 +25,20 @@ export class MailService {
         })
         console.log('Test Email Success')
     }
+
+    async sendVerificationEmail(email: string, token: string): Promise<void> {
+        // Your implementation here (e.g., using nodemailer, etc.)
+        console.log(`Sending verification email to ${email} with token ${token}`);
+      }
+    
+    async sendPasswordResetEmail(email: string, token: string) {
+        const resetLink = `https://yourfrontend.com/reset-password?token=${token}`;
+    
+        await this.mailerServise.sendMail({
+          to: email,
+          subject: 'Password Reset Request',
+          template: './password-reset', // e.g., a template file in the templates folder
+          context: { resetLink }, // Data to inject into the template
+        });
+      }
 }
