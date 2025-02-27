@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import Leaderboard from "../../../components/Leaderboard";
 
 const page = () => {
   return (
-    <div>stats</div>
-  )
-}
+    <>
+      <Leaderboard />
+    </>
+  );
+};
 
-export default page
+export default page;
