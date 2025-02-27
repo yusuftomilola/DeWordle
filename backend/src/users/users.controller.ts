@@ -5,24 +5,20 @@ import {
   Body,
   Param,
   Delete,
-  ClassSerializerInterceptor,
-  UseInterceptors,
-  Query,
-  ParseIntPipe,
-  NotFoundException,
   Patch,
-  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+
+@Controller('/api/v1/users')
+@UseGuards(JwtAuthGuard)
 import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
 import { UserRole } from 'src/common/enums/users-roles.enum';
 import { RoleDecorator } from 'security/decorators/roles.decorator';
 import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
-@Controller('/api/v1/users')
-@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -34,7 +30,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  // GET /users?limit=10&page=1
   @Get()
   @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
@@ -57,9 +52,8 @@ export class UsersController {
   @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
   findOne(@Param('id') id: string) {
-    return this.usersService.findOneById(+id);
+    return this.usersService.findOneById(Number(id));
   }
-
   @Delete(':id')
   @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
@@ -67,7 +61,6 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
-  /**Patch endpoint */
   @Patch(':id')
   @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin, UserRole.User)
@@ -77,10 +70,8 @@ export class UsersController {
   ) {
     const user = await this.usersService.updateUser(id, updateUserDto);
 
-    /**if user does not exist */
-    if (!user) {
-      throw new NotFoundException('No user was found');
-    }
-    return user;
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(Number(id));
   }
 }
