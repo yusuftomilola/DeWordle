@@ -3,8 +3,6 @@ import type { PuzzleRepository } from "../repositories/puzzle.repository"
 import type { PuzzleTranslationRepository } from "../repositories/puzzle-translation.repository"
 import type { LanguageRepository } from "../repositories/language.repository"
 import type { PuzzleTranslation } from "../entities/puzzle-translation.entity"
-import type { CreatePuzzleTranslationDto } from "../dto/create-puzzle-translation.dto"
-import type { UpdatePuzzleTranslationDto } from "../dto/update-puzzle-translation.dto"
 import type { CacheService } from "./cache.service"
 import type { EventEmitterService } from "./event-emitter.service"
 
@@ -94,7 +92,7 @@ export class PuzzleTranslationService {
     return this.puzzleTranslationRepository.findByLanguage(language.id)
   }
 
-  async createPuzzleTranslation(createDto: CreatePuzzleTranslationDto): Promise<PuzzleTranslation> {
+  async createPuzzleTranslation(createDto): Promise<PuzzleTranslation> {
     const puzzle = await this.puzzleRepository.findById(createDto.puzzleId)
     if (!puzzle) {
       throw new NotFoundException(`Puzzle with ID ${createDto.puzzleId} not found`)
@@ -132,7 +130,7 @@ export class PuzzleTranslationService {
     return newTranslation
   }
 
-  async updatePuzzleTranslation(id: string, updateDto: UpdatePuzzleTranslationDto): Promise<PuzzleTranslation> {
+  async updatePuzzleTranslation(id: string, updateDto): Promise<PuzzleTranslation> {
     const translation = await this.puzzleTranslationRepository.findById(id)
     if (!translation) {
       throw new NotFoundException(`Puzzle translation with ID ${id} not found`)

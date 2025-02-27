@@ -10,7 +10,6 @@ import {
   BlockchainExceptionFilter,
 } from './common/filters';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 

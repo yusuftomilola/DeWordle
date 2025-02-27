@@ -10,13 +10,13 @@ import { PuzzleTranslationController } from "./controllers/puzzle-translation-co
 import { AdminTranslationController } from "./controllers/admin-translation.controller"
 
 // Services
-import { UserLanguageService } from "./services/user-language.service"
-import { TranslationService } from "./services/translation.service"
-import { LanguageDetectionService } from "./services/language-detection.service"
-import { PuzzleTranslationService } from "./services/puzzle-translation.service"
-import { AdminTranslationService } from "./services/admin-translation.service"
-import { CacheService } from "./services/cache.service"
-import { EventEmitterService } from "./services/event-emitter.service"
+// import { UserLanguageService } from "./services/user-language.service"
+// import { TranslationService } from "./services/translation.service"
+// import { LanguageDetectionService } from "./services/language-detection.service"
+// import { PuzzleTranslationService } from "./services/puzzle-translation.service"
+// import { AdminTranslationService } from "./services/admin-translation.service"
+// import { CacheService } from "./services/cache.service"
+// import { EventEmitterService } from "./services/event-emitter.service"
 
 // Entities
 import { UserLanguagePreference } from "./entities/user-language-preference.entity"
@@ -54,13 +54,13 @@ import { TranslationKeyRepository } from "./repositories/translation-key.reposit
     AdminTranslationController,
   ],
   providers: [
-    UserLanguageService,
-    TranslationService,
-    LanguageDetectionService,
-    PuzzleTranslationService,
-    AdminTranslationService,
-    CacheService,
-    EventEmitterService,
+    // UserLanguageService,
+    // TranslationService,
+    // LanguageDetectionService,
+    // PuzzleTranslationService,
+    // AdminTranslationService,
+    // CacheService,
+    // EventEmitterService,
     UserLanguageRepository,
     TranslationRepository,
     LanguageRepository,
@@ -68,6 +68,6 @@ import { TranslationKeyRepository } from "./repositories/translation-key.reposit
     PuzzleTranslationRepository,
     TranslationKeyRepository,
   ],
-  exports: [UserLanguageService, TranslationService, LanguageDetectionService, PuzzleTranslationService],
+  // exports: [UserLanguageService, TranslationService, LanguageDetectionService, PuzzleTranslationService],
 })
 export class LanguageModule {}

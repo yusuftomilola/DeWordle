@@ -14,7 +14,7 @@ export class FollowResponseDto {
 }
 
 export class UserDto {
-  id: string;
+  id: number;
   username: string;
   bio?: string;
   profilePicture?: string;

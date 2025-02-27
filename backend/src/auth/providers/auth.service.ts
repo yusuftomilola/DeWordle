@@ -13,9 +13,9 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
 import { Token } from 'src/auth/entities/token.entity';
-import { MailService } from 'src/mail/mail.service';
 import { TokenType } from 'src/auth/enums/token-type.enum';
 import { EmailService } from 'src/mail/providers/email.service';
+import { MailService } from 'src/mail/providers/mail.service';
 
 @Injectable()
 @UseFilters(AuthExceptionFilter) // ✅ Apply AuthExceptionFilter
@@ -32,7 +32,6 @@ export class AuthService {
     
     @InjectRepository(Token)
     private tokensRepository: Repository<Token>,
-    private jwtService: JwtService,
     private configService: ConfigService,
     private mailService: MailService,
     private readonly emailService: EmailService,

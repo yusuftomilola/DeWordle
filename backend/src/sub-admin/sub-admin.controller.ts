@@ -22,6 +22,8 @@ import {
   DatabaseExceptionFilter,
   ValidationExceptionFilter,
 } from 'src/common/filters';
+import { RoleDecorator } from 'security/decorators/roles.decorator';
+import { UserRole } from 'src/common/enums/users-roles.enum';
 
 @Controller('/api/v1/sub-admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
