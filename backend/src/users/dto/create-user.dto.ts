@@ -1,12 +1,14 @@
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsString,
   MinLength,
   Matches,
   MaxLength,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
 import { Result } from 'src/result/entities/result.entity';
-import { Column } from 'typeorm';
 
 export class CreateUserDto {
   @IsString()
@@ -27,6 +29,8 @@ export class CreateUserDto {
   )
   password: string;
 
-  @Column()
-  result: Result;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Result)
+  results: Result[];
 }

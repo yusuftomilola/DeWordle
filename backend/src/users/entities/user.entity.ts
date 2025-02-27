@@ -3,11 +3,13 @@ import { Result } from 'src/result/entities/result.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Token } from '../../auth/entities/token.entity';
 
 @Entity()
 export class User {
@@ -23,11 +25,37 @@ export class User {
   @Column('varchar', { nullable: false })
   password: string;
 
-  @OneToMany(() => Result, (result) => result.user, { cascade: true, eager: true })
+  @Column({ default: false })
+    isVerified: boolean;
+  
+  @OneToMany(() => Token, (token) => token.user)
+  tokens: Token[];
+
+  @OneToMany(() => Result, (result) => result.user, {
+    cascade: true,
+  })
   result: Result[];
 
-  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, { cascade: true, eager: true })
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
+    cascade: true,
+    eager: true,
+  })
   leaderboard: Leaderboard[];
+
+  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  leaderboards: Leaderboard[];
+
+  @OneToMany(() => Result, (result) => result.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  results: Result[];
+
+  @Column('varchar', { length: 225, nullable: true })
+  googleId?: string
 
   @CreateDateColumn()
   createdAt: Date;
@@ -35,7 +63,6 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @DeleteDateColumn({ nullable: true })
+  @DeleteDateColumn()
   deletedAt?: Date;
 }
-

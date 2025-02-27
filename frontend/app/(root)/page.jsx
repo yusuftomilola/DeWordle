@@ -1,13 +1,9 @@
-import Keyboard from "../../components/Keyboard.jsx";
-import Navbar from "../../components/Navbar.jsx";
-import WordGrid from "../../components/WordGrid.jsx";
+import LandingPage from "../../components/LandingPage";
 
-export default function page() {
+export default function Page() {
   return (
-    <div>
-      <Navbar />
-      <WordGrid />
-      <Keyboard />
+    <div className="bg-[#ffffff]">
+      <LandingPage  />
     </div>
   );
 }
