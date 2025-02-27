@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from './provider/redis.service';
 
@@ -38,7 +43,36 @@ export class GuestUserService {
     return { id: guestId, expiresAt };
   }
 
+  async updateGuestSession(guestId: string, won: boolean): Promise<void> {
+    const session = await this.redisService.getGuestSession(guestId);
+
+    if (!session) {
+      throw new NotFoundException('Guest session not found or expired');
+    }
+
+    try {
+      await this.redisService.updateGameResult(guestId, won);
+    } catch (error) {
+      throw new BadRequestException('Failed to update game result');
+    }
+  }
+
+  async getGuestGameResult(guestId: string) {
+    const session = await this.redisService.getGuestSession(guestId);
+
+    if (!session) {
+      throw new ForbiddenException('Session has expired');
+    }
+
+    const result = await this.redisService.getGameResult(guestId);
+    if (!result) {
+      throw new NotFoundException('No game result found for this guest');
+    }
+    return result;
+  }
+
   async deleteGuestUserSession(guestId: string): Promise<void> {
     await this.redisService.deleteGuestSession(guestId);
+    await this.redisService.deleteGameResult(guestId);
   }
 }
