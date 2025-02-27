@@ -12,22 +12,75 @@ import {
   NotFoundException,
   Patch,
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+@ApiTags('Users')
+@ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
 @Controller('/api/v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
+  @ApiBody({ type: CreateUserDto })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  // GET /users?limit=10&page=1
   @Get()
+  @ApiOperation({ summary: 'Get all users with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of users retrieved successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'Page number for pagination',
+    example: 1,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items per page',
+    example: 10,
+    required: false,
+  })
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('limit', ParseIntPipe) limit: number = 10,
@@ -35,31 +88,82 @@ export class UsersController {
     return this.usersService.findAll(page, limit);
   }
 
-  // DELETE /users/:id
-  @Delete(':id')
-  async softDelete(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.softDelete(id);
-  }
-
   @Get(':id')
+  @ApiOperation({ summary: 'Get a user by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'User details retrieved successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
+  @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
   findOne(@Param('id') id: string) {
     return this.usersService.findOneById(+id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @ApiOperation({ summary: 'Soft delete a user by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'User soft deleted successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
+  @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
+  async softDelete(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.softDelete(id);
   }
 
-  /**Patch endpoint */
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a user by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid input data',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
+  @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
+  @ApiBody({ type: UpdateUserDto })
   public async updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id', ParseIntPipe) id: number,
   ) {
     const user = await this.usersService.updateUser(id, updateUserDto);
 
-    /**if user does not exist */
     if (!user) {
       throw new NotFoundException('No user was found');
     }
