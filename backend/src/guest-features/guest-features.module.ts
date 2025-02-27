@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { GuestFeaturesService } from './guest-features.service';
 import { GuestFeaturesController } from './guest-features.controller';
-import { GuestModule } from 'src/guest/guest.module';
+import { GuestUserModule } from 'src/guest/guest.module';
 
 @Module({
-  imports: [GuestModule],
+  imports: [GuestUserModule],
   controllers: [GuestFeaturesController],
   providers: [GuestFeaturesService],
 })

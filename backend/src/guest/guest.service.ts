@@ -1,5 +1,6 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { RedisService } from './provider/redis.service';
 
 interface GuestSession {
   id: string;
@@ -7,66 +8,37 @@ interface GuestSession {
 }
 
 @Injectable()
-export class GuestService implements OnModuleInit {
-  private guestSessions: Map<string, GuestSession> = new Map();
+export class GuestUserService {
   private readonly EXPIRATION_TIME_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
-  private cleanupInterval: NodeJS.Timeout;
 
-  onModuleInit() {
-    // Set up periodic cleanup of expired sessions (every minute)
-    this.cleanupInterval = setInterval(() => {
-      this.cleanupExpiredSessions();
-    }, 60000);
-  }
+  constructor(private readonly redisService: RedisService) {}
 
-  onModuleDestroy() {
-    // Clean up the interval when the module is destroyed
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-    }
-  }
-
-  private cleanupExpiredSessions() {
-    const now = new Date();
-    for (const [id, session] of this.guestSessions.entries()) {
-      if (session.expiresAt < now) {
-        this.guestSessions.delete(id);
-      }
-    }
-  }
-
-  createGuest(): { id: string; expiresAt: Date } {
+  async createGuestUser(): Promise<GuestSession> {
     const id = uuidv4();
     const expiresAt = new Date(Date.now() + this.EXPIRATION_TIME_MS);
 
-    this.guestSessions.set(id, { id, expiresAt });
+    await this.redisService.setGuestSession(id);
 
     return { id, expiresAt };
   }
 
-  validateGuest(guestId: string): boolean {
-    const session = this.guestSessions.get(guestId);
-
-    if (!session) {
-      return false;
-    }
-
-    if (session.expiresAt < new Date()) {
-      this.guestSessions.delete(guestId);
-      return false;
-    }
-
-    return true;
+  async validateGuestUser(guestId: string): Promise<boolean> {
+    const session = await this.redisService.getGuestSession(guestId);
+    return session !== null;
   }
 
-  refreshGuestSession(guestId: string): { id: string; expiresAt: Date } | null {
-    if (!this.validateGuest(guestId)) {
+  async refreshGuestUserSession(guestId: string): Promise<GuestSession | null> {
+    const isValid = await this.validateGuestUser(guestId);
+
+    if (!isValid) {
       return null;
     }
 
     const expiresAt = new Date(Date.now() + this.EXPIRATION_TIME_MS);
-    this.guestSessions.set(guestId, { id: guestId, expiresAt });
-
     return { id: guestId, expiresAt };
+  }
+
+  async deleteGuestUserSession(guestId: string): Promise<void> {
+    await this.redisService.deleteGuestSession(guestId);
   }
 }
