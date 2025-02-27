@@ -4,7 +4,6 @@ import { Repository, Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { RetentionMetric } from './entities/retention-metric.entity';
 import { User } from '../users/entities/user.entity';
 import { RetentionQueryDto } from './dto/retention-query.dto';
-import { subDays, subWeeks, subMonths, startOfDay, endOfDay, format } from 'date-fns';
 
 @Injectable()
 export class RetentionMetricsService {
@@ -16,9 +15,13 @@ export class RetentionMetricsService {
   ) {}
 
   async calculateDailyMetrics(date: Date) {
-    const startDate = startOfDay(date);
-    const endDate = endOfDay(date);
-    const previousDate = subDays(startDate, 1);
+    // Start of day: Set hours, minutes, seconds, ms to 0
+    const startDate = new Date(date.setHours(0, 0, 0, 0));
+    // End of day: Set hours to 23, minutes to 59, etc
+    const endDate = new Date(date.setHours(23, 59, 59, 999));
+    // Previous day
+    const previousDate = new Date(startDate);
+    previousDate.setDate(previousDate.getDate() - 1);
 
     // Get active users for the current day
     const activeUsers = await this.userRepository.count({
@@ -48,8 +51,8 @@ export class RetentionMetricsService {
     const previousDayUsers = await this.userRepository.count({
       where: {
         lastActivityAt: Between(
-          startOfDay(previousDate),
-          endOfDay(previousDate),
+          new Date(previousDate.setHours(0, 0, 0, 0)),
+          new Date(previousDate.setHours(23, 59, 59, 999)),
         ),
       },
     });
@@ -93,8 +96,11 @@ export class RetentionMetricsService {
         const retentionByWeek = [];
 
         for (let week = 0; week < 12; week++) {
-          const weekStart = addWeeks(cohortDate, week);
-          const weekEnd = addWeeks(weekStart, 1);
+          const weekStart = new Date(cohortDate);
+          weekStart.setDate(weekStart.getDate() + (week * 7));
+          
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekEnd.getDate() + 7);
 
           const activeUsers = await this.userRepository.count({
             where: {
@@ -108,7 +114,7 @@ export class RetentionMetricsService {
         }
 
         return {
-          cohortDate: format(cohortDate, 'yyyy-MM-dd'),
+          cohortDate: cohortDate.toISOString().split('T')[0],
           userCount: parseInt(cohort.userCount),
           retentionByWeek,
         };
@@ -134,22 +140,27 @@ export class RetentionMetricsService {
 
   async getDashboardMetrics() {
     const today = new Date();
-    const [
-      dailyMetrics,
-      weeklyMetrics,
-      monthlyMetrics,
-    ] = await Promise.all([
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    
+    const threeMonthsAgo = new Date(today);
+    threeMonthsAgo.setMonth(today.getMonth() - 3);
+    
+    const twelveMonthsAgo = new Date(today);
+    twelveMonthsAgo.setMonth(today.getMonth() - 12);
+
+    const [dailyMetrics, weeklyMetrics, monthlyMetrics] = await Promise.all([
       this.getMetrics({
         period: 'daily',
-        startDate: subDays(today, 30).toISOString(),
+        startDate: thirtyDaysAgo.toISOString(),
       }),
       this.getMetrics({
         period: 'weekly',
-        startDate: subMonths(today, 3).toISOString(),
+        startDate: threeMonthsAgo.toISOString(),
       }),
       this.getMetrics({
         period: 'monthly',
-        startDate: subMonths(today, 12).toISOString(),
+        startDate: twelveMonthsAgo.toISOString(),
       }),
     ]);
 
