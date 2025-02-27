@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResultService } from './result.service';
 import { ResultController, StatusResultController } from './result.controller';
-import { statusResult } from './entities/result.entity';
+import { Result } from './entities/result.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([statusResult])],
+  imports: [TypeOrmModule.forFeature([Result])],
   controllers: [ResultController, StatusResultController],
   providers: [ResultService],
   exports: [ResultService, TypeOrmModule],
