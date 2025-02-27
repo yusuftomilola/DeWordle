@@ -11,7 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from '../../security/jwt.strategy';
+import { JwtStrategy } from '../../security/strategies/jwt.strategy';
 import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
 
 @Module({
