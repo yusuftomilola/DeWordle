@@ -1,17 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  HttpCode,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './providers/auth.service';
 import { SignInDto } from './dto/create-auth.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
-@Controller('auth')
+@Controller('/api/v1/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -21,18 +13,9 @@ export class AuthController {
     return this.authService.SignIn(signinDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  public async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto);
   }
 }

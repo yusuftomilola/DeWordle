@@ -7,10 +7,8 @@ import { User } from 'src/users/entities/user.entity';
 @Injectable()
 export class GenerateTokenProvider {
   constructor(
-    // jwt service
     private readonly jwtService: JwtService,
 
-    // jwt config injcetion
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -32,10 +30,10 @@ export class GenerateTokenProvider {
 
   public async generateTokens(user: User) {
     const [access_token, refresh_token] = await Promise.all([
-      // generate access token
-      this.SignToken(user.id, this.jwtConfiguration.ttl, { email: user.email }),
-      // generate refresh token
-      this.SignToken(user.id, this.jwtConfiguration.Rttl),
+      this.SignToken(user.id, this.jwtConfiguration.expiresIn, {
+        email: user.email,
+      }),
+      this.SignToken(user.id, this.jwtConfiguration.refreshExpiresIn),
     ]);
 
     return { access_token, refresh_token };

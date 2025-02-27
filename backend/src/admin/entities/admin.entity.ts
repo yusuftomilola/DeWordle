@@ -1,7 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { IsEmail, IsBoolean } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('admin')
 export class Admin {
   @PrimaryGeneratedColumn()
   id: number;
@@ -9,11 +14,36 @@ export class Admin {
   @Column()
   username: string;
 
-  @Column({ unique: true })
-  @IsEmail()
+  @Column()
   email: string;
 
+  @Column()
+  password: string;
+
+  @Column({ default: 'admin' })
+  role: string;
+
   @Column({ default: false })
-  @IsBoolean()
-  isSuperAdmin: boolean;
+  emailVerified: boolean;
+
+  @Column({ nullable: true })
+  refreshToken: string;
+
+  @Column({ nullable: true })
+  resetToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resetTokenExpiry: Date;
+
+  @Column({ nullable: true })
+  verificationToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  verificationTokenExpiry: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
