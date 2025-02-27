@@ -28,6 +28,11 @@ export class ResultService {
         where: { userId },
       });
 
+
+      const existingResult = await this.resultRepository.findOne({
+        where: { userId },
+      });
+
       const userIdNumber = parseInt(userId, 10);
       if (isNaN(userIdNumber)) {
         throw new BadRequestException(`Invalid userId: ${userId}`);
@@ -42,6 +47,7 @@ export class ResultService {
         where: { user: { id: userIdNumber } } 
       });
       
+
 
       if (existingResult) {
         throw new Error('Result already exists for this user.');

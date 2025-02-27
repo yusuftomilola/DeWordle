@@ -28,7 +28,14 @@ import { RedisService } from './guest/provider/redis.service';
 import { GuestUserController } from './guest/guest.controller';
 import { GuestUserService } from './guest/guest.service';
 import { MailModule } from './mail/mail.module';
+
+import { PaginationModule } from './common/pagination/pagination-controller.controller'; // Your change
+
+
+
+
 import { DictionaryModule } from './dictionary/dictionary.module';
+
 
 @Module({
   imports: [
@@ -62,6 +69,8 @@ import { DictionaryModule } from './dictionary/dictionary.module';
     ResultModule,
     SubAdminModule,
     GuestModule,
+    PaginationModule, 
+    MailModule, 
     GamemodeModule,
     GuestUserModule,
     GuestFeaturesModule,

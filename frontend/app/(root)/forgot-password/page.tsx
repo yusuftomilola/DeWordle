@@ -1,8 +1,12 @@
+"use client"
 import React from 'react'
+import ForgotPassword from "../../../components/ForgotPassword"
 
 const page = () => {
   return (
-    <div>Forgot password email verification page.</div>
+    <div>
+      <ForgotPassword />
+    </div>
   )
 }
 

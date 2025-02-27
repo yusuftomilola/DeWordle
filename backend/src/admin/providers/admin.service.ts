@@ -1,12 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseFilters } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from '../entities/admin.entity';
 import { CreateAdminDto } from '../dto/create-admin.dto';
 import { UpdateAdminDto } from '../dto/update-admin.dto';
 import * as bcrypt from 'bcrypt';
+import {
+  AllExceptionsFilter,
+  DatabaseExceptionFilter,
+  ValidationExceptionFilter,
+} from 'src/common/filters';
 
 @Injectable()
+@UseFilters(
+  DatabaseExceptionFilter,
+  ValidationExceptionFilter,
+  AllExceptionsFilter,
+)
 export class AdminService {
   constructor(
     @InjectRepository(Admin)
