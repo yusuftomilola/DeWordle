@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateResultDto } from './dto/create-result.dto';
 import { UpdateResultDto } from './dto/update-result.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +23,11 @@ export class ResultService {
 
   async createResult(userId: string): Promise<Result> {
     try {
+
+      const existingResult = await this.resultRepository.findOne({
+        where: { userId },
+      });
+
       const userIdNumber = parseInt(userId, 10);
       if (isNaN(userIdNumber)) {
         throw new BadRequestException(`Invalid userId: ${userId}`);
@@ -33,6 +42,7 @@ export class ResultService {
         where: { user: { id: userIdNumber } } 
       });
       
+
       if (existingResult) {
         throw new Error('Result already exists for this user.');
       }
@@ -79,13 +89,18 @@ export class ResultService {
     }
   }
 
-  async updateResult(userId: string, updateResultDto: UpdateResultDto): Promise<Result> {
+  async updateResult(
+    userId: string,
+    updateResultDto: UpdateResultDto,
+  ): Promise<Result> {
     const userIdNumber = parseInt(userId, 10);
     if (isNaN(userIdNumber)) {
       throw new BadRequestException(`Invalid userId: ${userId}`);
     }
 
-    const result = await this.resultRepository.findOne({ where: { user: { id: userIdNumber } } });
+    const result = await this.resultRepository.findOne({
+      where: { user: { id: userIdNumber } },
+    });
     if (!result) {
       throw new NotFoundException(`Result entry for user ${userId} not found`);
     }
@@ -112,7 +127,11 @@ export class ResultService {
     return await this.resultRepository.save(result);
   }
 
-  async updateResults(userId: string, updateResultDto: UpdateStatusResultDto, res: Res): Promise<void> {
+  async updateResults(
+    userId: string,
+    updateResultDto: UpdateStatusResultDto,
+    res: Res,
+  ): Promise<void> {
     try {
       const userIdNumber = parseInt(userId, 10);
       if (isNaN(userIdNumber)) {
@@ -125,7 +144,9 @@ export class ResultService {
       });
       
       if (!result) {
-        res.status(404).json({ message: `Result not found for userId: ${userId}` });
+        res
+          .status(404)
+          .json({ message: `Result not found for userId: ${userId}` });
         return;
       }
       
@@ -142,7 +163,7 @@ export class ResultService {
     if (!result) {
       throw new NotFoundException(`Result with id ${id} not found`);
     }
-    
+
     await this.resultRepository.delete(id);
     return { message: `Result with id ${id} has been deleted` };
   }
@@ -160,7 +181,9 @@ export class ResultService {
       });
       
       if (!result) {
-        res.status(404).json({ message: `Result not found for userId: ${userId}` });
+        res
+          .status(404)
+          .json({ message: `Result not found for userId: ${userId}` });
         return;
       }
       

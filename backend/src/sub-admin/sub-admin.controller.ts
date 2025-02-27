@@ -15,9 +15,12 @@ import { UpdateSubAdminDto } from './dto/update-sub-admin.dto';
 import { SubAdminService } from './sub-admin.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RoleDecorator } from 'security/decorators/roles.decorator';
+import { UserRole } from 'src/common/enums/users-roles.enum';
 
 @Controller('/api/v1/sub-admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@RoleDecorator(UserRole.Admin)
 export class SubAdminController {
   constructor(private readonly subAdminService: SubAdminService) {}
 
@@ -53,13 +56,18 @@ export class SubAdminController {
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     await this.subAdminService.requestPasswordReset(forgotPasswordDto.email);
-    return { message: 'If an account exists with this email, a reset link has been sent.' };
+    return {
+      message:
+        'If an account exists with this email, a reset link has been sent.',
+    };
   }
 
   @Post('reset-password')
-async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-  await this.subAdminService.resetPassword(resetPasswordDto);
-  return { message: 'Password reset successful. You can now log in with your new password.' };
-}
-
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    await this.subAdminService.resetPassword(resetPasswordDto);
+    return {
+      message:
+        'Password reset successful. You can now log in with your new password.',
+    };
+  }
 }
