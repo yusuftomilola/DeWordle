@@ -11,6 +11,7 @@ import { GenerateTokenProvider } from './generate-token.provider';
 import jwtConfig from 'config/jwt.config';
 import { UsersService } from 'src/users/users.service';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { SubAdminService } from 'src/sub-admin/sub-admin.service';
 
 @Injectable()
 export class RefreshTokenProvider {
@@ -23,6 +24,8 @@ export class RefreshTokenProvider {
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
 
     private readonly generateTokensProvider: GenerateTokenProvider,
+
+    private readonly subAdminService: SubAdminService,
   ) {}
 
   public async refreshToken(refreshTokenDto: RefreshTokenDto) {
@@ -37,6 +40,7 @@ export class RefreshTokenProvider {
       );
 
       const user = await this.userServices.findOneById(sub);
+      const subAdmin = await this.subAdminService.findOneById(sub);
 
       const access_token = await this.generateTokensProvider.SignToken(
         user.id,

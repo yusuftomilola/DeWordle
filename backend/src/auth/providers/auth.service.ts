@@ -4,13 +4,14 @@ import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { SignInProvider } from './sign-in.provider';
 import { RefreshTokenProvider } from './refresh-token.provider';
 import { UsersService } from 'src/users/users.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
-
+    private readonly jwtService: JwtService,
     private readonly signInProvider: SignInProvider,
     private readonly refreshTokenProvider: RefreshTokenProvider,
   ) {}

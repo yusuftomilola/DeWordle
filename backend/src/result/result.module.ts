@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResultService } from './result.service';
-import { ResultController } from './result.controller';
+import { ResultController, StatusResultController } from './result.controller';
+import { Result } from './entities/result.entity';
 
 @Module({
-  controllers: [ResultController],
+  imports: [TypeOrmModule.forFeature([Result])],
+  controllers: [ResultController, StatusResultController],
   providers: [ResultService],
+  exports: [ResultService, TypeOrmModule],
 })
 export class ResultModule {}

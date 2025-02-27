@@ -19,6 +19,16 @@ import { validate } from '../config/env.validation';
 import { GuestModule } from './guest/guest.module';
 import { GuestController } from './guest/guest.controller';
 import { GamemodeModule } from './gamemode/gamemode.module';
+import { GuestUserModule } from './guest/guest.module';
+import { GuestFeaturesModule } from './guest-features/guest-features.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
+import { GuestUserGuard } from './guest/guest.guard';
+import { RedisService } from './guest/provider/redis.service';
+import { GuestUserController } from './guest/guest.controller';
+import { GuestUserService } from './guest/guest.service';
+import { MailModule } from './mail/mail.module';
+
 
 @Module({
   imports: [
@@ -34,10 +44,16 @@ import { GamemodeModule } from './gamemode/gamemode.module';
       username: process.env.DB_USERNAME,
       password: String(process.env.DB_PASSWORD),
       database: process.env.DB_NAME,
+      autoLoadEntities: true,
       entities: [User, Result, Leaderboard, Admin, SubAdmin],
       migrations: ['src/migrations/*.ts'],
-      autoLoadEntities: true,
       synchronize: true,
+    }),
+    CacheModule.register({
+      store: redisStore,
+      host: 'localhost',
+      port: 6379,
+      ttl: 300, // 10 minutes expiration
     }),
     UsersModule,
     AuthModule,
@@ -47,8 +63,11 @@ import { GamemodeModule } from './gamemode/gamemode.module';
     SubAdminModule,
     GuestModule,
     GamemodeModule,
+    GuestUserModule,
+    GuestFeaturesModule,
+    MailModule,
   ],
-  controllers: [AppController, GuestController],
-  providers: [AppService],
+  controllers: [AppController, GuestUserController],
+  providers: [AppService, GuestUserGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally
 })
 export class AppModule {}
