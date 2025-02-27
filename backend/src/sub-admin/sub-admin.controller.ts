@@ -7,6 +7,7 @@ import {
   UseGuards,
   Get,
   Put,
+  UseFilters,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../security/guards/jwt-auth.guard';
 import { RolesGuard } from '../../security/guards/rolesGuard/roles.guard';
@@ -15,12 +16,22 @@ import { UpdateSubAdminDto } from './dto/update-sub-admin.dto';
 import { SubAdminService } from './sub-admin.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-import { RoleDecorator } from 'security/decorators/roles.decorator';
-import { UserRole } from 'src/common/enums/users-roles.enum';
+import {
+  AllExceptionsFilter,
+  AuthExceptionFilter,
+  DatabaseExceptionFilter,
+  ValidationExceptionFilter,
+} from 'src/common/filters';
 
 @Controller('/api/v1/sub-admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @RoleDecorator(UserRole.Admin)
+@UseFilters(
+  AllExceptionsFilter,
+  AuthExceptionFilter,
+  DatabaseExceptionFilter,
+  ValidationExceptionFilter,
+)
 export class SubAdminController {
   constructor(private readonly subAdminService: SubAdminService) {}
 
@@ -36,7 +47,6 @@ export class SubAdminController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    // return await this.subAdminService.findOne(+id);
     return await this.subAdminService.findOneById(+id);
   }
 
@@ -54,6 +64,7 @@ export class SubAdminController {
   }
 
   @Post('forgot-password')
+  @UseFilters(ValidationExceptionFilter) // Applies only to this method
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     await this.subAdminService.requestPasswordReset(forgotPasswordDto.email);
     return {
@@ -63,6 +74,7 @@ export class SubAdminController {
   }
 
   @Post('reset-password')
+  @UseFilters(ValidationExceptionFilter)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     await this.subAdminService.resetPassword(resetPasswordDto);
     return {

@@ -1,9 +1,10 @@
-import { Injectable, Inject, forwardRef, NotFoundException, UnauthorizedException, BadRequestException  } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, NotFoundException, UnauthorizedException, BadRequestException, UseFilters  } from '@nestjs/common';
 import { SignInDto } from '../dto/create-auth.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { SignInProvider } from './sign-in.provider';
 import { RefreshTokenProvider } from './refresh-token.provider';
 import { UsersService } from 'src/users/users.service';
+import { AuthExceptionFilter } from 'src/common/filters';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,6 +18,7 @@ import { TokenType } from 'src/auth/enums/token-type.enum';
 import { EmailService } from 'src/mail/providers/email.service';
 
 @Injectable()
+@UseFilters(AuthExceptionFilter) // ✅ Apply AuthExceptionFilter
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UsersService))
@@ -37,11 +39,19 @@ export class AuthService {
   ) {}
 
   public async SignIn(signInDto: SignInDto) {
-    return await this.signInProvider.SignIn(signInDto);
+    try {
+      return await this.signInProvider.SignIn(signInDto);
+    } catch (error) {
+      throw new Error('Authentication failed'); // The filter will handle this
+    }
   }
 
   public async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    return await this.refreshTokenProvider.refreshToken(refreshTokenDto);
+    try {
+      return await this.refreshTokenProvider.refreshToken(refreshTokenDto);
+    } catch (error) {
+      throw new Error('Refresh token failed'); // The filter will handle this
+    }
   }
 
 

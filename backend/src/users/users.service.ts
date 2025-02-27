@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Injectable,
   NotFoundException,
@@ -15,6 +16,7 @@ import { MailService } from 'src/mail/providers/mail.service';
 import { FindOneByGoogleIdProvider } from './providers/find-one-by-google-id-provider';
 import { CreateGoogleUserProvider } from './providers/create-google-user-provider';
 import { GoogleInterface } from 'src/auth/social/interfaces/user.interface';
+import { DatabaseExceptionFilter } from 'src/common/filters';
 
 @Injectable()
 export class UsersService {
@@ -74,14 +76,18 @@ export class UsersService {
 
   // Soft delete a user by ID
   async softDelete(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
-    
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      await this.userRepository.softDelete(id);
+      return { message: `User with ID ${id} has been deleted.` };
+    } catch (error) {
+      throw new DatabaseExceptionFilter(); // Explicitly using DB filter if needed
     }
-    
-    await this.userRepository.softDelete(id);
-    return { message: `User with ID ${id} has been deleted.` };
   }
 
   public async findOneById(id: number): Promise<User> {
