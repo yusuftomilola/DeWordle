@@ -2,11 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import NavbarLandingPage from "./NavbarLandingPage";
-
-
 
 const navigation = [{ name: "How to play", href: "#" }];
 
@@ -26,18 +23,12 @@ const LandingPage = () => {
 
 
       <header
-
-      {/* <header
-
         className={`fixed inset-x-0 top-0 z-50 py-4 lg:py-5 sm:px-10 xl:px-20 bg-white transition-shadow ${
           hasShadow ? "shadow-[0_1px_4px_rgba(0,0,0,0.05)]" : "shadow-none"
         }`}
       >
-
       <NavbarLandingPage />
-
-      </header> */}
-
+      </header> 
 
       <div className="w-full h-full max-w-7xl mx-auto">
         <div className="mx-auto justify-between lg:flex gap-10 xl:gap-24 mt-8 ">

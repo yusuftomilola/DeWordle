@@ -7,7 +7,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import HowToPlayModal from "./HowToPlayModal";
 import Link from "next/link";
 
-const Navbar = () => {
+const NavbarLandingPage = () => {
   const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const helpGuideRef = useRef(null);
@@ -107,4 +107,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarLandingPage;
