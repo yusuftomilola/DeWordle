@@ -45,7 +45,6 @@ async function bootstrap() {
     new AllExceptionsFilter(),
   );
 
-
    // enable cors
    app.enableCors({
     origin: 'http://localhost:3500/', // All locations

@@ -15,6 +15,8 @@ import { JwtStrategy } from '../../security/strategies/jwt.strategy';
 import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
 import { GoogleAuthenticationController } from './social/google-authtication.controller';
 import { GoogleAuthenticationService } from './social/providers/google-authtication';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -34,6 +36,11 @@ import { GoogleAuthenticationService } from './social/providers/google-authticat
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
+    },
+    // globalizing auth guards
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
     SignInProvider,
     GenerateTokenProvider,
