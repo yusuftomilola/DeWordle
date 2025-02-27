@@ -2,7 +2,7 @@ import { Injectable, UseFilters } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Reward } from './reward.entity';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers/';
 import * as dotenv from 'dotenv';
 import {
   AllExceptionsFilter,
