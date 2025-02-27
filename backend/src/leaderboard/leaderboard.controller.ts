@@ -8,10 +8,13 @@ import {
   Delete,
   ParseIntPipe,
   HttpCode,
+  DefaultValuePipe,
+  Query,
 } from '@nestjs/common';
 import { LeaderboardService } from './leaderboard.service';
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
+import { query } from 'express';
 
 @Controller('leaderboard')
 export class LeaderboardController {
@@ -24,14 +27,26 @@ export class LeaderboardController {
     );
   }
 
-  @Get()
-  findAll() {
-    return this.leaderboardService.findAll();
+  @Get('/leaderboard/:id')
+  async findOneLeaderboardBy(id: number) {
+    return this.leaderboardService.getOneLeaderboardBy(id);
+  }
+  @Delete('/leaderboard/:id')
+  async deleteLeaderboard(@Query('id', ParseIntPipe) id: number) {
+    return this.leaderboardService.deleteLeaderboard(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.leaderboardService.findOne(+id);
+  @Get('/leaderboard')
+  async findAllLeaderboard(
+    @Param() createLeaderboardDto: CreateLeaderboardDto,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    return this.leaderboardService.getAllLeaderboard(
+      createLeaderboardDto,
+      limit,
+      page,
+    );
   }
 
   @Patch(':id')
@@ -41,9 +56,5 @@ export class LeaderboardController {
     @Body() updateDto: UpdateLeaderboardDto,
   ) {
     return this.leaderboardService.update(id, updateDto);
-  }
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.leaderboardService.remove(+id);
   }
 }

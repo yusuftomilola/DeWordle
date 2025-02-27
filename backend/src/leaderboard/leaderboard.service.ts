@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
@@ -37,13 +42,39 @@ export class LeaderboardService {
     return 'This action adds a new leaderboard';
   }
 
-  findAll() {
-    return `This action returns all leaderboard`;
+  public async getAllLeaderboard(
+    createLeaderboardDto: CreateLeaderboardDto,
+    limit: number,
+    page: number,
+  ): Promise<Leaderboard[]> {
+    return await this.leaderboardRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} leaderboard`;
+  public async getOneLeaderboardBy(id: number): Promise<Leaderboard> {
+    if (!id || typeof id !== 'number') {
+      throw new BadRequestException(
+        `Invalid id provided. Please provide a valid id.`,
+      );
+    }
+
+    const leaderboardEntry = await this.leaderboardRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!leaderboardEntry) {
+      throw new NotFoundException(`Leaderboard entry with id ${id} not found.`);
+    }
+
+    if (!leaderboardEntry.user) {
+      throw new NotFoundException(
+        `User associated with leaderboard entry id ${id} does not exist.`,
+      );
+    }
+
+    return leaderboardEntry;
   }
+
   async update(
     id: number,
     updateDto: UpdateLeaderboardDto,
@@ -74,7 +105,38 @@ export class LeaderboardService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} leaderboard`;
+  public async deleteLeaderboard(
+    id: number,
+  ): Promise<{ delete: boolean; id: number }> {
+    if (!id || typeof id !== 'number') {
+      throw new BadRequestException(
+        `Invalid id provided. Please provide a valid id.`,
+      );
+    }
+
+    // Fetch the leaderboard entry along with user
+    const leaderboardEntry = await this.leaderboardRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!leaderboardEntry) {
+      throw new NotFoundException(`Leaderboard entry with id ${id} not found.`);
+    }
+
+    // Check if the associated user exists
+    if (!leaderboardEntry.user) {
+      throw new NotFoundException(
+        `User associated with leaderboard entry id ${id} does not exist.`,
+      );
+    }
+
+    // delete the leaderboard entry
+    const deleteResult = await this.leaderboardRepository.delete(id);
+    if (deleteResult.affected === 0) {
+      throw new DatabaseErrorException('Failed to delete leaderboard entry');
+    }
+
+    return { delete: true, id };
   }
 }
