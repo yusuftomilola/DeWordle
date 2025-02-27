@@ -11,8 +11,8 @@ import {
 import { AdminService } from './providers/admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { RolesGuard } from 'security/roles.guard';
-import { JwtAuthGuard } from 'security/jwt-auth.guard';
+import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
 @Controller('/api/v1/admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
