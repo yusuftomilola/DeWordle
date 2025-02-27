@@ -16,7 +16,7 @@ import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
 import { GoogleAuthenticationController } from './social/google-authtication.controller';
 import { GoogleAuthenticationService } from './social/providers/google-authtication';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from 'security/jwt-auth.guard';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
 @Module({
   imports: [
