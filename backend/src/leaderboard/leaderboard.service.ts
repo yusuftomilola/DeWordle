@@ -1,3 +1,4 @@
+
 import {
   BadRequestException,
   forwardRef,
@@ -5,6 +6,15 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { NotFoundException } from '@nestjs/common';
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,25 +32,40 @@ export class LeaderboardService {
     @Inject(forwardRef(() => UsersService))
     private readonly userServices: UsersService,
   ) {}
+
   async createLeaderboard(
     createLeaderboardDto: CreateLeaderboardDto,
   ): Promise<Leaderboard> {
-    const user = await this.userServices.findOneById(
-      createLeaderboardDto.userId,
-    );
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      const user = await this.userServices.findOneById(
+        createLeaderboardDto.userId,
+      );
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const leaderboardEntry = this.leaderboardRepository.create({
+        ...createLeaderboardDto,
+        user,
+      });
+
+      return await this.leaderboardRepository.save(leaderboardEntry);
+    } catch (error) {
+      throw new DatabaseErrorException('Failed to create leaderboard entry');
     }
-    const leaderboardEntry = this.leaderboardRepository.create({
-      ...createLeaderboardDto,
-      user,
-    });
-    return this.leaderboardRepository.save(leaderboardEntry);
   }
 
-  create(_createLeaderboardDto: CreateLeaderboardDto) {
-    return 'This action adds a new leaderboard';
-  }
+  async findAll(): Promise<Leaderboard[]> {
+    try {
+      const leaderboardEntries = await this.leaderboardRepository.find({
+        relations: ['user'],
+      });
+
+      if (!leaderboardEntries.length) {
+        throw new NotFoundException('No leaderboard entries found');
+      }
+
 
   public async getAllLeaderboard(
     createLeaderboardDto: CreateLeaderboardDto,
@@ -73,37 +98,65 @@ export class LeaderboardService {
     }
 
     return leaderboardEntry;
+=======
+      return leaderboardEntries;
+    } catch (error) {
+      throw new DatabaseErrorException('Failed to fetch leaderboard entries');
+    }
+  }
+
+  async findOne(id: number): Promise<Leaderboard> {
+    try {
+      const leaderboardEntry = await this.leaderboardRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
+
+      if (!leaderboardEntry) {
+        throw new NotFoundException(
+          `Leaderboard entry with ID ${id} not found`,
+        );
+      }
+
+      return leaderboardEntry;
+    } catch (error) {
+      throw new DatabaseErrorException('Failed to fetch leaderboard entry');
+    }
   }
 
   async update(
     id: number,
     updateDto: UpdateLeaderboardDto,
   ): Promise<Leaderboard> {
-    const existingEntry = await this.leaderboardRepository.findOne({
-      where: { id },
-      relations: ['user'],
-    });
-
-    if (!existingEntry) {
-      throw new NotFoundException(`Leaderboard entry with ID ${id} not found`);
-    }
-
     try {
+      const existingEntry = await this.leaderboardRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
+
+      if (!existingEntry) {
+        throw new NotFoundException(
+          `Leaderboard entry with ID ${id} not found`,
+        );
+      }
+
       const updateData = {
         totalWins: updateDto.totalWins,
         totalAttempts: updateDto.totalAttempts,
         averageScore: updateDto.averageScore,
         user: updateDto.userId ? { id: updateDto.userId } : undefined,
       };
+
       const mergedEntry = this.leaderboardRepository.merge(
         existingEntry,
         updateData,
       );
       return await this.leaderboardRepository.save(mergedEntry);
-    } catch {
+    } catch (error) {
       throw new DatabaseErrorException('Failed to update leaderboard entry');
     }
   }
+
 
   public async deleteLeaderboard(
     id: number,
@@ -138,5 +191,21 @@ export class LeaderboardService {
     }
 
     return { delete: true, id };
+
+  async remove(id: number): Promise<{ message: string }> {
+    try {
+      const result = await this.leaderboardRepository.delete(id);
+
+      if (!result.affected) {
+        throw new NotFoundException(
+          `Leaderboard entry with ID ${id} not found`,
+        );
+      }
+
+      return { message: 'Leaderboard entry deleted successfully' };
+    } catch (error) {
+      throw new DatabaseErrorException('Failed to delete leaderboard entry');
+    }
+
   }
 }

@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   forwardRef,
   Inject,
   Injectable,
   UnauthorizedException,
+  UseFilters,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
@@ -12,8 +12,10 @@ import jwtConfig from 'config/jwt.config';
 import { UsersService } from 'src/users/users.service';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { SubAdminService } from 'src/sub-admin/sub-admin.service';
+import { AuthExceptionFilter } from 'src/common/filters';
 
 @Injectable()
+@UseFilters(AuthExceptionFilter) // ✅ Apply AuthExceptionFilter
 export class RefreshTokenProvider {
   constructor(
     @Inject(forwardRef(() => UsersService))
@@ -24,7 +26,6 @@ export class RefreshTokenProvider {
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
 
     private readonly generateTokensProvider: GenerateTokenProvider,
-
     private readonly subAdminService: SubAdminService,
   ) {}
 
@@ -42,10 +43,15 @@ export class RefreshTokenProvider {
       const user = await this.userServices.findOneById(sub);
       const subAdmin = await this.subAdminService.findOneById(sub);
 
+      const account = user || subAdmin;
+      if (!account) {
+        throw new UnauthorizedException('User not found');
+      }
+
       const access_token = await this.generateTokensProvider.SignToken(
-        user.id,
+        account.id,
         this.jwtConfiguration.expiresIn,
-        { email: user.email },
+        { email: account.email },
       );
 
       return { access_token, refresh_token: refreshTokenDto.refreshToken };
