@@ -2,19 +2,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { ForgotPasswordSchema } from '../utils/schema/forgotPasswordSchema';
 
-// Validation schema
-const ForgotPasswordSchema = Yup.object().shape({
-    email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
-});
 
 function ForgotPassword() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = async (values, { setSubmitting }) => {
+    const handleSubmit = async () => {
         setIsSubmitting(true);
         // Handle form submission logic here
         // ...
@@ -25,7 +19,7 @@ function ForgotPassword() {
 
     return (
         <div className="bg-white min-h-screen flex flex-col">
-            <main className="flex-grow flex flex-col items-center px-4 sm:px-6 md:px-8 mt-12 sm:mt-16 md:mt-[88px]">
+            <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
                 <div className="w-full max-w-max sm:max-w-md md:max-w-fit">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-semibold text-center text-[#29296E] mb-4 md:mb-6">
                         Forgot Password?
