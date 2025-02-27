@@ -1,16 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SubAdmin } from './entities/sub-admin-entity';
 import { CreateSubAdminDto } from './dto/create-sub-admin.dto';
 import { UpdateSubAdminDto } from './dto/update-sub-admin.dto';
+import { MailService } from 'src/mail/providers/mail.service';
+import { ResetPsswordService } from './providers/reset-pssword.service';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class SubAdminService {
   constructor(
     @InjectRepository(SubAdmin)
     private readonly subAdminRepository: Repository<SubAdmin>,
+
+    // inject mailService
+    private readonly mailService: MailService,
+
+    private readonly resetPasswordReset: ResetPsswordService
   ) {}
 
   async create(dto: CreateSubAdminDto): Promise<Partial<SubAdmin>> {
@@ -20,14 +28,29 @@ export class SubAdminService {
       ...dto,
       password: hashedPassword,
     });
-
+    
     const savedSubAdmin = await this.subAdminRepository.save(newSubAdmin);
+    
+    try {
+      await this.mailService.welcomeEmail(newSubAdmin)
+  } catch (error) {
+      throw new RequestTimeoutException(error)
+  }
+
     return {
       id: savedSubAdmin.id,
       name: savedSubAdmin.name,
       role: savedSubAdmin.role,
       email: savedSubAdmin.email,
     };
+  }
+
+  async findOneByEmail(email: string): Promise<SubAdmin | null> {
+    return await this.subAdminRepository.findOne({ where: { email } });
+  }
+
+  public async findOneById(id: number): Promise<SubAdmin | null> {
+    return await this.subAdminRepository.findOneBy({ id });
   }
 
   async findAll(): Promise<Partial<SubAdmin>[]> {
@@ -80,4 +103,12 @@ export class SubAdminService {
     await this.subAdminRepository.delete(id);
     return { message: 'Sub-admin deleted successfully' };
   }
+
+  public async requestPasswordReset(email: string)  {
+    return this.resetPasswordReset.requestPasswordReset(email)
+  };
+
+  public async resetPassword(resetPasswordDto: ResetPasswordDto)  {
+    return this.resetPasswordReset.resetPassword(resetPasswordDto)
+  };
 }
