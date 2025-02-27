@@ -35,6 +35,8 @@ import { PaginationModule } from './common/pagination/pagination-controller.cont
 
 
 import { DictionaryModule } from './dictionary/dictionary.module';
+import { RetentionMetricsModule } from './retention-metrics/retention-metrics.module';
+import { RetentionMetricsModule } from './retention-metrics/retention-metrics.module';
 
 
 @Module({
@@ -75,6 +77,7 @@ import { DictionaryModule } from './dictionary/dictionary.module';
     GuestUserModule,
     GuestFeaturesModule,
     MailModule,
+    RetentionMetricsModule,
     // DictionaryModule,
   ],
   controllers: [AppController, GuestUserController],
