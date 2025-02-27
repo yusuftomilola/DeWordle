@@ -25,6 +25,7 @@ import {
 
 @Controller('/api/v1/sub-admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@RoleDecorator(UserRole.Admin)
 @UseFilters(
   AllExceptionsFilter,
   AuthExceptionFilter,

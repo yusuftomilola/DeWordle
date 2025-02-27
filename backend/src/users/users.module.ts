@@ -11,6 +11,7 @@ import { ResultService } from 'src/result/result.service';
 import { ResultModule } from 'src/result/result.module';
 import { FindOneByGoogleIdProvider } from './providers/find-one-by-google-id-provider';
 import { CreateGoogleUserProvider } from './providers/create-google-user-provider';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CreateGoogleUserProvider } from './providers/create-google-user-provide
     TypeOrmModule.forFeature([User]),
     LeaderboardModule,
     ResultModule,
+    MailModule,
   ],
   controllers: [UsersController],
   providers: [

@@ -39,6 +39,12 @@ export class SignInProvider {
     if (!account) {
       throw new UnauthorizedException('No account found with this email');
     }
+    
+    // Check if email is verified
+    if (!user.isVerified) {
+      throw new UnauthorizedException('Please verify your email before logging in');
+    }
+
 
     let isEqual: boolean = false;
     try {
