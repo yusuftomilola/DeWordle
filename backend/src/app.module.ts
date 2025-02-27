@@ -28,7 +28,7 @@ import { RedisService } from './guest/provider/redis.service';
 import { GuestUserController } from './guest/guest.controller';
 import { GuestUserService } from './guest/guest.service';
 import { MailModule } from './mail/mail.module';
-
+import { DictionaryModule } from './dictionary/dictionary.module';
 
 @Module({
   imports: [
@@ -66,6 +66,7 @@ import { MailModule } from './mail/mail.module';
     GuestUserModule,
     GuestFeaturesModule,
     MailModule,
+    // DictionaryModule,
   ],
   controllers: [AppController, GuestUserController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally
