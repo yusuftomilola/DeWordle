@@ -9,6 +9,7 @@ import {
   Delete,
   ParseIntPipe,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { Response as ResType } from 'express';
 import { ResultService } from './result.service';
@@ -18,8 +19,13 @@ import {
   CreateStatusResultDto,
   UpdateStatusResultDto,
 } from './dto/status-result.dto';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
+import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
+import { RoleDecorator } from 'security/decorators/roles.decorator';
+import { UserRole } from 'src/common/enums/users-roles.enum';
 
 @Controller('result')
+@UseGuards(JwtAuthGuard)
 export class ResultController {
   constructor(private readonly resultService: ResultService) {}
 
@@ -39,6 +45,8 @@ export class ResultController {
   }
 
   @Patch(':userId')
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
   updateResult(
     @Param('userId') userId: string,
     @Body() updateResultDto: UpdateResultDto,
@@ -47,6 +55,8 @@ export class ResultController {
   }
 
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.Admin)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.resultService.remove(id);
   }
