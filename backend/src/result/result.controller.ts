@@ -29,19 +29,22 @@ import { UserRole } from 'src/common/enums/users-roles.enum';
 export class ResultController {
   constructor(private readonly resultService: ResultService) {}
 
-  @Post()
-  create(@Body() createResultDto: CreateResultDto) {
-    return this.resultService.create(createResultDto);
+  @Post(':userId')
+  create(@Param('userId') userId: string) {
+    return this.resultService.createResult(userId);
   }
 
   @Get()
-  findAll() {
-    return this.resultService.findAll();
+  findAll(@Res() res: ResType) {
+    return this.resultService.findAll(res);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.resultService.findOne(+id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: ResType
+  ) {
+    return this.resultService.findOne(id, res);
   }
 
   @Patch(':userId')
@@ -68,7 +71,7 @@ export class StatusResultController {
 
   @Get()
   async findAll(@Res() res: ResType): Promise<void> {
-    await this.resultService.findAllResults(res);
+    await this.resultService.findAll(res);
   }
 
   @Get(':userId')
@@ -76,7 +79,14 @@ export class StatusResultController {
     @Param('userId') userId: string,
     @Res() res: ResType,
   ): Promise<void> {
-    await this.resultService.findOneResults(userId, res);
+    // Since there's no findOneResults, let's adapt to use the existing methods
+    // You may need to modify this based on your actual requirements
+    const userIdNumber = parseInt(userId, 10);
+    if (!isNaN(userIdNumber)) {
+      await this.resultService.findOne(userIdNumber, res);
+    } else {
+      res.status(400).json({ message: `Invalid userId: ${userId}` });
+    }
   }
 
   @Patch(':userId')

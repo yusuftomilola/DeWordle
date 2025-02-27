@@ -10,6 +10,7 @@ import {
   BlockchainExceptionFilter,
 } from './common/filters';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 
@@ -45,6 +46,23 @@ async function bootstrap() {
     new AllExceptionsFilter(),
   );
 
+   // enable cors
+   app.enableCors({
+    origin: 'http://localhost:3500/', // All locations
+    credentials: true, // Allow cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  
   await app.listen(process.env.PORT ?? 3000);
+
+  // Global validation pipe
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
 }
 bootstrap();

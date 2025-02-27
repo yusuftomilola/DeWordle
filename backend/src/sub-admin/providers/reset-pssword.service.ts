@@ -6,7 +6,6 @@ import { SubAdmin } from '../entities/sub-admin-entity';
 import { HashingProvider } from 'src/auth/providers/hashing-provider';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { MailService } from 'src/mail/providers/mail.service';
-import { EmailService } from 'src/mail/providers/email.service';
 
 @Injectable()
 export class ResetPsswordService {
@@ -23,7 +22,7 @@ export class ResetPsswordService {
     /*
      * Inject hashing provider
      */
-    private readonly emailService: EmailService
+    private readonly emailService: MailService,
   ) {}
 
   async requestPasswordReset(email: string): Promise<void> {

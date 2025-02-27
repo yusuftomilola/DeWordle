@@ -17,13 +17,18 @@ import { Admin } from './admin/entities/admin.entity';
 import envConfiguration from 'config/envConfiguration';
 import { validate } from '../config/env.validation';
 import { GuestModule } from './guest/guest.module';
+import { GuestController } from './guest/guest.controller';
+import { GamemodeModule } from './gamemode/gamemode.module';
+import { GuestUserModule } from './guest/guest.module';
+import { GuestFeaturesModule } from './guest-features/guest-features.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import { GuestGuard } from './guest/guest.guard';
+import { GuestUserGuard } from './guest/guest.guard';
 import { RedisService } from './guest/provider/redis.service';
 import { GuestUserController } from './guest/guest.controller';
-import { GuestUserService } from './guest/provider/guest.service';
+import { GuestUserService } from './guest/guest.service';
 import { MailModule } from './mail/mail.module';
+
 
 @Module({
   imports: [
@@ -57,9 +62,12 @@ import { MailModule } from './mail/mail.module';
     ResultModule,
     SubAdminModule,
     GuestModule,
+    GamemodeModule,
+    GuestUserModule,
+    GuestFeaturesModule,
     MailModule,
   ],
   controllers: [AppController, GuestUserController],
-  providers: [AppService, GuestGuard, RedisService, GuestUserService],
+  providers: [AppService, GuestUserGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally
 })
 export class AppModule {}
