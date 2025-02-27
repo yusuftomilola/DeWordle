@@ -1,6 +1,14 @@
-import { ReactNode } from "react";
+import Navbar from "../../components/Navbar";
+import { AppProvider } from "../../context/AppContext";
 
 const Layout = ({ children }) => {
-  return <main>{children}</main>;
+  return (
+    <main>
+      <AppProvider>
+        <Navbar />
+        {children}
+      </AppProvider>
+    </main>
+  );
 };
 export default Layout;

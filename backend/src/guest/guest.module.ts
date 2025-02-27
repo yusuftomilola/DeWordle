@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
-import { GuestController } from './guest.controller';
-import { GuestService } from './guest.service';
-import { GuestGuard } from './guest.guard';
+import { CacheModule } from '@nestjs/cache-manager';
+import { GuestUserController } from './guest.controller';
+import { GuestUserService } from './guest.service';
+import { GuestUserGuard } from './guest.guard';
+import { RedisService } from './provider/redis.service';
 
 @Module({
-  controllers: [GuestController],
-  providers: [GuestService, GuestGuard],
-  exports: [GuestService, GuestGuard],
+  imports: [
+    CacheModule.register(), // Enable cache
+  ],
+  providers: [GuestUserService, GuestUserGuard, RedisService],
+  controllers: [GuestUserController],
 })
-export class GuestModule {}
+export class GuestUserModule {}

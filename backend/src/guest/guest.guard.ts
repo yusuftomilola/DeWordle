@@ -5,13 +5,13 @@ import {
   UnauthorizedException,
   ForbiddenException,
 } from '@nestjs/common';
-import { GuestService } from './guest.service';
+import { GuestUserService } from './guest.service';
 
 @Injectable()
-export class GuestGuard implements CanActivate {
-  constructor(private readonly guestService: GuestService) {}
+export class GuestUserGuard implements CanActivate {
+  constructor(private readonly guestService: GuestUserService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const guestId = this.extractGuestId(request);
 
@@ -19,7 +19,7 @@ export class GuestGuard implements CanActivate {
       throw new UnauthorizedException('Guest ID is missing');
     }
 
-    const isValid = this.guestService.validateGuest(guestId);
+    const isValid = await this.guestService.validateGuestUser(guestId);
 
     if (!isValid) {
       throw new ForbiddenException('Guest session has expired');
@@ -31,18 +31,18 @@ export class GuestGuard implements CanActivate {
   }
 
   private extractGuestId(request: any): string | null {
-    // extract from Authorization header
+    // Try to extract from Authorization header
     const authHeader = request.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    if (authHeader && authHeader.startsWith('Guest ')) {
       return authHeader.split(' ')[1];
     }
 
-    // extract from query parameter
+    // Try to extract from query parameter
     if (request.query && request.query.guestId) {
       return request.query.guestId;
     }
 
-    // extract from request body
+    // Try to extract from request body
     if (request.body && request.body.guestId) {
       return request.body.guestId;
     }

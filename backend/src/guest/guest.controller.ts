@@ -1,13 +1,19 @@
-import { Controller, Post, UnauthorizedException, Param } from '@nestjs/common';
-import { GuestService } from './guest.service';
+import {
+  Controller,
+  Post,
+  UnauthorizedException,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { GuestUserService } from './guest.service';
 
-@Controller('guest')
-export class GuestController {
-  constructor(private readonly guestService: GuestService) {}
+@Controller('guest-user')
+export class GuestUserController {
+  constructor(private readonly guestUserService: GuestUserService) {}
 
   @Post()
-  createGuestSession() {
-    const guestSession = this.guestService.createGuest();
+  async createGuestUserSession() {
+    const guestSession = await this.guestUserService.createGuestUser();
 
     return {
       guestId: guestSession.id,
@@ -17,8 +23,8 @@ export class GuestController {
   }
 
   @Post('validate/:guestId')
-  validateGuestSession(@Param('guestId') guestId: string) {
-    const isValid = this.guestService.validateGuest(guestId);
+  async validateGuestUserSession(@Param('guestId') guestId: string) {
+    const isValid = await this.guestUserService.validateGuestUser(guestId);
 
     if (!isValid) {
       throw new UnauthorizedException('Guest session is invalid or expired');
@@ -31,8 +37,9 @@ export class GuestController {
   }
 
   @Post('refresh/:guestId')
-  refreshGuestSession(@Param('guestId') guestId: string) {
-    const refreshedSession = this.guestService.refreshGuestSession(guestId);
+  async refreshGuestUserSession(@Param('guestId') guestId: string) {
+    const refreshedSession =
+      await this.guestUserService.refreshGuestUserSession(guestId);
 
     if (!refreshedSession) {
       throw new UnauthorizedException('Guest session cannot be refreshed');
@@ -42,6 +49,15 @@ export class GuestController {
       guestId: refreshedSession.id,
       expiresAt: refreshedSession.expiresAt,
       message: 'Guest session refreshed successfully',
+    };
+  }
+
+  @Delete(':guestId')
+  async deleteGuestUserSession(@Param('guestId') guestId: string) {
+    await this.guestUserService.deleteGuestUserSession(guestId);
+
+    return {
+      message: 'Guest session deleted successfully',
     };
   }
 }
