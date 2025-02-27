@@ -11,8 +11,12 @@ import { ConfigModule, ConfigService  } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from '../../security/jwt.strategy';
+import { JwtStrategy } from '../../security/strategies/jwt.strategy';
 import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
+import { GoogleAuthenticationController } from './social/google-authtication.controller';
+import { GoogleAuthenticationService } from './social/providers/google-authtication';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { MailModule } from '../mail/mail.module';
@@ -32,7 +36,7 @@ import { Token } from './entities/token.entity';
     TypeOrmModule.forFeature([User, Token]),
     MailModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleAuthenticationController],
   providers: [
     AuthService,
     JwtStrategy,
@@ -40,9 +44,15 @@ import { Token } from './entities/token.entity';
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
+    // globalizing auth guards
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     SignInProvider,
     GenerateTokenProvider,
     RefreshTokenProvider,
+    GoogleAuthenticationService
   ],
   exports: [
     AuthService,

@@ -9,4 +9,6 @@ export default registerAs('jwt', () => ({
     process.env.JWT_REFRESH_TOKEN_TTL ?? '7776000',
     10,
   ),
+  googleClient_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+  googleClient_secret: process.env.GOOGLE_OAUTH_CLEINT_SECRET,
 }));

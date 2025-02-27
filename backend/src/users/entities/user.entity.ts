@@ -54,6 +54,9 @@ export class User {
   })
   results: Result[];
 
+  @Column('varchar', { length: 225, nullable: true })
+  googleId?: string
+
   @CreateDateColumn()
   createdAt: Date;
 

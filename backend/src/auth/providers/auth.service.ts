@@ -21,7 +21,7 @@ export class AuthService {
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
-
+    private readonly jwtService: JwtService,
     private readonly signInProvider: SignInProvider,
     private readonly refreshTokenProvider: RefreshTokenProvider,
     

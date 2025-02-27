@@ -12,6 +12,9 @@ import { Repository } from 'typeorm';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
 import { TokenType } from '../auth/enums/token-type.enum'; // Added missing import
 import { MailService } from 'src/mail/providers/mail.service';
+import { FindOneByGoogleIdProvider } from './providers/find-one-by-google-id-provider';
+import { CreateGoogleUserProvider } from './providers/create-google-user-provider';
+import { GoogleInterface } from 'src/auth/social/interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +22,10 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>, // Added generic type parameter
     private readonly findOneByEmailProvider: FindOneByEmailProvider,
+
+    private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
+
+    private readonly createGoogleUserProvider: CreateGoogleUserProvider,
     private readonly createUserProvider: CreateUsersProvider,
     private readonly mailService: MailService, 
     // @Inject(forwardRef(() => AuthService))
@@ -81,7 +88,14 @@ export class UsersService {
     return await this.userRepository.findOneBy({ id });
   }
 
-  // Commented out as in original code
+  public async findOneByGoogleId(googleId: string) {
+    return this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+  }
+
+  public async createGoogleUser(googleUser: GoogleInterface) {
+    return this.createGoogleUserProvider.createGoogleUser(googleUser);
+  }
+
   // update(id: number, updateUserDto: UpdateUserDto) {
   //   return `This action updates a #${id} user`;
   // }
