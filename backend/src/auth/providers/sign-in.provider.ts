@@ -47,6 +47,10 @@ export class SignInProvider {
       throw new UnauthorizedException('No account found with this email');
     }
     
+    // Check if email is verified
+    if (!user.isVerified) {
+      throw new UnauthorizedException('Please verify your email before logging in');
+    }
 
     // compare the password to the hash
     let isEqual: boolean = false;

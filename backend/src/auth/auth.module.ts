@@ -3,16 +3,21 @@ import { AuthService } from './providers/auth.service';
 import { AuthController } from './auth.controller';
 import { HashingProvider } from './providers/hashing-provider';
 import { BcryptProvider } from './providers/bcrypt-provider';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { SignInProvider } from './providers/sign-in.provider';
 import { GenerateTokenProvider } from './providers/generate-token.provider';
 import jwtConfig from 'config/jwt.config';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService  } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../security/jwt.strategy';
 import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
+import { MailModule } from '../mail/mail.module';
+import { Token } from './entities/token.entity';
+
 
 @Module({
   imports: [
@@ -24,6 +29,8 @@ import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
       secret: process.env.JWT_SECRET || 'yourSecretKey',
       signOptions: { expiresIn: '1h' },
     }),
+    TypeOrmModule.forFeature([User, Token]),
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [
