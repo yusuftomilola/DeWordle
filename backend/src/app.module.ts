@@ -39,7 +39,7 @@ import { MailModule } from './mail/mail.module';
       username: process.env.DB_USERNAME,
       password: String(process.env.DB_PASSWORD),
       database: process.env.DB_NAME,
-      autoLoadEntities: true, // Automatically loads entities from entities folder
+      autoLoadEntities: true,
       entities: [User, Result, Leaderboard, Admin, SubAdmin],
       migrations: ['src/migrations/*.ts'],
       synchronize: true,
@@ -60,6 +60,6 @@ import { MailModule } from './mail/mail.module';
     MailModule,
   ],
   controllers: [AppController, GuestUserController],
-  providers: [AppService, GuestGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally
+  providers: [AppService, GuestGuard, RedisService, GuestUserService],
 })
 export class AppModule {}
