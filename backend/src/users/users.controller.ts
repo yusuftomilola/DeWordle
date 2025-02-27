@@ -5,66 +5,44 @@ import {
   Body,
   Param,
   Delete,
-  ClassSerializerInterceptor,
-  UseInterceptors,
-  Query,
-  ParseIntPipe,
-  NotFoundException,
   Patch,
-  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-
-@Controller('/api/v1/users')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @UseInterceptors(ClassSerializerInterceptor)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  // GET /users?limit=10&page=1
   @Get()
-  async findAll(
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('limit', ParseIntPipe) limit: number = 10,
-  ) {
-    return this.usersService.findAll(page, limit);
-  }
-
-  // DELETE /users/:id
-  @Delete(':id')
-  async softDelete(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.softDelete(id);
+  findAll(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.usersService.findAll(Number(page), Number(limit));
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOneById(+id);
+    return this.usersService.findOneById(Number(id));
+  }
+
+  @Get('email/:email')
+  findByEmail(@Param('email') email: string) {
+    return this.usersService.GetOneByEmail(email);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(Number(id), updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
-
-  /**Patch endpoint */
-  @Patch(':id')
-  public async updateUser(
-    @Body() updateUserDto: UpdateUserDto,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    const user = await this.usersService.updateUser(id, updateUserDto);
-
-    /**if user does not exist */
-    if (!user) {
-      throw new NotFoundException('No user was found');
-    }
-    return user;
+    return this.usersService.remove(Number(id));
   }
 }

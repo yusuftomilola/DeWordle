@@ -4,10 +4,8 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { CreateUsersProvider } from './providers/create-users-provider';
 import { Repository } from 'typeorm';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,107 +16,117 @@ import { GoogleInterface } from 'src/auth/social/interfaces/user.interface';
 @Injectable()
 export class UsersService {
   constructor(
-    /*
-     * inject create user provider
-     */
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
     private readonly findOneByEmailProvider: FindOneByEmailProvider,
-
     private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
-
     private readonly createGoogleUserProvider: CreateGoogleUserProvider,
-
-    private readonly createUserProvider: CreateUsersProvider,
-
-    // @Inject(forwardRef(() => AuthService))
-    // private readonly authService: AuthService,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.createUserProvider.createUser(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('User with this email already exists');
+    }
+
+    const user = this.userRepository.create(createUserDto);
+    return this.userRepository.save(user);
   }
 
   public async GetOneByEmail(email: string) {
-    return await this.findOneByEmailProvider.FindByEmail(email);
+    const user = await this.findOneByEmailProvider.FindByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
-  // Find all users with pagination
   async findAll(page: number, limit: number) {
-    const [users, total] = await this.userRepository.findAndCount({
+    const [users, count] = await this.userRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { id: 'ASC' },
     });
 
-    return {
-      total,
-      page,
-      limit,
-      data: users,
-    };
-  }
-
-  // Soft delete a user by ID
-  async softDelete(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
-
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+    if (users.length === 0) {
+      throw new NotFoundException('No users found');
     }
 
-    await this.userRepository.softDelete(id);
-    return { message: `User with ID ${id} has been deleted.` };
+    return { users, count };
   }
 
-  public async findOneById(id: number): Promise<User | null> {
-    return await this.userRepository.findOneBy({ id });
+  async softDelete(id: number) {
+    const result = await this.userRepository.softDelete(id);
+
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
+
+    return { message: 'User soft deleted successfully' };
+  }
+
+  public async findOneById(id: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   public async findOneByGoogleId(googleId: string) {
-    return this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+    const user =
+      await this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+
+    if (!user) {
+      throw new NotFoundException('Google user not found');
+    }
+
+    return user;
   }
 
   public async createGoogleUser(googleUser: GoogleInterface) {
     return this.createGoogleUserProvider.createGoogleUser(googleUser);
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async remove(id: number) {
+    const result = await this.userRepository.delete(id);
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    if (!result.affected) {
+      throw new NotFoundException('User not found');
+    }
+
+    return { message: 'User deleted successfully' };
   }
 
   public async updateUser(
     id: number,
     updateUserDto: UpdateUserDto,
-  ): Promise<User | null> {
+  ): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
+
     if (!user) {
-      return null;
+      throw new NotFoundException('User not found');
     }
 
-    // Check if email is unique before updating
     if (updateUserDto.email) {
       const existingUser = await this.userRepository.findOne({
         where: { email: updateUserDto.email },
       });
+
       if (existingUser && existingUser.id !== id) {
-        throw new BadRequestException('Please check your email id');
+        throw new BadRequestException('Email already in use');
       }
     }
 
-    // Ensure only specified fields are updated, excluding id
-    const allowedUpdates = ['name', 'email'];
-    for (const key of Object.keys(updateUserDto)) {
-      if (allowedUpdates.includes(key)) {
-        (user as any)[key] = (updateUserDto as any)[key];
-      }
-    }
-
+    Object.assign(user, updateUserDto);
     return this.userRepository.save(user);
   }
 }

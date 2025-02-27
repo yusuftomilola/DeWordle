@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Injectable,
+  UseFilters,
   UnauthorizedException,
   BadRequestException,
   NotFoundException,
@@ -10,8 +11,10 @@ import { AdminService } from './admin.service';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { HashingProvider } from './hashing-services';
+import { AllExceptionsFilter, AuthExceptionFilter } from 'src/common/filters';
 
 @Injectable()
+@UseFilters(AuthExceptionFilter, AllExceptionsFilter)
 export class AdminAuthService {
   constructor(
     private readonly adminService: AdminService,
