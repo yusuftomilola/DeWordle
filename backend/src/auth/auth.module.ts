@@ -13,6 +13,8 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../security/strategies/jwt.strategy';
 import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
+import { GoogleAuthenticationController } from './social/google-authtication.controller';
+import { GoogleAuthenticationService } from './social/providers/google-authtication';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleAuthenticationController],
   providers: [
     AuthService,
     JwtStrategy,
@@ -36,6 +38,7 @@ import { SubAdminModule } from 'src/sub-admin/sub-admin.module';
     SignInProvider,
     GenerateTokenProvider,
     RefreshTokenProvider,
+    GoogleAuthenticationService
   ],
   exports: [
     AuthService,
