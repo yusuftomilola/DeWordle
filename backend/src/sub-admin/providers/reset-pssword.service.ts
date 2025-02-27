@@ -11,7 +11,6 @@ import * as crypto from 'crypto';
 import { SubAdmin } from '../entities/sub-admin-entity';
 import { HashingProvider } from 'src/auth/providers/hashing-provider';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
-import { MailService } from 'src/mail/providers/mail.service';
 import { EmailService } from 'src/mail/providers/email.service';
 
 @Injectable()
