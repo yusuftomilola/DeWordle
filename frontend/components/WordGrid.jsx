@@ -1,30 +1,9 @@
 "use client";
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 
 function WordGrid() {
-  const { gridData, setGridData } = useContext(AppContext);
-  const colors = [
-    "#939B9F", // Gray
-    "#CEB02C", // Yellow
-    "#66A060", // Green
-  ];
-
-  useEffect(() => {
-    let updated = false;
-    const newGridData = gridData.map((cell, index) => {
-      if (cell.char && !cell.color) {
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        updated = true;
-        return { ...cell, color: randomColor };
-      }
-      return cell;
-    });
-
-    if (updated) {
-      setGridData(newGridData);
-    }
-  }, [gridData, setGridData, colors]);
+  const { gridData } = useContext(AppContext);
 
   return (
     <div className="mt-5">
@@ -34,9 +13,9 @@ function WordGrid() {
             key={index}
             className="w-[74px] h-[74px] rounded-[4px] flex items-center justify-center text-2xl font-semibold shadow-md transition-all duration-300 ease-in-out"
             style={{
-              backgroundColor: cell.color || "#ffffff", // Use assigned color or default to white
+              backgroundColor: "#ffffff",
               border: "1px solid #777777",
-              animation: cell.char ? "fadeIn 0.5s ease-in-out" : "none", // Apply animation
+              animation: cell.char ? "fadeIn 0.5s ease-in-out" : "none",
             }}
           >
             {cell.char}
