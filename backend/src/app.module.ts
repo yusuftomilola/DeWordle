@@ -16,13 +16,14 @@ import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 import { Admin } from './admin/entities/admin.entity';
 import envConfiguration from 'config/envConfiguration';
 import { validate } from '../config/env.validation';
-import { GuestModule } from './guest/guest.module';
+import { GuestUserModule } from './guest/guest.module';
+import { GuestFeaturesModule } from './guest-features/guest-features.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import { GuestGuard } from './guest/guest.guard';
+import { GuestUserGuard } from './guest/guest.guard';
 import { RedisService } from './guest/provider/redis.service';
 import { GuestUserController } from './guest/guest.controller';
-import { GuestUserService } from './guest/provider/guest.service';
+import { GuestUserService } from './guest/guest.service';
 import { MailModule } from './mail/mail.module';
 
 @Module({
@@ -39,7 +40,7 @@ import { MailModule } from './mail/mail.module';
       username: process.env.DB_USERNAME,
       password: String(process.env.DB_PASSWORD),
       database: process.env.DB_NAME,
-      autoLoadEntities: true, // Automatically loads entities from entities folder
+      autoLoadEntities: true,
       entities: [User, Result, Leaderboard, Admin, SubAdmin],
       migrations: ['src/migrations/*.ts'],
       synchronize: true,
@@ -56,10 +57,11 @@ import { MailModule } from './mail/mail.module';
     AdminModule,
     ResultModule,
     SubAdminModule,
-    GuestModule,
+    GuestUserModule,
+    GuestFeaturesModule,
     MailModule,
   ],
   controllers: [AppController, GuestUserController],
-  providers: [AppService, GuestGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally
+  providers: [AppService, GuestUserGuard, RedisService, GuestUserService], // Provide RedisService & GuestGuard globally
 })
 export class AppModule {}

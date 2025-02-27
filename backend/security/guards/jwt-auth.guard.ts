@@ -26,9 +26,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err, user) {
+  handleRequest<TUser = any>(
+    err: any,
+    user: TUser,
+    info: any,
+    context: ExecutionContext,
+    status?: any,
+  ): TUser {
+    console.log('Extracted User:', user); 
     if (err || !user) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('you dont have any access ');
     }
     return user;
   }

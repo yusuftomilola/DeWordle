@@ -11,6 +11,9 @@ import { CreateUsersProvider } from './providers/create-users-provider';
 import { Repository } from 'typeorm';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FindOneByGoogleIdProvider } from './providers/find-one-by-google-id-provider';
+import { CreateGoogleUserProvider } from './providers/create-google-user-provider';
+import { GoogleInterface } from 'src/auth/social/interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +25,10 @@ export class UsersService {
     private userRepository: Repository<User>,
 
     private readonly findOneByEmailProvider: FindOneByEmailProvider,
+
+    private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
+
+    private readonly createGoogleUserProvider: CreateGoogleUserProvider,
 
     private readonly createUserProvider: CreateUsersProvider,
 
@@ -67,6 +74,14 @@ export class UsersService {
 
   public async findOneById(id: number): Promise<User | null> {
     return await this.userRepository.findOneBy({ id });
+  }
+
+  public async findOneByGoogleId(googleId: string) {
+    return this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+  }
+
+  public async createGoogleUser(googleUser: GoogleInterface) {
+    return this.createGoogleUserProvider.createGoogleUser(googleUser);
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {
