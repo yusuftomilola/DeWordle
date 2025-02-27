@@ -11,5 +11,6 @@ import { RedisService } from './provider/redis.service';
   ],
   providers: [GuestUserService, GuestUserGuard, RedisService],
   controllers: [GuestUserController],
+  exports: [GuestUserService, GuestUserGuard],
 })
 export class GuestUserModule {}
