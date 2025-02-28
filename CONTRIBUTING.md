@@ -30,6 +30,24 @@ DeWordle is a decentralized, blockchain-based word-guessing game built on the St
 
 How to Contribute🤝
 
+## Pull Request Template
+
+To ensure consistency and improve the review process, we've implemented a PR template. When creating a pull request, please:
+
+1. Follow the PR template that automatically loads when you create a new PR.
+
+2. Fill out all relevant sections of the template.
+
+3. Ensure your PR description clearly communicates the changes you've made.
+
+4. Include screenshots or recordings when applicable.
+
+5. Link to any related issues using keywords like "Closes #123" or "Fixes #123"
+
+The template location is at [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) and provides a structured format to help maintainers understand and review your contribution more efficiently.
+
+## Steps to apply
+
 1. Apply for an Issue
    -Look for an open issue and comment expressing your interest in working on it.
    -Wait for the maintainer to assign the issue to you.
