@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import {
   AllExceptionsFilter,
   ValidationExceptionFilter,
@@ -16,6 +17,18 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Swagger configuration (from feature/swagger-documentation)
+  const config = new DocumentBuilder()
+    .setTitle('Dewordle API')
+    .setDescription('API documentation for Dewordle platform')
+    .setVersion('1.0')
+    .addBearerAuth() // Enable JWT authentication in Swagger
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
+  // Global validation pipe (from main)
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -36,6 +49,7 @@ async function bootstrap() {
     }),
   );
 
+  // Global filters (from main)
   app.useGlobalFilters(
     new ValidationExceptionFilter(),
     new AuthExceptionFilter(),
@@ -45,23 +59,14 @@ async function bootstrap() {
     new AllExceptionsFilter(),
   );
 
-   // enable cors
-   app.enableCors({
+  // Enable CORS (from main)
+  app.enableCors({
     origin: 'http://localhost:3500/', // All locations
     credentials: true, // Allow cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
-  
-  await app.listen(process.env.PORT ?? 3000);
 
-  // Global validation pipe
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
