@@ -19,8 +19,9 @@ import {
 import { AdminService } from './providers/admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
-import { RolesGuard } from 'security/roles.guard';
-import { JwtAuthGuard } from 'security/jwt-auth.guard';
+import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('Admin')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
@@ -40,6 +41,7 @@ export class AdminController {
     return await this.adminService.createAdmin(createAdminDto);
   }
 
+  @Auth(true)   //testing the Auth decorator
   @Get()
   @ApiOperation({ summary: 'Get all admins' })
   @ApiResponse({ status: 200, description: 'List of all admins' })

@@ -7,6 +7,7 @@ import {
   UseGuards,
   Get,
   Put,
+  UseFilters,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -16,18 +17,33 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../security/jwt-auth.guard';
-import { RolesGuard } from '../../security/roles.guard';
+import { JwtAuthGuard } from '../../security/guards/jwt-auth.guard';
+import { RolesGuard } from '../../security/guards/rolesGuard/roles.guard';
 import { CreateSubAdminDto } from './dto/create-sub-admin.dto';
 import { UpdateSubAdminDto } from './dto/update-sub-admin.dto';
 import { SubAdminService } from './sub-admin.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import {
+  AllExceptionsFilter,
+  AuthExceptionFilter,
+  DatabaseExceptionFilter,
+  ValidationExceptionFilter,
+} from 'src/common/filters';
+import { RoleDecorator } from 'security/decorators/roles.decorator';
+import { UserRole } from 'src/common/enums/users-roles.enum';
 
 @ApiTags('SubAdmin')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
 @Controller('/api/v1/sub-admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@RoleDecorator(UserRole.Admin)
+@UseFilters(
+  AllExceptionsFilter,
+  AuthExceptionFilter,
+  DatabaseExceptionFilter,
+  ValidationExceptionFilter,
+)
 export class SubAdminController {
   constructor(private readonly subAdminService: SubAdminService) {}
 
@@ -161,6 +177,7 @@ export class SubAdminController {
     description: 'Invalid input data',
   })
   @ApiBody({ type: ForgotPasswordDto })
+  @UseFilters(ValidationExceptionFilter) // Applies only to this method
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     await this.subAdminService.requestPasswordReset(forgotPasswordDto.email);
     return {
@@ -185,6 +202,7 @@ export class SubAdminController {
     description: 'Invalid or expired token',
   })
   @ApiBody({ type: ResetPasswordDto })
+  @UseFilters(ValidationExceptionFilter)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     await this.subAdminService.resetPassword(resetPasswordDto);
     return {

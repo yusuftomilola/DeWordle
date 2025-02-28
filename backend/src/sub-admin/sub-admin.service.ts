@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, RequestTimeoutException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -18,7 +22,7 @@ export class SubAdminService {
     // inject mailService
     private readonly mailService: MailService,
 
-    private readonly resetPasswordReset: ResetPsswordService
+    private readonly resetPasswordReset: ResetPsswordService,
   ) {}
 
   async create(dto: CreateSubAdminDto): Promise<Partial<SubAdmin>> {
@@ -28,14 +32,14 @@ export class SubAdminService {
       ...dto,
       password: hashedPassword,
     });
-    
+
     const savedSubAdmin = await this.subAdminRepository.save(newSubAdmin);
-    
+
     try {
-      await this.mailService.welcomeEmail(newSubAdmin)
-  } catch (error) {
-      throw new RequestTimeoutException(error)
-  }
+      await this.mailService.welcomeEmail(newSubAdmin);
+    } catch (error) {
+      throw new RequestTimeoutException(error);
+    }
 
     return {
       id: savedSubAdmin.id,
@@ -104,11 +108,11 @@ export class SubAdminService {
     return { message: 'Sub-admin deleted successfully' };
   }
 
-  public async requestPasswordReset(email: string)  {
-    return this.resetPasswordReset.requestPasswordReset(email)
-  };
+  public async requestPasswordReset(email: string) {
+    return this.resetPasswordReset.requestPasswordReset(email);
+  }
 
-  public async resetPassword(resetPasswordDto: ResetPasswordDto)  {
-    return this.resetPasswordReset.resetPassword(resetPasswordDto)
-  };
+  public async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    return this.resetPasswordReset.resetPassword(resetPasswordDto);
+  }
 }

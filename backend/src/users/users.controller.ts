@@ -5,12 +5,12 @@ import {
   Body,
   Param,
   Delete,
-  ClassSerializerInterceptor,
-  UseInterceptors,
-  Query,
-  ParseIntPipe,
-  NotFoundException,
   Patch,
+  Query,
+  ClassSerializerInterceptor,
+  ParseIntPipe,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -24,10 +24,15 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
+import { UserRole } from 'src/common/enums/users-roles.enum';
+import { RoleDecorator } from 'security/decorators/roles.decorator';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
 @ApiTags('Users')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
 @Controller('/api/v1/users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -51,6 +56,8 @@ export class UsersController {
     description: 'Forbidden',
   })
   @ApiBody({ type: CreateUserDto })
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.User, UserRole.Admin)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
@@ -81,6 +88,8 @@ export class UsersController {
     example: 10,
     required: false,
   })
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('limit', ParseIntPipe) limit: number = 10,
@@ -107,8 +116,10 @@ export class UsersController {
     description: 'Forbidden',
   })
   @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
   findOne(@Param('id') id: string) {
-    return this.usersService.findOneById(+id);
+    return this.usersService.findOneById(Number(id));
   }
 
   @Delete(':id')
@@ -130,6 +141,8 @@ export class UsersController {
     description: 'Forbidden',
   })
   @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.User, UserRole.Admin, UserRole.SubAdmin)
   async softDelete(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.softDelete(id);
   }
@@ -158,15 +171,13 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
   @ApiBody({ type: UpdateUserDto })
+  @UseGuards(RolesGuard)
+  @RoleDecorator(UserRole.Admin, UserRole.SubAdmin, UserRole.User)
   public async updateUser(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id', ParseIntPipe) id: number,
   ) {
     const user = await this.usersService.updateUser(id, updateUserDto);
-
-    if (!user) {
-      throw new NotFoundException('No user was found');
-    }
     return user;
   }
 }
