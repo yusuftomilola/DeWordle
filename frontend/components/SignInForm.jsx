@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import { Formik, Form, Field } from 'formik';
 import { signInSchema } from '../utils/authValidationSchema';
-import { handleGoogleSignIn } from '@/utils/auth-actions';
-import { signIn } from '@/auth';
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);

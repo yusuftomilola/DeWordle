@@ -1,7 +1,64 @@
+'use client';
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
+import { Formik, Form, Field } from 'formik';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
+import * as Yup from 'yup';
+import { signUpSchema } from '../utils/authValidationSchema';
 
-export default function SignUpForm() {
+const SignUpForm = () => {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const SignUpSchema = Yup.object().shape({
+    userName: Yup.string()
+      .min(2, 'Username must be at least 2 characters')
+      .max(50, 'Username must be less than 50 characters')
+      .required('Username is required'),
+    email: Yup.string()
+      .email('Invalid email address')
+      .required('Email is required'),
+    password: Yup.string()
+      .min(8, 'Password must be at least 8 characters')
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+      )
+      .required('Password is required'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
+    terms: Yup.boolean()
+      .oneOf([true], 'You must accept the terms and conditions')
+      .required('You must accept the terms and conditions'),
+  });
+
+  const initialValues = {
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    terms: false,
+  };
+
+  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      console.log('Form submitted with values:', values);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      router.push('/');
+    } catch (error) {
+      console.error('Submission error:', error);
+      setStatus({ error: 'Something went wrong. Please try again.' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-6xl w-full mx-auto flex flex-col lg:flex-row items-center justify-between">
@@ -200,20 +257,18 @@ export default function SignUpForm() {
           </p>
         </div>
 
-        <button className="w-full flex items-center justify-center p-3 rounded-full bg-[#F2F2F4] mb-2 text-black font-semibold text-sm sm:text-base">
-          <FcGoogle className="mr-2" /> Continue with Google
-        </button>
-        <button className="w-full flex items-center justify-center p-3 rounded-full bg-[#F2F2F4] text-black font-semibold text-sm sm:text-base">
-          <FaApple className="mr-2 text-black" /> Continue with Apple
-        </button>
-
-        <p className="text-center text-gray-600 mt-4 text-sm sm:text-base">
-          Already have an account?{' '}
-          <a href="/signin" className="text-indigo-600">
-            Log In
-          </a>
-        </p>
+        <div className="hidden lg:block w-1/2 pl-12">
+          <div className="w-full h-96 flex items-center justify-center">
+            <img
+              src="/illustration.svg"
+              alt="Sign up illustration"
+              className="max-w-full h-auto"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default SignUpForm;
