@@ -29,6 +29,8 @@ import { MailModule } from './mail/mail.module';
 import { createClient } from 'redis';
 import { PaginationModule } from './common/pagination/pagination-controller.controller'; // Your change
 import { DictionaryModule } from './dictionary/dictionary.module';
+import { RetentionMetricsModule } from './retention-metrics/retention-metrics.module';
+import { RetentionMetricsModule } from './retention-metrics/retention-metrics.module';
 
 
 @Module({
@@ -85,6 +87,7 @@ import { DictionaryModule } from './dictionary/dictionary.module';
     GuestUserModule,
     GuestFeaturesModule,
     MailModule,
+    RetentionMetricsModule,
     // DictionaryModule,
   ],
   controllers: [AppController, GuestUserController],
