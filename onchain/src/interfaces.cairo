@@ -4,12 +4,15 @@ use starknet::ContractAddress;
 #[starknet::interface]
 pub trait IDeWordle<TContractState> {
     fn set_daily_word(ref self: TContractState, word: ByteArray);
-    fn get_daily_word(self: @TContractState) -> ByteArray;
+    fn get_daily_word(self: @TContractState) -> felt252;
+    fn get_daily_letters(self: @TContractState) -> Array<felt252>;
 
     fn get_player_daily_stat(self: @TContractState, player: ContractAddress) -> DailyPlayerStat;
     fn play(ref self: TContractState);
 
     fn submit_guess(ref self: TContractState, guessed_word: ByteArray) -> Option<Span<LetterState>>;
+    fn update_end_of_day(ref self: TContractState);
+    fn get_end_of_day_timestamp(self: @TContractState) -> u64;
 }
 
 #[derive(Drop, Serde, starknet::Store)]

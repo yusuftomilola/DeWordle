@@ -1,32 +1,52 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
-import { RedisService } from './provider/redis.service';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { GuestUserService } from './guest.service';
 
 @Injectable()
-export class GuestGuard implements CanActivate {
-  constructor(private readonly redisService: RedisService) {}
+export class GuestUserGuard implements CanActivate {
+  constructor(private readonly guestService: GuestUserService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const headers = request.headers;
+    const guestId = this.extractGuestId(request);
 
-    // 1️⃣ Allow authenticated users (with JWT)
-    if (headers.authorization) {
-      return true; 
-    }
-
-    // 2️⃣ Check if 'guest-id' exists in request headers
-    const guestId = headers['guest-id'];
     if (!guestId) {
-      throw new UnauthorizedException('Guest ID is required');
+      throw new UnauthorizedException('Guest ID is missing');
     }
 
-    // 3️⃣ Check if session exists in Redis (valid or expired)
-    const session = await this.redisService.getGuestSession(guestId);
+    const isValid = await this.guestService.validateGuestUser(guestId);
 
-    if (!session) {
-      throw new ForbiddenException('Guest session expired or invalid');
+    if (!isValid) {
+      throw new ForbiddenException('Guest session has expired');
     }
 
-    return true; // Allow valid guest access
+    // Add guest ID to request for controllers to use
+    request.guestId = guestId;
+    return true;
+  }
+
+  private extractGuestId(request: any): string | null {
+    // Try to extract from Authorization header
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Guest ')) {
+      return authHeader.split(' ')[1];
+    }
+
+    // Try to extract from query parameter
+    if (request.query && request.query.guestId) {
+      return request.query.guestId;
+    }
+
+    // Try to extract from request body
+    if (request.body && request.body.guestId) {
+      return request.body.guestId;
+    }
+
+    return null;
   }
 }

@@ -1,7 +1,8 @@
 use dewordle::interfaces::{IDeWordleDispatcher, IDeWordleDispatcherTrait};
+use dewordle::utils::{hash_word, hash_letter};
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
-    stop_cheat_caller_address
+    stop_cheat_caller_address, cheat_block_timestamp, CheatSpan,
 };
 use starknet::ContractAddress;
 
@@ -31,7 +32,7 @@ fn test_set_daily_word() {
     dewordle.set_daily_word(daily_word.clone());
 
     // Verify that the daily word was set correctly
-    assert(dewordle.get_daily_word() == daily_word, 'Daily word not stored correctly');
+    assert(dewordle.get_daily_word() == hash_word(daily_word), 'Daily word not stored correctly');
 }
 
 #[test]
@@ -189,7 +190,7 @@ fn test_play_does_not_affect_other_storage() {
     dewordle.play();
 
     // Check that daily word is unchanged
-    assert(dewordle.get_daily_word() == "test", 'Daily word changed unexpectedly');
+    assert(dewordle.get_daily_word() == hash_word("test"), 'Daily word changed unexpectedly');
 
     stop_cheat_caller_address(contract_address);
 }
@@ -343,4 +344,53 @@ fn test_submit_guess_when_correct() {
     assert(
         new_daily_stat.won_at_attempt == 6 - daily_stat.attempt_remaining, 'Wrong won_at_attempt'
     );
+}
+
+#[test]
+fn test_get_daily_letters() {
+    let contract_address = deploy_contract();
+    let dewordle = IDeWordleDispatcher { contract_address };
+
+    start_cheat_caller_address(contract_address, OWNER());
+
+    // Define and set the daily word
+    let daily_word = "test";
+    dewordle.set_daily_word(daily_word.clone());
+
+    // Get the stored letters
+    let stored_letters = dewordle.get_daily_letters();
+    let word = array![
+        hash_letter('t'.into()),
+        hash_letter('e'.into()),
+        hash_letter('s'.into()),
+        hash_letter('t'.into())
+    ];
+
+    for i in 0..word.len() {
+        assert(stored_letters[i] == word[i], 'Mismatched letter hash');
+    };
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_update_end_of_day() {
+    let contract_address = deploy_contract();
+    let dewordle = IDeWordleDispatcher { contract_address };
+    start_cheat_caller_address(contract_address, OWNER());
+
+    // Get initial timestamp
+    let initial_timestamp = dewordle.get_end_of_day_timestamp();
+
+    // Fast forward time by one day
+    cheat_block_timestamp(
+        contract_address, starknet::get_block_timestamp() + 86400, CheatSpan::TargetCalls(1)
+    );
+    dewordle.update_end_of_day();
+
+    // Verify update
+    let updated_timestamp = dewordle.get_end_of_day_timestamp();
+    assert(updated_timestamp == initial_timestamp + 86400, 'timestamp not updated correctly');
+
+    stop_cheat_caller_address(contract_address);
 }
