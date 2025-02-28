@@ -1,3 +1,3 @@
-const { default: DailyChallenge } = require("@/components/DailyChallenge");
+import DailyChallenge from "../../../components/DailyChallenge"
 
 <DailyChallenge />
