@@ -1,12 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-
-    // appDir: true,
-
-    // Remove appDir as it's no longer needed in Next.js 13+
-
+  output: 'export',
+  images: {
+    unoptimized: true,
   },
-}
+  experimental: {},
+};
 
-export default nextConfig
+export default nextConfig;
