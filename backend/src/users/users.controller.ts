@@ -7,18 +7,21 @@ import {
   Delete,
   Patch,
   Query,
+  ClassSerializerInterceptor,
+  ParseIntPipe,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
-@Controller('/api/v1/users')
-@UseGuards(JwtAuthGuard)
 import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
 import { UserRole } from 'src/common/enums/users-roles.enum';
 import { RoleDecorator } from 'security/decorators/roles.decorator';
 import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
+@Controller('/api/v1/users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -69,9 +72,11 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     const user = await this.usersService.updateUser(id, updateUserDto);
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(Number(id));
   }
+
+  // @Delete(':id')
+  // public async remove(@Param('id') id ) {
+  //   return this.usersService.remove(Number(id));
+  // }
 }
+

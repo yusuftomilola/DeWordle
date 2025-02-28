@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { DictionaryWord } from './entities/dictionary-word.entity';
 import { PendingWord } from './entities/pending-word.entity';
 import { SubmitWordDto } from './dto/submit-word.dto';
@@ -22,7 +21,7 @@ export class DictionaryService {
     @InjectRepository(PendingWord)
     private pendingWordRepo: Repository<PendingWord>,
     @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
+    private cacheManager: any,
   ) {}
 
   async getRandomWord(): Promise<DictionaryWord> {
