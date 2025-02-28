@@ -30,8 +30,6 @@ import { createClient } from 'redis';
 import { PaginationModule } from './common/pagination/pagination-controller.controller'; // Your change
 import { DictionaryModule } from './dictionary/dictionary.module';
 import { RetentionMetricsModule } from './retention-metrics/retention-metrics.module';
-import { RetentionMetricsModule } from './retention-metrics/retention-metrics.module';
-
 
 @Module({
   imports: [
@@ -60,7 +58,7 @@ import { RetentionMetricsModule } from './retention-metrics/retention-metrics.mo
             url: 'redis://localhost:6379',
           });
           await client.connect();
-          
+
           return {
             store: 'redis',
             client: client,
@@ -81,8 +79,8 @@ import { RetentionMetricsModule } from './retention-metrics/retention-metrics.mo
     ResultModule,
     SubAdminModule,
     GuestUserModule,
-    PaginationModule, 
-    MailModule, 
+    PaginationModule,
+    MailModule,
     GamemodeModule,
     GuestUserModule,
     GuestFeaturesModule,
