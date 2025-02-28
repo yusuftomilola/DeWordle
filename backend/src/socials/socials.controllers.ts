@@ -1,6 +1,6 @@
 import { Controller, Post, Delete, Get, Body, Param, Query, Request } from '@nestjs/common';
-import { FollowService } from './follow.service';
 import { FollowDto, FollowResponseDto, UserDto, ActivityDto, PaginationDto } from './dto/socials.dto';
+import { FollowService } from './socials.service';
 
 @Controller('social')
 export class SocialController {
@@ -25,7 +25,7 @@ export class SocialController {
   @Get('followers/:userId')
   async getFollowers(
     @Request() req,
-    @Param('userId') userId: string,
+    @Param('userId') userId: number,
   ): Promise<UserDto[]> {
     return this.followService.getFollowers(userId, req.user?.id);
   }
@@ -33,7 +33,7 @@ export class SocialController {
   @Get('following/:userId')
   async getFollowing(
     @Request() req,
-    @Param('userId') userId: string,
+    @Param('userId') userId: number,
   ): Promise<UserDto[]> {
     return this.followService.getFollowing(userId, req.user?.id);
   }

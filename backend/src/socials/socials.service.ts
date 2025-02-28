@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Follow } from './entities/follow.entity';
 import { Activity } from './entities/activity.entity';
-import { User } from '../users/user.entity';
 import { FollowDto, FollowResponseDto, UserDto, ActivityDto, PaginationDto } from './dto/socials.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class FollowService {
@@ -17,14 +17,14 @@ export class FollowService {
     private activityRepository: Repository<Activity>,
   ) {}
 
-  async followUser(userId: string, followDto: FollowDto): Promise<FollowResponseDto> {
-    if (userId === followDto.followingId) {
+  async followUser(userId: number, followDto: FollowDto): Promise<FollowResponseDto> {
+    if (userId === parseInt(followDto.followingId)) {
       throw new ConflictException('You cannot follow yourself');
     }
 
     // Check if users exist
     const follower = await this.userRepository.findOne({ where: { id: userId } });
-    const following = await this.userRepository.findOne({ where: { id: followDto.followingId } });
+    const following = await this.userRepository.findOne({ where: { id: parseInt(followDto.followingId) } });
     
     if (!follower || !following) {
       throw new NotFoundException('User not found');
@@ -32,7 +32,7 @@ export class FollowService {
 
     // Check if already following
     const existingFollow = await this.followRepository.findOne({
-      where: { followerId: userId, followingId: followDto.followingId },
+      where: { followerId: userId.toString(), followingId: followDto.followingId },
     });
 
     if (existingFollow) {
@@ -41,7 +41,7 @@ export class FollowService {
 
     // Create new follow relationship
     const newFollow = this.followRepository.create({
-      followerId: userId,
+      followerId: userId.toString(),
       followingId: followDto.followingId,
     });
 
@@ -67,7 +67,7 @@ export class FollowService {
     await this.followRepository.remove(follow);
   }
 
-  async getFollowers(userId: string, currentUserId?: string): Promise<UserDto[]> {
+  async getFollowers(userId: number, currentUserId?: string): Promise<UserDto[]> {
     // Check if user exists
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -109,7 +109,7 @@ export class FollowService {
     }));
   }
 
-  async getFollowing(userId: string, currentUserId?: string): Promise<UserDto[]> {
+  async getFollowing(userId: number, currentUserId?: string): Promise<UserDto[]> {
     // Check if user exists
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -264,14 +264,14 @@ export class FollowService {
 
     const savedActivity = await this.activityRepository.save(newActivity);
     
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({ where: { id: parseInt(userId) } });
     
     return {
       id: savedActivity.id,
       user: {
         id: user.id,
-        username: user.username,
-        profilePicture: user.profilePicture,
+        username: user.userName,
+        // profilePicture: user.profilePicture,
       },
       type: savedActivity.type,
       data: savedActivity.data,

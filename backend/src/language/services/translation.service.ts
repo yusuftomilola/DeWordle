@@ -3,8 +3,6 @@ import type { TranslationRepository } from "../repositories/translation.reposito
 import type { TranslationKeyRepository } from "../repositories/translation-key.repository"
 import type { LanguageRepository } from "../repositories/language.repository"
 import type { Translation } from "../entities/translation.entity"
-import type { CreateTranslationDto } from "../dto/create-translation.dto"
-import type { UpdateTranslationDto } from "../dto/update-translation.dto"
 import type { CacheService } from "./cache.service"
 import type { EventEmitterService } from "./event-emitter.service"
 
@@ -86,7 +84,7 @@ export class TranslationService {
     return result
   }
 
-  async createTranslation(createDto: CreateTranslationDto): Promise<Translation> {
+  async createTranslation(createDto): Promise<Translation> {
     const language = await this.languageRepository.findById(createDto.languageId)
     if (!language) {
       throw new NotFoundException(`Language with ID ${createDto.languageId} not found`)
@@ -132,7 +130,7 @@ export class TranslationService {
     return newTranslation
   }
 
-  async updateTranslation(id: string, updateDto: UpdateTranslationDto): Promise<Translation> {
+  async updateTranslation(id: string, updateDto): Promise<Translation> {
     const translation = await this.translationRepository.findById(id)
     if (!translation) {
       throw new NotFoundException(`Translation with ID ${id} not found`)
@@ -180,7 +178,7 @@ export class TranslationService {
     this.eventEmitter.emit("translation.deleted", { id, languageCode: language.code })
   }
 
-  async bulkCreateTranslations(createDtos: CreateTranslationDto[]): Promise<Translation[]> {
+  async bulkCreateTranslations(createDtos): Promise<Translation[]> {
     const translations: Partial<Translation>[] = []
     const languageCodes = new Set<string>()
     const categories = new Set<string>()

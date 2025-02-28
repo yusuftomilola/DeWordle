@@ -8,19 +8,15 @@ import {
   Delete,
   ParseIntPipe,
   HttpCode,
-
   DefaultValuePipe,
   Query,
-
   UseGuards,
 
 } from '@nestjs/common';
 import { LeaderboardService } from './leaderboard.service';
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
-
 import { query } from 'express';
-
 import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
 import { RoleDecorator } from 'security/decorators/roles.decorator';
@@ -63,7 +59,8 @@ export class LeaderboardController {
       limit,
       page,
     );
-
+  }
+  
   @Get()
   @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin, UserRole.User)
