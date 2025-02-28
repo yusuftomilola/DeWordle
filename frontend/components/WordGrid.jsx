@@ -1,19 +1,24 @@
 "use client";
 import React, { useContext } from "react";
 import { AppContext } from "../context/AppContext";
+
 function WordGrid() {
-  // const inputs = Array.from({ length: 25 });
   const { gridData } = useContext(AppContext);
 
   return (
     <div className="mt-5">
-      <div className="grid grid-cols-5 gap-2  md:gap-[13px] place-content-center mx-auto w-[250px] sm:w-[330px] md:w-[422px] text-foreground">
-        {gridData.map((char, index) => (
+      <div className="grid grid-cols-5 gap-3 md:gap-5 place-content-center mx-auto w-[300px] md:w-[400px] text-foreground">
+        {gridData.map((cell, index) => (
           <div
             key={index}
-            className="w-[40px] h-[40px] sm:w-[55px] sm:h-[55px] md:w-[74px] md:h-[74px] rounded-[4px] bg-[#fff] border-[1px] border-[#777777] flex items-center justify-center text-2xl font-bold"
+            className="w-[74px] h-[74px] rounded-[4px] flex items-center justify-center text-2xl font-semibold shadow-md transition-all duration-300 ease-in-out"
+            style={{
+              backgroundColor: "#ffffff",
+              border: "1px solid #777777",
+              animation: cell.char ? "fadeIn 0.5s ease-in-out" : "none",
+            }}
           >
-            {char}
+            {cell.char}
           </div>
         ))}
       </div>

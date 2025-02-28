@@ -1,11 +1,9 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UseFilters } from '@nestjs/common';
+
 import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from './provider/redis.service';
+import { DatabaseExceptionFilter } from 'src/common/filters';
 
 interface GuestSession {
   id: string;
@@ -13,34 +11,48 @@ interface GuestSession {
 }
 
 @Injectable()
+@UseFilters(DatabaseExceptionFilter) // ✅ Apply the database filter
 export class GuestUserService {
   private readonly EXPIRATION_TIME_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
 
   constructor(private readonly redisService: RedisService) {}
 
   async createGuestUser(): Promise<GuestSession> {
-    const id = uuidv4();
-    const expiresAt = new Date(Date.now() + this.EXPIRATION_TIME_MS);
+    try {
+      const id = uuidv4();
+      const expiresAt = new Date(Date.now() + this.EXPIRATION_TIME_MS);
 
-    await this.redisService.setGuestSession(id);
+      await this.redisService.setGuestSession(id);
 
-    return { id, expiresAt };
+      return { id, expiresAt };
+    } catch (error) {
+      console.error('Error creating guest session:', error);
+    throw new Error(`Failed to create guest user session: ${(error as Error).message}`);
+    }
   }
 
   async validateGuestUser(guestId: string): Promise<boolean> {
-    const session = await this.redisService.getGuestSession(guestId);
-    return session !== null;
+    try {
+      const session = await this.redisService.getGuestSession(guestId);
+      return session !== null;
+    } catch (error) {
+      throw new Error('Failed to validate guest user session');
+    }
   }
 
   async refreshGuestUserSession(guestId: string): Promise<GuestSession | null> {
-    const isValid = await this.validateGuestUser(guestId);
+    try {
+      const isValid = await this.validateGuestUser(guestId);
 
-    if (!isValid) {
-      return null;
+      if (!isValid) {
+        return null;
+      }
+
+      const expiresAt = new Date(Date.now() + this.EXPIRATION_TIME_MS);
+      return { id: guestId, expiresAt };
+    } catch (error) {
+      throw new Error('Failed to refresh guest user session');
     }
-
-    const expiresAt = new Date(Date.now() + this.EXPIRATION_TIME_MS);
-    return { id: guestId, expiresAt };
   }
 
   async updateGuestSession(guestId: string, won: boolean): Promise<void> {
@@ -72,7 +84,11 @@ export class GuestUserService {
   }
 
   async deleteGuestUserSession(guestId: string): Promise<void> {
-    await this.redisService.deleteGuestSession(guestId);
-    await this.redisService.deleteGameResult(guestId);
+    try {
+      await this.redisService.deleteGuestSession(guestId);
+      await this.redisService.deleteGameResult(guestId);
+    } catch (error) {
+      throw new Error('Failed to delete guest user session');
+    }
   }
 }
