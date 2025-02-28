@@ -4,11 +4,6 @@ import {
   UnauthorizedException,
   Param,
   Delete,
-  Patch,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Get,
 } from '@nestjs/common';
 import { GuestUserService } from './guest.service';
 
@@ -55,22 +50,6 @@ export class GuestUserController {
       expiresAt: refreshedSession.expiresAt,
       message: 'Guest session refreshed successfully',
     };
-  }
-
-  @Patch('/:guestId')
-  @HttpCode(HttpStatus.OK)
-  async updateGuest(
-    @Param('guestId') guestId: string,
-    @Body('won') won: boolean,
-  ) {
-    await this.guestUserService.updateGuestSession(guestId, won);
-    return { message: 'Game result updated successfully' };
-  }
-
-  @Get('/:guestId/result')
-  async getGuestResult(@Param('guestId') guestId: string) {
-    const result = await this.guestUserService.getGuestGameResult(guestId);
-    return result;
   }
 
   @Delete(':guestId')
