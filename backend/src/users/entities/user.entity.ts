@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Token } from '../../auth/entities/token.entity';
 
 @Entity()
 export class User {
@@ -23,6 +24,12 @@ export class User {
 
   @Column('varchar', { nullable: false })
   password: string;
+
+  @Column({ default: false })
+    isVerified: boolean;
+  
+  @OneToMany(() => Token, (token) => token.user)
+  tokens: Token[];
 
   @OneToMany(() => Result, (result) => result.user, {
     cascade: true,
@@ -46,6 +53,9 @@ export class User {
     onDelete: 'CASCADE',
   })
   results: Result[];
+
+  @Column('varchar', { length: 225, nullable: true })
+  googleId?: string
 
   @CreateDateColumn()
   createdAt: Date;

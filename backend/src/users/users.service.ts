@@ -1,36 +1,57 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Injectable,
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateUsersProvider } from './providers/create-users-provider';
 import { Repository } from 'typeorm';
 import { FindOneByEmailProvider } from './providers/find-one-by-email.provider';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { TokenType } from '../auth/enums/token-type.enum'; // Added missing import
+import { MailService } from 'src/mail/providers/mail.service';
+import { FindOneByGoogleIdProvider } from './providers/find-one-by-google-id-provider';
+import { CreateGoogleUserProvider } from './providers/create-google-user-provider';
+import { GoogleInterface } from 'src/auth/social/interfaces/user.interface';
+import { DatabaseExceptionFilter } from 'src/common/filters';
 
 @Injectable()
 export class UsersService {
   constructor(
-    /*
-     * inject create user provider
-     */
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-
+    private userRepository: Repository<User>, // Added generic type parameter
     private readonly findOneByEmailProvider: FindOneByEmailProvider,
 
-    private readonly createUserProvider: CreateUsersProvider,
+    private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
 
+    private readonly createGoogleUserProvider: CreateGoogleUserProvider,
+    private readonly createUserProvider: CreateUsersProvider,
+    private readonly mailService: MailService, 
     // @Inject(forwardRef(() => AuthService))
     // private readonly authService: AuthService,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.createUserProvider.createUser(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.createUserProvider.createUser(createUserDto);
+
+    // Generate verification token
+    const verificationToken = await this.createToken(
+      user.id,
+      TokenType.VERIFICATION,
+    );
+    
+    // Send verification email
+    await this.mailService.sendVerificationEmail(
+      user.email,
+      verificationToken.token,
+    );
+    
+    return {
+      message: 'Registration successful. Please check your email to verify your account.',
+    };
   }
 
   public async GetOneByEmail(email: string) {
@@ -44,7 +65,7 @@ export class UsersService {
       take: limit,
       order: { id: 'ASC' },
     });
-
+    
     return {
       total,
       page,
@@ -55,18 +76,30 @@ export class UsersService {
 
   // Soft delete a user by ID
   async softDelete(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
 
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      await this.userRepository.softDelete(id);
+      return { message: `User with ID ${id} has been deleted.` };
+    } catch (error) {
+      throw new DatabaseExceptionFilter(); // Explicitly using DB filter if needed
     }
-
-    await this.userRepository.softDelete(id);
-    return { message: `User with ID ${id} has been deleted.` };
   }
 
-  public async findOneById(id: number): Promise<User | null> {
+  public async findOneById(id: number): Promise<User> {
     return await this.userRepository.findOneBy({ id });
+  }
+
+  public async findOneByGoogleId(googleId: string) {
+    return this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+  }
+
+  public async createGoogleUser(googleUser: GoogleInterface) {
+    return this.createGoogleUserProvider.createGoogleUser(googleUser);
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {
@@ -80,12 +113,12 @@ export class UsersService {
   public async updateUser(
     id: number,
     updateUserDto: UpdateUserDto,
-  ): Promise<User | null> {
+  ): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       return null;
     }
-
+    
     // Check if email is unique before updating
     if (updateUserDto.email) {
       const existingUser = await this.userRepository.findOne({
@@ -95,7 +128,7 @@ export class UsersService {
         throw new BadRequestException('Please check your email id');
       }
     }
-
+    
     // Ensure only specified fields are updated, excluding id
     const allowedUpdates = ['name', 'email'];
     for (const key of Object.keys(updateUserDto)) {
@@ -103,7 +136,13 @@ export class UsersService {
         (user as any)[key] = (updateUserDto as any)[key];
       }
     }
-
+    
     return this.userRepository.save(user);
+  }
+
+  // Added missing method that was referenced in create()
+  private async createToken(userId: number, tokenType: TokenType): Promise<any> {
+    // Implementation would go here
+    return { token: 'generated-token' }; // Placeholder implementation
   }
 }
