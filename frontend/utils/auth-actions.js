@@ -1,9 +1,6 @@
 'use server';
 
-import { signIn } from 'next-auth/react';
-
 // Server-side redirect for authentication
-
 export async function handleGoogleSignIn() {
   await signIn('google', { callbackUrl: '/' });
 }
