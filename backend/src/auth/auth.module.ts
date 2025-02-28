@@ -45,10 +45,10 @@ import { Token } from './entities/token.entity';
       useClass: BcryptProvider,
     },
     // globalizing auth guards
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
     SignInProvider,
     GenerateTokenProvider,
     RefreshTokenProvider,

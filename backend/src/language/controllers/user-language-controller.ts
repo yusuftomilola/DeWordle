@@ -2,7 +2,6 @@ import { Controller, Get, Patch, Param, Body, Delete, Post, UseGuards } from "@n
 import type { UserLanguageService } from "../services/user-language.service"
 import { CreateUserLanguageDto } from "../dto/create-user-language.dto"
 import { UpdateUserLanguageDto } from "../dto/update-user-language.dto"
-import { LanguageGuard } from "../guards/language.guard"
 import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiResponse } from "@nestjs/swagger"
 
 @ApiTags("User Language Preferences")
@@ -63,7 +62,7 @@ export class UserLanguageController {
     description: 'Deletes the user language preference',
   })
   @Delete(':userId')
-  @UseGuards(LanguageGuard)
+  // @UseGuards(LanguageGuard)
   async deleteUserLanguage(@Param('userId') userId: string) {
     await this.userLanguageService.deleteUserLanguage(userId);
     return {

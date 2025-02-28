@@ -22,15 +22,11 @@ export class ResultService {
   ) {}
 
   async createResult(userId: string): Promise<Result> {
+    let user_id:  User| boolean;
     try {
 
       const existingResult = await this.resultRepository.findOne({
-        where: { userId },
-      });
-
-
-      const existingResult = await this.resultRepository.findOne({
-        where: { userId },
+        where: { userId: user_id },
       });
 
       const userIdNumber = parseInt(userId, 10);
@@ -42,12 +38,6 @@ export class ResultService {
       if (!user) {
         throw new NotFoundException(`User with id ${userId} not found`);
       }
-
-      const existingResult = await this.resultRepository.findOne({ 
-        where: { user: { id: userIdNumber } } 
-      });
-      
-
 
       if (existingResult) {
         throw new Error('Result already exists for this user.');
