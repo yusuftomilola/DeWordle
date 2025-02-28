@@ -38,6 +38,28 @@ import { RetentionMetricsModule } from './retention-metrics/retention-metrics.mo
       load: [envConfiguration],
       validate,
     }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('SMTP_HOST'),
+          port: configService.get<number>('SMTP_PORT'),
+          auth: {
+            user: configService.get<string>('SMTP_USER'),
+            pass: configService.get<string>('SMTP_PASS'),
+          },
+        },
+        defaults: {
+          from: `"No Reply" <${configService.get<string>('SMTP_FROM')}>`,
+        },
+        template: {
+          dir: join(__dirname, '../templates'), // Email templates location
+          adapter: new HandlebarsAdapter(),
+          options: { strict: true },
+        },
+      }),
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
