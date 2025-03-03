@@ -414,7 +414,7 @@ const Keyboard = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto mt-8 mb-8 keyboard">
+    <div className="w-full max-w-xl mx-auto mt-8 mb-4 keyboard">
       <div className="space-y-3">
         {" "}
         {/* Increased space between rows */}

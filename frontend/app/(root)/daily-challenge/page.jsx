@@ -1,3 +1,13 @@
-import DailyChallenge from "../../../components/DailyChallenge"
+import DailyChallenge from "../../../components/DailyChallenge";
 
-<DailyChallenge />
+import React from "react";
+
+const page = () => {
+  return (
+    <div>
+      <DailyChallenge />
+    </div>
+  );
+};
+
+export default page;
