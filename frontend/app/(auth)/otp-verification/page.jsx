@@ -1,7 +1,9 @@
 import OtpVerification from "../../../components/OtpVerification";
 
-function ForgotPassword() {
-  return <OtpVerification />;
-}
+import React from "react";
 
-export default ForgotPassword;
+const page = () => {
+  return <OtpVerification />;
+};
+
+export default page;

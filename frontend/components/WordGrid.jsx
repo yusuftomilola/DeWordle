@@ -11,7 +11,7 @@ function WordGrid() {
         {gridData.map((cell, index) => (
           <div
             key={index}
-            className="w-[74px] h-[74px] rounded-[4px] flex items-center justify-center text-2xl font-semibold shadow-md transition-all duration-300 ease-in-out"
+            className="w-[50px] h-[50px] rounded-[4px] flex items-center justify-center text-2xl font-semibold shadow-md transition-all duration-300 ease-in-out"
             style={{
               backgroundColor: "#ffffff",
               border: "1px solid #777777",

@@ -148,7 +148,7 @@ const SignInForm = () => {
           </Form>
         )}
       </Formik>
-      <div className="space-y-4">
+      <div className="space-y-4 flex ">
         <button
           type="button"
           className="w-full text-[18px] font-[700] h-[59px] flex items-center justify-center gap-2 border border-none rounded-[32px] py-2 px-4 bg-[#F2F2F4] hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"

@@ -74,10 +74,6 @@ const NavbarLandingPage = () => {
           <Link href="/signup">
             <button className="text-[#29296E]">Sign Up</button>
           </Link>
-
-          <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-[15px] flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg">
-            Request Demo
-          </button>
         </div>
 
         {/* Mobile Menu Button (Hamburger) */}
@@ -97,10 +93,6 @@ const NavbarLandingPage = () => {
           <Link href="/signup">
             <button className="text-[#29296E] py-2">Sign Up</button>
           </Link>
-
-          <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-[15px] flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg mt-2">
-            Request Demo
-          </button>
         </div>
       )}
     </div>
