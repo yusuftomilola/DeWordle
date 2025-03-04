@@ -1,4 +1,4 @@
-import DailyChallenge from "../../../components/DailyChallenge";
+import DailyChallenge from "@/components/DailyChallenge";
 
 import React from "react";
 

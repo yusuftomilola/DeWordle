@@ -1,5 +1,5 @@
 import React from "react";
-import InteractiveHowToPlay from "../../../components/InteractiveHowToPlay";
+import InteractiveHowToPlay from "@/components/InteractiveHowToPlay";
 
 const page = () => {
   return (
