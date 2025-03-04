@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import DewordleIcon from "../assets/dewordleIcon.svg";
+import DewordleIcon from "@/assets/dewordleIcon.svg";
 import { ChevronDown, Menu, X } from "lucide-react";
 import HowToPlayModal from "./HowToPlayModal";
 import Link from "next/link";

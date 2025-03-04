@@ -1,5 +1,5 @@
 import React from "react";
-import AdminSignin from "../../../components/AdminSignin";
+import AdminSignin from "@/components/AdminSignin";
 
 const page = () => {
   return (

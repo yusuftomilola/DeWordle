@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Formik, Form, Field } from 'formik';
-import { ForgotPasswordSchema } from '../utils/schema/forgotPasswordSchema';
+import { ForgotPasswordSchema } from '@/utils/schema/forgotPasswordSchema';
 
 
 function ForgotPassword() {

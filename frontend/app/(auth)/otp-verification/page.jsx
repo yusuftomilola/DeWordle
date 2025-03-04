@@ -1,4 +1,4 @@
-import OtpVerification from "../../../components/OtpVerification";
+import OtpVerification from "@/components/OtpVerification";
 
 import React from "react";
 

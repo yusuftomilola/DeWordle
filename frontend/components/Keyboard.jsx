@@ -1,7 +1,7 @@
 "use client";
 import React, { useContext, useEffect, useCallback, useState } from "react";
 import { Delete } from "lucide-react";
-import { AppContext } from "../context/AppContext";
+import { AppContext } from "@/context/AppContext";
 import gsap from "gsap";
 
 const Keyboard = () => {

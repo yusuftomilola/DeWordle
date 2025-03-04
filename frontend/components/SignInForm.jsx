@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import { Formik, Form, Field } from 'formik';
-import { signInSchema } from '../utils/authValidationSchema';
+import { signInSchema } from '@/utils/authValidationSchema';
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);

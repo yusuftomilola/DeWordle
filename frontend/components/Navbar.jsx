@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import DewordleIcon from "../assets/dewordleIcon.svg";
+import DewordleIcon from "@/assets/dewordleIcon.svg";
 import {
   BarChartIcon as ChartNoAxesColumn,
   Settings,
