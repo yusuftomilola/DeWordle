@@ -1,10 +1,10 @@
 import React from "react";
-import InteractiveHowToPlay from "@/components/InteractiveHowToPlay";
+import DewordleTutorial from "@/components/GameGuide";
 
 const page = () => {
   return (
     <div>
-      <InteractiveHowToPlay />
+      <DewordleTutorial />
     </div>
   );
 };

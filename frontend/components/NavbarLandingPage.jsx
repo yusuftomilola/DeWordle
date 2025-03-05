@@ -71,6 +71,9 @@ const NavbarLandingPage = () => {
 
         {/* Desktop Menu (Visible on Large Screens) */}
         <div className="hidden md:flex items-center gap-6 text-[#29296E]">
+        <Link href="/game-guide">
+            <button className="text-[#29296E] py-2">Game Guide</button>
+          </Link>
           <Link href="/signup">
             <button className="text-[#29296E]">Sign Up</button>
           </Link>
@@ -90,6 +93,9 @@ const NavbarLandingPage = () => {
       {/* Mobile Dropdown Menu (Visible on Small Screens) */}
       {isMobileMenuOpen && (
         <div className="absolute top-[70px] left-0 w-full bg-white shadow-lg py-4 z-50 flex flex-col items-center md:hidden">
+          <Link href="/game-guide">
+            <button className="text-[#29296E] py-2">Game Guide</button>
+          </Link>
           <Link href="/signup">
             <button className="text-[#29296E] py-2">Sign Up</button>
           </Link>
