@@ -184,7 +184,7 @@ const Navbar = () => {
           </button>
 
           {/* Connect Button */}
-          <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-[15px] flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg">
+          <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-full flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg">
                 Connect
               </button>
         </div>
