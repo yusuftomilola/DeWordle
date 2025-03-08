@@ -73,7 +73,7 @@ const Navbar = () => {
         </div>
 
         {/* Navbar End: User Profile and Help */}
-        <div className="navbar-end flex items-center gap-x-24 mt-4">
+        <div className="navbar-end flex items-center gap-x-12 mt-4">
           {/* User Profile Button */}
           <div className="relative">
             <button 
