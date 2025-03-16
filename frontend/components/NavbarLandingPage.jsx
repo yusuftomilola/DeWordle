@@ -65,13 +65,18 @@ const NavbarLandingPage = () => {
               />
             </button>
 
-            {isHelpGuideOpen && <HowToPlayModal isOpen={isHelpGuideOpen} onClose={toggleHelpGuide} />}
+            {isHelpGuideOpen && (
+              <HowToPlayModal
+                isOpen={isHelpGuideOpen}
+                onClose={toggleHelpGuide}
+              />
+            )}
           </div>
         </div>
 
         {/* Desktop Menu (Visible on Large Screens) */}
         <div className="hidden md:flex items-center gap-6 text-[#29296E]">
-        <Link href="/game-guide">
+          <Link href="/game-guide">
             <button className="text-[#29296E] py-2">Game Guide</button>
           </Link>
           <Link href="/signup">
@@ -85,7 +90,11 @@ const NavbarLandingPage = () => {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="text-[#29296E] focus:outline-none"
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
       </div>

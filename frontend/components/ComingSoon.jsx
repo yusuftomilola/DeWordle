@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
 export default function ComingSoon() {
-  const [email, setEmail] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (email) {
       // Here you would typically send the email to your backend
-      console.log("Email submitted:", email)
-      setIsSubmitted(true)
-      setTimeout(() => setIsSubmitted(false), 3000)
-      setEmail("")
+      console.log("Email submitted:", email);
+      setIsSubmitted(true);
+      setTimeout(() => setIsSubmitted(false), 3000);
+      setEmail("");
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12">
@@ -27,11 +27,15 @@ export default function ComingSoon() {
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-gray-800 mb-12 max-w-lg mx-auto">
-          From automation of people processes to creating an engaged and driven culture.
+          From automation of people processes to creating an engaged and driven
+          culture.
         </p>
 
         {/* Email notification form */}
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-4"
+        >
           <input
             type="email"
             value={email}
@@ -51,9 +55,10 @@ export default function ComingSoon() {
         </form>
 
         {/* Notification text */}
-        <p className="text-sm text-gray-400">_ Notify me when App is launched _</p>
+        <p className="text-sm text-gray-400">
+          _ Notify me when App is launched _
+        </p>
       </main>
     </div>
-  )
+  );
 }
-

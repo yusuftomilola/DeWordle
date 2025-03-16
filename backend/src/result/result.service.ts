@@ -28,7 +28,9 @@ export class ResultService {
         throw new BadRequestException(`Invalid userId: ${userId}`);
       }
 
-      const user = await this.userRepository.findOne({ where: { id: userIdNumber } });
+      const user = await this.userRepository.findOne({
+        where: { id: userIdNumber },
+      });
       if (!user) {
         throw new NotFoundException(`User with id ${userId} not found`);
       }

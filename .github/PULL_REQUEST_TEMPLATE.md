@@ -1,20 +1,23 @@
 # Pull Request
 
 ## Description
+
 <!-- Provide a brief description of the changes introduced by this PR -->
 
 ## Related Issue
+
 <!-- Link to the related issue(s) this PR addresses -->
 <!-- Use keywords like "Closes #123", "Fixes #123", or "Resolves #123" -->
 
 ## Type of Change
+
 <!-- Mark the appropriate option with an "x" (no spaces around the "x") -->
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 
 - [ ] New feature (non-breaking change which adds functionality)
 
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as      expected)Update your CONTRIBUTING.md to reference the template
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)Update your CONTRIBUTING.md to reference the template
 
 - [ ] Documentation update
 
@@ -29,7 +32,9 @@
 - [ ] Other (please describe):
 
 ## Checklist
+
 <!-- Mark items with an "x" (no spaces around the "x") once completed -->
+
 - [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) document.
 
 - [ ] My code follows the code style of this project.
@@ -47,10 +52,13 @@
 - [ ] Any dependent changes have been merged and published in downstream modules.
 
 ## Screenshots/Recordings
+
 <!-- If applicable, add screenshots or screen recordings to demonstrate the changes -->
 
 ## Additional Context
+
 <!-- Add any other context about the PR here -->
 
 ## Testing Instructions
+
 <!-- Provide instructions for reviewers to test your changes -->

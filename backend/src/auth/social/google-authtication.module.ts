@@ -4,7 +4,6 @@ import { GoogleAuthenticationService } from './providers/google-authtication';
 
 @Module({
   controllers: [GoogleAuthenticationController],
-  providers: [GoogleAuthenticationService]
+  providers: [GoogleAuthenticationService],
 })
-
 export class GoogleAuthticationModule {}

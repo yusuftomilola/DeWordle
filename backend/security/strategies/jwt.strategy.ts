@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly configService: ConfigService,
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -25,11 +25,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (!payload) {
       throw new UnauthorizedException();
     }
-    
-    const user = await this.userRepository.findOne({ 
-      where: { id: payload.sub }
+
+    const user = await this.userRepository.findOne({
+      where: { id: payload.sub },
     });
-    
+
     if (!user) {
       throw new UnauthorizedException('Invalid token');
     }

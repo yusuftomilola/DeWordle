@@ -11,7 +11,6 @@ export class MailService {
     private readonly mailerServise: MailerService,
   ) {}
 
-
   public async welcomeEmail(subAdmin: SubAdmin): Promise<void> {
     await this.mailerServise.sendMail({
       to: subAdmin.email,
@@ -26,27 +25,27 @@ export class MailService {
     });
     console.log('Test Email Success');
   }
-//   public async welcomeEmail(subAdmin: SubAdmin): Promise<void> {
-//     await this.mailerServise.sendMail({
-//         to: subAdmin.email,
-//         from: `helpdesk <support@dewordle.come>`,
-//         subject: 'DeWordle sub-admin signUp',
-//         template: './welcome',
-//         context: {
-//             name: subAdmin.name,
-//             email: subAdmin.email,
-//             loginUrl: 'http://localhost:3000'
-//         }
-//     })
-//     console.log('Test Email Success')
-// }
+  //   public async welcomeEmail(subAdmin: SubAdmin): Promise<void> {
+  //     await this.mailerServise.sendMail({
+  //         to: subAdmin.email,
+  //         from: `helpdesk <support@dewordle.come>`,
+  //         subject: 'DeWordle sub-admin signUp',
+  //         template: './welcome',
+  //         context: {
+  //             name: subAdmin.name,
+  //             email: subAdmin.email,
+  //             loginUrl: 'http://localhost:3000'
+  //         }
+  //     })
+  //     console.log('Test Email Success')
+  // }
 
-async sendVerificationEmail(email: string, token: string): Promise<void> {
+  async sendVerificationEmail(email: string, token: string): Promise<void> {
     // Your implementation here (e.g., using nodemailer, etc.)
     console.log(`Sending verification email to ${email} with token ${token}`);
   }
 
-async sendPasswordResetEmail(email: string, token: string) {
+  async sendPasswordResetEmail(email: string, token: string) {
     const resetLink = `https://yourfrontend.com/reset-password?token=${token}`;
 
     await this.mailerServise.sendMail({
@@ -57,4 +56,3 @@ async sendPasswordResetEmail(email: string, token: string) {
     });
   }
 }
-
