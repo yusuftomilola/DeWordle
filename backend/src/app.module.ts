@@ -34,9 +34,8 @@ import { join } from 'path';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [envConfiguration],
-      validate,
     }),
+
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -53,24 +52,32 @@ import { join } from 'path';
           from: `"No Reply" <${configService.get<string>('SMTP_FROM')}>`,
         },
         template: {
-          dir: join(__dirname, '../templates'), // Email templates location
+          dir: join(__dirname, '../templates'),
           adapter: new HandlebarsAdapter(),
           options: { strict: true },
         },
       }),
     }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT) || 5432,
       username: process.env.DB_USERNAME,
-      password: String(process.env.DB_PASSWORD),
+      password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       entities: [User, Result, Leaderboard, Admin, SubAdmin],
       migrations: ['src/migrations/*.ts'],
       synchronize: true,
+      ssl:
+        process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false, // SSL Fix
+      extra: {
+        ssl:
+          process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+      },
     }),
+
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => {
@@ -93,6 +100,7 @@ import { join } from 'path';
         }
       },
     }),
+
     UsersModule,
     AuthModule,
     LeaderboardModule,
