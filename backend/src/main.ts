@@ -50,14 +50,14 @@ async function bootstrap() {
   );
 
   // Global filters (from main)
-  app.useGlobalFilters(
-    new ValidationExceptionFilter(),
-    new AuthExceptionFilter(),
-    new SessionExceptionFilter(),
-    new DatabaseExceptionFilter(),
-    new BlockchainExceptionFilter(),
-    new AllExceptionsFilter(),
-  );
+  // app.useGlobalFilters(
+  //   new ValidationExceptionFilter(),
+  //   new AuthExceptionFilter(),
+  //   new SessionExceptionFilter(),
+  //   new DatabaseExceptionFilter(),
+  //   new BlockchainExceptionFilter(),
+  //   new AllExceptionsFilter(),
+  // );
 
   // Enable CORS (from main)
   app.enableCors({

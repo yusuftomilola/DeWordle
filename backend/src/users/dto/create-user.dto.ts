@@ -8,6 +8,7 @@ import {
   MaxLength,
   IsArray,
   ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { Result } from 'src/result/entities/result.entity';
 
@@ -49,25 +50,26 @@ export class CreateUserDto {
   )
   password: string;
 
-  @ApiProperty({
-    description: 'An array of results associated with the user',
-    type: [Result], // Specify the type as an array of Result entities
-    example: [
-      {
-        id: 1,
-        userId: { id: 123, name: 'John Doe', email: 'john.doe@example.com' },
-        user: { id: 123, name: 'John Doe', email: 'john.doe@example.com' },
-        word: 'example',
-        feedback: 'Great job!',
-        attempts: 3,
-        status: 'SUCCESS',
-        gameDate: '2023-10-01T12:34:56.789Z',
-      },
-    ],
-    required: true,
-  })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => Result)
-  results: Result[];
+  // @IsOptional()
+  // @ApiProperty({
+  //   description: 'An array of results associated with the user',
+  //   type: [Result], // Specify the type as an array of Result entities
+  //   example: [
+  //     {
+  //       id: 1,
+  //       userId: { id: 123, name: 'John Doe', email: 'john.doe@example.com' },
+  //       user: { id: 123, name: 'John Doe', email: 'john.doe@example.com' },
+  //       word: 'example',
+  //       feedback: 'Great job!',
+  //       attempts: 3,
+  //       status: 'SUCCESS',
+  //       gameDate: '2023-10-01T12:34:56.789Z',
+  //     },
+  //   ],
+  //   required: true,
+  // })
+  // @IsArray()
+  // @ValidateNested({ each: true })
+  // @Type(() => Result)
+  // results?: Result[];
 }

@@ -37,16 +37,16 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const user = await this.createUserProvider.createUser(createUserDto);
 
-    // Generate verification token
-    const verificationToken = await this.createToken(
-      user.id,
-      TokenType.VERIFICATION,
-    );
+    // // Generate verification token
+    // const verificationToken = await this.createToken(
+    //   user.id,
+    //   TokenType.VERIFICATION,
+    // );
 
     // Send verification email
     await this.mailService.sendVerificationEmail(
       user.email,
-      verificationToken.token,
+      // verificationToken.token,
     );
 
     return {

@@ -71,9 +71,9 @@ export class CreateUsersProvider {
       totalAttempts: 0,
       averageScore: 0,
 
-      results: Array.isArray(createUserDto.results)
-        ? createUserDto.results
-        : [],
+      // results: Array.isArray(createUserDto.results)
+      //   ? createUserDto.results
+      //   : [],
     });
     // Auto-create result entry for the new user
     await this.resultService.createResult(savedUser.id.toString());
