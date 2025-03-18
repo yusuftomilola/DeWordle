@@ -14,7 +14,7 @@ export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   token: string;
 
   @Column({
@@ -30,6 +30,9 @@ export class Token {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   expiresAt: Date;
+
+  @Column({ default: false })
+  isRevoked: boolean;
 }

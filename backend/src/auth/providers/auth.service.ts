@@ -46,11 +46,11 @@ export class AuthService {
   ) {}
 
   public async SignIn(signInDto: SignInDto) {
-    try {
+    // try {
       return await this.signInProvider.SignIn(signInDto);
-    } catch (error) {
-      throw new Error('Authentication failed'); // The filter will handle this
-    }
+    // } catch (error) {
+    //   throw new Error('Authentication failed'); // The filter will handle this
+    // }
   }
 
   public async refreshToken(refreshTokenDto: RefreshTokenDto) {
@@ -108,7 +108,7 @@ export class AuthService {
     // Send verification email
     await this.mailService.sendVerificationEmail(
       user.email,
-      verificationToken.token,
+      // verificationToken.token,
     );
 
     return { message: 'Verification email sent successfully' };

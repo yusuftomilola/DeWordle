@@ -32,11 +32,11 @@ import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 @ApiTags('Users')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
 @Controller('/api/v1/users')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post('create')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({
@@ -56,7 +56,7 @@ export class UsersController {
     description: 'Forbidden',
   })
   @ApiBody({ type: CreateUserDto })
-  @UseGuards(RolesGuard)
+  // @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.User, UserRole.Admin)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -88,7 +88,8 @@ export class UsersController {
     example: 10,
     required: false,
   })
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(RolesGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin)
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
@@ -141,7 +142,7 @@ export class UsersController {
     description: 'Forbidden',
   })
   @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @RoleDecorator(UserRole.User, UserRole.Admin, UserRole.SubAdmin)
   async softDelete(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.softDelete(id);
@@ -171,7 +172,7 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', description: 'The ID of the user', example: 1 })
   @ApiBody({ type: UpdateUserDto })
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @RoleDecorator(UserRole.Admin, UserRole.SubAdmin, UserRole.User)
   public async updateUser(
     @Body() updateUserDto: UpdateUserDto,

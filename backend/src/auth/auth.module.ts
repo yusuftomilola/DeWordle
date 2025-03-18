@@ -21,6 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { MailModule } from '../mail/mail.module';
 import { Token } from './entities/token.entity';
+import { TokenService } from './providers/token.services';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { Token } from './entities/token.entity';
     GenerateTokenProvider,
     RefreshTokenProvider,
     GoogleAuthenticationService,
+    TokenService,
   ],
   exports: [
     AuthService,

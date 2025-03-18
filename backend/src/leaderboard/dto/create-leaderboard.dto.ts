@@ -43,23 +43,23 @@ export class CreateLeaderboardDto {
   @IsNumber()
   readonly averageScore: number;
 
-  @ApiProperty({
-    description: 'An array of results associated with the user',
-    type: [Result],
-    example: [
-      {
-        id: 1,
-        score: 90,
-        date: '2023-10-01',
-      },
-      {
-        id: 2,
-        score: 80,
-        date: '2023-10-02',
-      },
-    ],
-    required: true,
-  })
-  @IsArray()
-  readonly results: Result[];
+  // @ApiProperty({
+  //   description: 'An array of results associated with the user',
+  //   type: [Result],
+  //   example: [
+  //     {
+  //       id: 1,
+  //       score: 90,
+  //       date: '2023-10-01',
+  //     },
+  //     {
+  //       id: 2,
+  //       score: 80,
+  //       date: '2023-10-02',
+  //     },
+  //   ],
+  //   required: true,
+  // })
+  // @IsArray()
+  // readonly results: Result[];
 }

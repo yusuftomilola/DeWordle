@@ -45,6 +45,7 @@ export class ResultService {
 
       const newResult = this.resultRepository.create({
         user,
+        attempts: 0,
         timesPlayed: 0,
         currentStreak: 0,
         maxStreak: 0,

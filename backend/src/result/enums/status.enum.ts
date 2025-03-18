@@ -1,4 +1,4 @@
-export enum Status {
-  WON = 'won',
-  LOST = 'lost',
-}
+// export enum Status {
+//   WON = 'won',
+//   LOST = 'lost',
+// }

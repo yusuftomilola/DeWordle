@@ -38,21 +38,21 @@ export class User {
 
   @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
     cascade: true,
-    eager: true,
+    onDelete: 'CASCADE',
   })
   leaderboard: Leaderboard[];
 
-  @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  leaderboards: Leaderboard[];
+  // @OneToMany(() => Leaderboard, (leaderboard) => leaderboard.user, {
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // leaderboards: Leaderboard[];
 
-  @OneToMany(() => Result, (result) => result.user, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  results: Result[];
+  // @OneToMany(() => Result, (result) => result.user, {
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // results: Result[];
 
   @Column('varchar', { length: 225, nullable: true })
   googleId?: string;

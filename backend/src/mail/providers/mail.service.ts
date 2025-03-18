@@ -40,9 +40,9 @@ export class MailService {
   //     console.log('Test Email Success')
   // }
 
-  async sendVerificationEmail(email: string, token: string): Promise<void> {
+  async sendVerificationEmail(email: string): Promise<void> {
     // Your implementation here (e.g., using nodemailer, etc.)
-    console.log(`Sending verification email to ${email} with token ${token}`);
+    console.log(`Sending verification email to ${email} with token }`);
   }
 
   async sendPasswordResetEmail(email: string, token: string) {

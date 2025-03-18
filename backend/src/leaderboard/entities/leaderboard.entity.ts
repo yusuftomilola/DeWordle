@@ -17,7 +17,6 @@ export class Leaderboard {
     eager: true,
   })
   @JoinTable()
-  @ManyToOne(() => User, (user) => user.leaderboards)
   user: User;
 
   @Column('integer', { default: 0 })
