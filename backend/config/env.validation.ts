@@ -24,7 +24,6 @@ class EnvironmentVariables {
 
   @IsString()
   CONTRACT_ADDRESS: string;
-  
 }
 
 export function validate(config: Record<string, unknown>) {

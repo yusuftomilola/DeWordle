@@ -164,7 +164,7 @@ export default function DailyChallenge() {
                     </div>
                   ))}
                 </div>
-              )
+              ),
             )}
           </div>
 

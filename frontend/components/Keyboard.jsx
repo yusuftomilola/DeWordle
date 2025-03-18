@@ -55,7 +55,7 @@ const Keyboard = () => {
       setGridData,
       setCurrentCol,
       setCurrentRow,
-    ]
+    ],
   );
 
   // Define rows array first
@@ -130,7 +130,7 @@ const Keyboard = () => {
           ease: "power2.out",
           onComplete: () => ripple.remove(),
         },
-        0
+        0,
       )
       .to(
         button,
@@ -142,7 +142,7 @@ const Keyboard = () => {
           duration: 0.3,
           ease: "elastic.out(1, 0.3)",
         },
-        0.2
+        0.2,
       );
 
     // Border trace animation
@@ -230,7 +230,7 @@ const Keyboard = () => {
             ease: "power2.out",
             onComplete: () => ripple.remove(),
           },
-          0
+          0,
         )
         .to(
           targetButton,
@@ -242,7 +242,7 @@ const Keyboard = () => {
             duration: 0.3,
             ease: "elastic.out(1, 0.3)",
           },
-          0.2
+          0.2,
         );
 
       gsap
@@ -329,7 +329,7 @@ const Keyboard = () => {
       (button) =>
         button.textContent === keyValue.toUpperCase() ||
         (keyValue === "Backspace" && button.querySelector("svg")) ||
-        (keyValue === "Enter" && button.textContent === "Enter")
+        (keyValue === "Enter" && button.textContent === "Enter"),
     );
 
     if (targetButton) {
@@ -365,7 +365,7 @@ const Keyboard = () => {
             ease: "power2.out",
             onComplete: () => ripple.remove(),
           },
-          0
+          0,
         )
         .to(
           button,
@@ -377,7 +377,7 @@ const Keyboard = () => {
             duration: 0.3,
             ease: "elastic.out(1, 0.3)",
           },
-          0.2
+          0.2,
         );
 
       gsap

@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UseFilters } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UseFilters,
+} from '@nestjs/common';
 
 import { v4 as uuidv4 } from 'uuid';
 import { RedisService } from './provider/redis.service';
@@ -27,7 +33,9 @@ export class GuestUserService {
       return { id, expiresAt };
     } catch (error) {
       console.error('Error creating guest session:', error);
-    throw new Error(`Failed to create guest user session: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to create guest user session: ${(error as Error).message}`,
+      );
     }
   }
 

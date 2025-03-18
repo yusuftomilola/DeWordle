@@ -26,8 +26,8 @@ export class User {
   password: string;
 
   @Column({ default: false })
-    isVerified: boolean;
-  
+  isVerified: boolean;
+
   @OneToMany(() => Token, (token) => token.user)
   tokens: Token[];
 
@@ -55,7 +55,7 @@ export class User {
   results: Result[];
 
   @Column('varchar', { length: 225, nullable: true })
-  googleId?: string
+  googleId?: string;
 
   @Column({ nullable: true })
   lastActivityAt: Date;

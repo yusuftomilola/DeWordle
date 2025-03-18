@@ -1,11 +1,10 @@
-"use client"
-import { Camera, ChevronDown } from "lucide-react"
-import Image from "next/image"
+"use client";
+import { Camera, ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 export default function ProfilePage() {
   return (
     <div className="min-h-auto bg-[#f5f5f5]">
-   
       {/* Main Content */}
       <main className="flex justify-center py-6">
         <div className="bg-white w-full max-w-2xl p-5 rounded-lg shadow-sm">
@@ -69,12 +68,13 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex justify-end">
-              <button className="bg-[#797979] hover:bg-[#696969] text-white px-8 py-2 rounded-full">Save</button>
+              <button className="bg-[#797979] hover:bg-[#696969] text-white px-8 py-2 rounded-full">
+                Save
+              </button>
             </div>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }
-

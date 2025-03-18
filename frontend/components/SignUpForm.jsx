@@ -39,7 +39,9 @@ const SignUpForm = () => {
     <div className="flex items-center justify-center p-4 bg-white font-manrope">
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
-          <h1 className="md:text-[48px] text-[35px] font-[600] text-[#29296E]">Get Started</h1>
+          <h1 className="md:text-[48px] text-[35px] font-[600] text-[#29296E]">
+            Get Started
+          </h1>
           <p className="text-gray-600 mt-2 text-[24px] font-[400]">
             Create your account
           </p>
@@ -51,7 +53,6 @@ const SignUpForm = () => {
           onSubmit={handleSubmit}
         >
           {({ errors, touched, isSubmitting, status, values }) => {
-    
             useEffect(() => {
               if (
                 values.username ||

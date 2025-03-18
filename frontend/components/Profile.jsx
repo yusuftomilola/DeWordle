@@ -9,7 +9,6 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       {/* Mobile menu */}
-    
 
       {/* Main Content */}
       <main className="grid grid-cols-1 gap-8 px-4 py-2 md:px-8 lg:px-16 lg:py-8 lg:grid-cols-2">

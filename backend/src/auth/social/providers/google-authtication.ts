@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
 import jwtConfig from 'config/jwt.config';
@@ -35,14 +41,14 @@ export class GoogleAuthenticationService implements OnModuleInit {
   }
   public async authenticate(googleTokenDto: GoogleTokenDto) {
     try {
-      console.log("Received Token:", googleTokenDto.token);
+      console.log('Received Token:', googleTokenDto.token);
 
       // verify the google token sent by user
       const loginTicket = await this.oAuthClient.verifyIdToken({
         idToken: googleTokenDto.token,
       });
 
-      console.log("Google Token Payload:", loginTicket.getPayload());
+      console.log('Google Token Payload:', loginTicket.getPayload());
 
       // extract the payload from google jwt token
       const {
@@ -69,7 +75,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
       return this.generateTokensProvider.generateTokens(newUser);
     } catch (error) {
       // if any of the step fails, send an unauthorised exception
-      console.error("Google Auth Error:", error);
+      console.error('Google Auth Error:', error);
       throw new UnauthorizedException('failed to authenticate with google');
     }
   }

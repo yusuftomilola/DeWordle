@@ -20,7 +20,6 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { EmailDto } from './dto/email.dto';
 
-
 @ApiTags('Auth') // Group all endpoints under the 'Auth' tag
 @Controller('/api/v1/auth')
 export class AuthController {
@@ -71,7 +70,9 @@ export class AuthController {
     try {
       return await this.authService.verifyEmail(token);
     } catch (error) {
-      throw new BadRequestException(error.message || 'Invalid verification token');
+      throw new BadRequestException(
+        error.message || 'Invalid verification token',
+      );
     }
   }
 
@@ -108,9 +109,12 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto,
   ) {
     try {
-      return await this.authService.resetPassword(token, resetPasswordDto.password);
+      return await this.authService.resetPassword(
+        token,
+        resetPasswordDto.password,
+      );
     } catch (error) {
       throw new BadRequestException(error.message || 'Invalid reset token');
     }
-}
+  }
 }

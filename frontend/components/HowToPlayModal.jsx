@@ -17,7 +17,10 @@ const HowToPlayModal = ({ isOpen, onClose }) => {
       <p className="text-sm text-gray-700 mt-3">Guess the wordle in 6 tries:</p>
       <ul className="text-sm text-gray-600 mt-2 space-y-1">
         <li>• Each guess must be a valid 5-letter word.</li>
-        <li>• The color of the tiles will change to show how close your guess was to the word.</li>
+        <li>
+          • The color of the tiles will change to show how close your guess was
+          to the word.
+        </li>
       </ul>
 
       {/* Examples Section */}
@@ -26,46 +29,89 @@ const HowToPlayModal = ({ isOpen, onClose }) => {
       {/* Example 1 */}
       <div className="mt-2">
         <div className="flex gap-1">
-          <span className="w-10 h-10 flex items-center justify-center bg-green-500 text-white font-bold text-lg rounded-md">W</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">O</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">R</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">D</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">Y</span>
+          <span className="w-10 h-10 flex items-center justify-center bg-green-500 text-white font-bold text-lg rounded-md">
+            W
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            O
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            R
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            D
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            Y
+          </span>
         </div>
-        <p className="text-xs text-gray-600 mt-1">W is in the word and in the correct spot.</p>
+        <p className="text-xs text-gray-600 mt-1">
+          W is in the word and in the correct spot.
+        </p>
       </div>
 
       {/* Example 2 */}
       <div className="mt-2">
         <div className="flex gap-1">
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">L</span>
-          <span className="w-10 h-10 flex items-center justify-center bg-yellow-500 text-white font-bold text-lg rounded-md">I</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">G</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">H</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">T</span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            L
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center bg-yellow-500 text-white font-bold text-lg rounded-md">
+            I
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            G
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            H
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            T
+          </span>
         </div>
-        <p className="text-xs text-gray-600 mt-1">I is in the word but in the wrong spot.</p>
+        <p className="text-xs text-gray-600 mt-1">
+          I is in the word but in the wrong spot.
+        </p>
       </div>
 
       {/* Example 3 */}
       <div className="mt-2">
         <div className="flex gap-1">
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">R</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">O</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">G</span>
-          <span className="w-10 h-10 flex items-center justify-center bg-gray-400 text-white font-bold text-lg rounded-md">U</span>
-          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">E</span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            R
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            O
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            G
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center bg-gray-400 text-white font-bold text-lg rounded-md">
+            U
+          </span>
+          <span className="w-10 h-10 flex items-center justify-center border border-gray-300 text-lg rounded-md">
+            E
+          </span>
         </div>
-        <p className="text-xs text-gray-600 mt-1">U is not in the word in any spot.</p>
+        <p className="text-xs text-gray-600 mt-1">
+          U is not in the word in any spot.
+        </p>
       </div>
 
       {/* Bottom Section */}
       <p className="mt-4 text-xs text-gray-600 border-t pt-3">
-        <a href="#" className="text-blue-500 hover:underline">Log in or create a free account</a> to link your stats.
+        <a href="#" className="text-blue-500 hover:underline">
+          Log in or create a free account
+        </a>{" "}
+        to link your stats.
       </p>
       <p className="mt-2 text-xs text-gray-600">
-        A new puzzle is released daily at midnight. If you haven’t already, you can{" "}
-        <a href="#" className="text-blue-500 hover:underline">sign up</a> for our daily reminder email.
+        A new puzzle is released daily at midnight. If you haven’t already, you
+        can{" "}
+        <a href="#" className="text-blue-500 hover:underline">
+          sign up
+        </a>{" "}
+        for our daily reminder email.
       </p>
     </div>
   );

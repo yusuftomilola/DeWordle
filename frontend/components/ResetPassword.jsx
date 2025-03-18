@@ -100,7 +100,13 @@ const ResetPassword = () => {
                   )}
                 </button>
               </div>
-              {doesPasswordMatch ? '' : <p className="text-red-600 text-left text-sm" >Password does not match</p>}
+              {doesPasswordMatch ? (
+                ""
+              ) : (
+                <p className="text-red-600 text-left text-sm">
+                  Password does not match
+                </p>
+              )}
             </div>
 
             {/* Submission Button */}

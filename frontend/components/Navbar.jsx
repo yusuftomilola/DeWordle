@@ -11,7 +11,7 @@ import {
   Bell,
   HelpCircle,
   LogOut,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { HelpGuide } from "./HelpGuide";
 
@@ -26,7 +26,7 @@ const Navbar = () => {
   const user = {
     name: "John Stones",
     email: "johnstones1@gmail.com",
-    avatar: "/avatar.jpg" 
+    avatar: "/avatar.jpg",
   };
 
   const toggleMenu = () => {
@@ -41,7 +41,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
         profileButtonRef.current &&
         !profileButtonRef.current.contains(event.target)
@@ -68,7 +68,13 @@ const Navbar = () => {
         {/* Navbar Start: Dewordle Logo */}
         <div className="navbar-start flex items-center">
           <Link href="/" className="flex items-center">
-            <Image src={DewordleIcon} alt="logo" width={147} height={44} quality={90}/>
+            <Image
+              src={DewordleIcon}
+              alt="logo"
+              width={147}
+              height={44}
+              quality={90}
+            />
           </Link>
         </div>
 
@@ -76,18 +82,18 @@ const Navbar = () => {
         <div className="navbar-end flex items-center gap-x-12 mt-4">
           {/* User Profile Button */}
           <div className="relative">
-            <button 
+            <button
               ref={profileButtonRef}
               onClick={toggleProfileDropdown}
               className="flex items-center gap-2 text-[#29296E] font-medium"
             >
               <div className="w-8 h-8 rounded-full  overflow-hidden flex items-center justify-center border-2 border-[#29296E]">
                 {user.avatar ? (
-                  <Image 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    width={32} 
-                    height={32} 
+                  <Image
+                    src={user.avatar}
+                    alt={user.name}
+                    width={32}
+                    height={32}
                     className="object-cover"
                   />
                 ) : (
@@ -102,7 +108,7 @@ const Navbar = () => {
 
             {/* Profile Dropdown */}
             {isProfileOpen && (
-              <div 
+              <div
                 ref={dropdownRef}
                 className="absolute -right-20 mt-2 bg-white rounded-lg shadow-lg py-4 z-50 w-[20rem]"
               >
@@ -110,11 +116,11 @@ const Navbar = () => {
                 <div className="flex flex-col items-center justify-center px-4 py-4">
                   <div className="w-20 h-20 rounded-full  overflow-hidden flex items-center justify-center border-4 border-[#29296E] mb-2">
                     {user.avatar ? (
-                      <Image 
-                        src={user.avatar} 
-                        alt={user.name} 
-                        width={80} 
-                        height={80} 
+                      <Image
+                        src={user.avatar}
+                        alt={user.name}
+                        width={80}
+                        height={80}
                         className="object-cover"
                       />
                     ) : (
@@ -123,11 +129,15 @@ const Navbar = () => {
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xl font-semibold text-center">{user.name}</h3>
-                  <p className="text-sm text-gray-500 text-center">{user.email}</p>
-                  
-                  <button 
-                    onClick={() => handleNavigation('/profile')}
+                  <h3 className="text-xl font-semibold text-center">
+                    {user.name}
+                  </h3>
+                  <p className="text-sm text-gray-500 text-center">
+                    {user.email}
+                  </p>
+
+                  <button
+                    onClick={() => handleNavigation("/profile")}
                     className="w-full mt-3 py-2 bg-[#29296E] text-white font-medium rounded-full"
                   >
                     View Profile
@@ -136,33 +146,33 @@ const Navbar = () => {
 
                 {/* Menu Items */}
                 <div className="mt-2">
-                  <button 
-                    onClick={() => handleNavigation('/setting')}
+                  <button
+                    onClick={() => handleNavigation("/setting")}
                     className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 bg-gray-100"
                   >
                     <SettingsIcon size={18} className="text-[#29296E]" />
                     <span>Settings</span>
                   </button>
-                  
-                  <button 
-                    onClick={() => handleNavigation('/stats')}
+
+                  <button
+                    onClick={() => handleNavigation("/stats")}
                     className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
                   >
                     <BarChartIcon size={18} className="text-[#29296E]" />
                     <span>Stats</span>
                   </button>
-                  
-                  <button 
-                    onClick={() => handleNavigation('/notifications')}
+
+                  <button
+                    onClick={() => handleNavigation("/notifications")}
                     className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
                   >
                     <Bell size={18} className="text-[#29296E]" />
                     <span>Notifications</span>
                   </button>
-                  
+
                   <div className="mt-12">
-                    <button 
-                      onClick={() => handleNavigation('/logout')}
+                    <button
+                      onClick={() => handleNavigation("/logout")}
                       className="w-full px-4 py-2 text-left flex items-center gap-3"
                     >
                       <LogOut size={18} className="text-[#29296E]" />
@@ -175,7 +185,7 @@ const Navbar = () => {
           </div>
 
           {/* Help Button */}
-          <button 
+          <button
             onClick={() => setIsHelpGuideOpen(true)}
             className="flex items-center text-[#29296E]"
           >
@@ -185,8 +195,8 @@ const Navbar = () => {
 
           {/* Connect Button */}
           <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-full flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg">
-                Connect
-              </button>
+            Connect
+          </button>
         </div>
 
         {/* Mobile Menu */}

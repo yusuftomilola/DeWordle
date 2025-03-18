@@ -1,31 +1,31 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
-import { Formik, Form, Field } from 'formik';
-import { signInSchema } from '@/utils/authValidationSchema';
+import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { Formik, Form, Field } from "formik";
+import { signInSchema } from "@/utils/authValidationSchema";
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const initialValues = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
       // Handle form submission logic here
-      console.log('Form submitted:', values);
+      console.log("Form submitted:", values);
 
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Redirect or perform additional actions on success
     } catch (error) {
-      console.error('Submission error:', error);
-      setStatus({ error: 'Invalid email or password. Please try again.' });
+      console.error("Submission error:", error);
+      setStatus({ error: "Invalid email or password. Please try again." });
     } finally {
       setSubmitting(false);
     }
@@ -61,8 +61,8 @@ const SignInForm = () => {
                 placeholder="Enter your email"
                 className={`w-full px-3 py-2 border text-[16px] placeholder-[#9F9F9F] ${
                   touched.email && errors.email
-                    ? 'border-red-500'
-                    : 'border-[#535353]'
+                    ? "border-red-500"
+                    : "border-[#535353]"
                 } rounded-md h-[54px] focus:outline-none focus:ring-2 focus:ring-blue-500`}
               />
               {touched.email && errors.email && (
@@ -79,23 +79,23 @@ const SignInForm = () => {
               </label>
               <div className="relative">
                 <Field
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   placeholder="Password"
                   className={`appearance-none w-full px-3 py-2 border text-[16px] placeholder-[#9F9F9F] ${
                     touched.password && errors.password
-                      ? 'border-red-500'
-                      : 'border-[#535353]'
+                      ? "border-red-500"
+                      : "border-[#535353]"
                   } rounded-md h-[54px] focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                  style={{ WebkitAppearance: 'none' }}
+                  style={{ WebkitAppearance: "none" }}
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -126,7 +126,7 @@ const SignInForm = () => {
               disabled={isSubmitting}
               className="bg-[#29296E] w-full h-[56px] hover:bg-[#12123f] text-white py-2 px-4 rounded-[24px] font-medium focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Signing in...' : 'Log In'}
+              {isSubmitting ? "Signing in..." : "Log In"}
             </button>
 
             <div className="relative text-center my-4">

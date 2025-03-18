@@ -1,6 +1,5 @@
 import React from "react";
 
-
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
@@ -8,9 +7,7 @@ interface AuthLayoutProps {
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
     <div className="h-screen bg-[#ffffff] flex flex-col">
-      <main className="">
-        {children}
-      </main>
+      <main className="">{children}</main>
     </div>
   );
 };

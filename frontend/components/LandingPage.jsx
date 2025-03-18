@@ -25,8 +25,8 @@ const LandingPage = () => {
           hasShadow ? "shadow-[0_1px_4px_rgba(0,0,0,0.05)]" : "shadow-none"
         }`}
       >
-      <NavbarLandingPage />
-      </header> 
+        <NavbarLandingPage />
+      </header>
 
       <div className="w-full h-full max-w-7xl mx-auto">
         <div className="mx-auto justify-between lg:flex gap-10 xl:gap-24 mt-8 ">

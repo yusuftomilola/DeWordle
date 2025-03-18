@@ -4,8 +4,8 @@ import WordGrid from "@/components/WordGrid.jsx";
 export default function page() {
   return (
     <div>
-        <WordGrid />
-        <Keyboard />
+      <WordGrid />
+      <Keyboard />
     </div>
   );
 }

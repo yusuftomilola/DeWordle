@@ -1,5 +1,11 @@
-import { IsOptional, IsPositive, IsNumber, Min, IsString } from "class-validator";
-import { Type } from "class-transformer";
+import {
+  IsOptional,
+  IsPositive,
+  IsNumber,
+  Min,
+  IsString,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class PaginationQueryDto {
   @IsOptional()

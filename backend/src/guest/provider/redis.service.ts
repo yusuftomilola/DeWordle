@@ -21,8 +21,10 @@ export class RedisService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: any) {}
 
   // ✅ Store guest session with 10-min expiry
-  async setGuestSession(guestId: string) {  
-    await this.cacheManager.set(`guest_session:${guestId}`, 'active', { ttl: 600 }); // TTL: 10 mins
+  async setGuestSession(guestId: string) {
+    await this.cacheManager.set(`guest_session:${guestId}`, 'active', {
+      ttl: 600,
+    }); // TTL: 10 mins
   }
 
   // ✅ Retrieve guest session and RENEW TTL on each request
@@ -32,7 +34,7 @@ export class RedisService {
     )) as string | null;
 
     if (session) {
-     // 🔄 Session exists → Renew TTL
+      // 🔄 Session exists → Renew TTL
       await this.cacheManager.set(`guest_session:${guestId}`, 'active', 600);
     }
 

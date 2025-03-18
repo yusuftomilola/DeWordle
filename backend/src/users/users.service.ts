@@ -29,7 +29,7 @@ export class UsersService {
 
     private readonly createGoogleUserProvider: CreateGoogleUserProvider,
     private readonly createUserProvider: CreateUsersProvider,
-    private readonly mailService: MailService, 
+    private readonly mailService: MailService,
     // @Inject(forwardRef(() => AuthService))
     // private readonly authService: AuthService,
   ) {}
@@ -42,15 +42,16 @@ export class UsersService {
       user.id,
       TokenType.VERIFICATION,
     );
-    
+
     // Send verification email
     await this.mailService.sendVerificationEmail(
       user.email,
       verificationToken.token,
     );
-    
+
     return {
-      message: 'Registration successful. Please check your email to verify your account.',
+      message:
+        'Registration successful. Please check your email to verify your account.',
     };
   }
 
@@ -65,7 +66,7 @@ export class UsersService {
       take: limit,
       order: { id: 'ASC' },
     });
-    
+
     return {
       total,
       page,
@@ -118,7 +119,7 @@ export class UsersService {
     if (!user) {
       return null;
     }
-    
+
     // Check if email is unique before updating
     if (updateUserDto.email) {
       const existingUser = await this.userRepository.findOne({
@@ -128,7 +129,7 @@ export class UsersService {
         throw new BadRequestException('Please check your email id');
       }
     }
-    
+
     // Ensure only specified fields are updated, excluding id
     const allowedUpdates = ['name', 'email'];
     for (const key of Object.keys(updateUserDto)) {
@@ -136,12 +137,15 @@ export class UsersService {
         (user as any)[key] = (updateUserDto as any)[key];
       }
     }
-    
+
     return this.userRepository.save(user);
   }
 
   // Added missing method that was referenced in create()
-  private async createToken(userId: number, tokenType: TokenType): Promise<any> {
+  private async createToken(
+    userId: number,
+    tokenType: TokenType,
+  ): Promise<any> {
     // Implementation would go here
     return { token: 'generated-token' }; // Placeholder implementation
   }

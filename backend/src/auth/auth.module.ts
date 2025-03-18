@@ -7,7 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { SignInProvider } from './providers/sign-in.provider';
 import { GenerateTokenProvider } from './providers/generate-token.provider';
 import jwtConfig from 'config/jwt.config';
-import { ConfigModule, ConfigService  } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { PassportModule } from '@nestjs/passport';
@@ -21,7 +21,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { MailModule } from '../mail/mail.module';
 import { Token } from './entities/token.entity';
-
 
 @Module({
   imports: [
@@ -52,7 +51,7 @@ import { Token } from './entities/token.entity';
     SignInProvider,
     GenerateTokenProvider,
     RefreshTokenProvider,
-    GoogleAuthenticationService
+    GoogleAuthenticationService,
   ],
   exports: [
     AuthService,

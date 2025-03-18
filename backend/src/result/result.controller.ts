@@ -40,10 +40,7 @@ export class ResultController {
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @Res() res: ResType
-  ) {
+  findOne(@Param('id', ParseIntPipe) id: number, @Res() res: ResType) {
     return this.resultService.findOne(id, res);
   }
 

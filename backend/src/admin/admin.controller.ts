@@ -41,7 +41,7 @@ export class AdminController {
     return await this.adminService.createAdmin(createAdminDto);
   }
 
-  @Auth(true)   //testing the Auth decorator
+  @Auth(true) //testing the Auth decorator
   @Get()
   @ApiOperation({ summary: 'Get all admins' })
   @ApiResponse({ status: 200, description: 'List of all admins' })
