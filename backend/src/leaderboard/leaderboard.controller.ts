@@ -22,7 +22,6 @@ import {
 import { LeaderboardService } from './leaderboard.service';
 import { CreateLeaderboardDto } from './dto/create-leaderboard.dto';
 import { UpdateLeaderboardDto } from './dto/update-leaderboard.dto';
-import { query } from 'express';
 import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 import { RolesGuard } from 'security/guards/rolesGuard/roles.guard';
 import { RoleDecorator } from 'security/decorators/roles.decorator';

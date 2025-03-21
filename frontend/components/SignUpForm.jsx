@@ -1,11 +1,12 @@
-"use client";
-import React from "react";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
-import Link from "next/link";
-import { Formik, Form, Field } from "formik";
-import { signUpSchema } from "@/utils/authValidationSchema";
+'use client';
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { Formik, Form, Field } from 'formik';
+import { signUpSchema } from '@/utils/authValidationSchema';
+import { useSignup } from '@/app/hooks/useSignup';
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -13,24 +14,47 @@ const SignUpForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formEmpty, setFormEmpty] = useState(true);
 
+  const { mutate, isSuccess, isError, error, isPending } = useSignup();
+
+  useEffect(() => {
+    if (isSuccess) {
+      router.push('/signin');
+    }
+  }, [isSuccess, router]);
+
   const initialValues = {
-    username: "",
-    fullname: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    username: '',
+    fullname: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
     terms: false,
   };
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
-      console.log("Form submitted with values:", values);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      router.push("/");
+      console.log('Form submitted with values:', values);
+
+      const userData = {
+        userName: values.username,
+        email: values.email,
+        password: values.password,
+      };
+
+      mutate(userData, {
+        onError: (err) => {
+          console.error('Submission error:', err);
+          setStatus({
+            error:
+              err.response?.data?.message ||
+              'Something went wrong. Please try again.',
+          });
+          setSubmitting(false);
+        },
+      });
     } catch (error) {
-      console.error("Submission error:", error);
-      setStatus({ error: "Something went wrong. Please try again." });
-    } finally {
+      console.error('Submission error:', error);
+      setStatus({ error: 'Something went wrong. Please try again.' });
       setSubmitting(false);
     }
   };
@@ -52,7 +76,15 @@ const SignUpForm = () => {
           validationSchema={signUpSchema}
           onSubmit={handleSubmit}
         >
-          {({ errors, touched, isSubmitting, status, values }) => {
+          {({
+            errors,
+            touched,
+            isSubmitting,
+            status,
+            values,
+            setSubmitting,
+            setStatus,
+          }) => {
             useEffect(() => {
               if (
                 values.username ||
@@ -81,8 +113,8 @@ const SignUpForm = () => {
                     type="text"
                     className={`w-full px-3 py-2 border ${
                       touched.username && errors.username
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? 'border-red-500'
+                        : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500`}
                     placeholder="Enter your name/nickname"
                   />
@@ -105,8 +137,8 @@ const SignUpForm = () => {
                     type="text"
                     className={`w-full px-3 py-2 border ${
                       touched.fullname && errors.fullname
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? 'border-red-500'
+                        : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500`}
                     placeholder="Enter your name"
                   />
@@ -129,8 +161,8 @@ const SignUpForm = () => {
                     type="email"
                     className={`w-full px-3 py-2 border ${
                       touched.email && errors.email
-                        ? "border-red-500"
-                        : "border-gray-300"
+                        ? 'border-red-500'
+                        : 'border-gray-300'
                     } rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500`}
                     placeholder="Enter your email"
                   />
@@ -151,11 +183,11 @@ const SignUpForm = () => {
                   <div className="relative">
                     <Field
                       name="password"
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       className={`w-full px-3 py-2 border ${
                         touched.password && errors.password
-                          ? "border-red-500"
-                          : "border-gray-300"
+                          ? 'border-red-500'
+                          : 'border-gray-300'
                       } rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500`}
                       placeholder="Password"
                     />
@@ -164,7 +196,7 @@ const SignUpForm = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                       aria-label={
-                        showPassword ? "Hide password" : "Show password"
+                        showPassword ? 'Hide password' : 'Show password'
                       }
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -187,11 +219,11 @@ const SignUpForm = () => {
                   <div className="relative">
                     <Field
                       name="confirmPassword"
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showConfirmPassword ? 'text' : 'password'}
                       className={`w-full px-3 py-2 border ${
                         touched.confirmPassword && errors.confirmPassword
-                          ? "border-red-500"
-                          : "border-gray-300"
+                          ? 'border-red-500'
+                          : 'border-gray-300'
                       } rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500`}
                       placeholder="Password"
                     />
@@ -202,7 +234,7 @@ const SignUpForm = () => {
                       }
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none "
                       aria-label={
-                        showConfirmPassword ? "Hide password" : "Show password"
+                        showConfirmPassword ? 'Hide password' : 'Show password'
                       }
                     >
                       {showConfirmPassword ? (
@@ -223,25 +255,69 @@ const SignUpForm = () => {
                   <div className="text-red-500 text-sm">{status.error}</div>
                 )}
 
+                <div className="mt-4">
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <Field
+                        name="terms"
+                        type="checkbox"
+                        id="terms"
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">
+                      <label
+                        htmlFor="terms"
+                        className="font-medium text-gray-700"
+                      >
+                        I agree to the{' '}
+                        <a
+                          href="#"
+                          className="text-indigo-600 hover:text-indigo-500"
+                        >
+                          Terms and Conditions
+                        </a>
+                      </label>
+                      {touched.terms && errors.terms && (
+                        <div className="text-red-500 text-sm mt-1">
+                          {errors.terms}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isPending || formEmpty}
                   className={`w-full bg-[#29296E] hover:bg-indigo-800 text-white py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6 ${
-                    formEmpty ? "opacity-40" : "opacity-100"
+                    formEmpty ? 'opacity-40' : 'opacity-100'
                   } flex items-center justify-center min-h-[44px]`}
                 >
-                  {isSubmitting ? (
+                  {isSubmitting || isPending ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                       <span>Creating account...</span>
                     </>
                   ) : (
-                    "Create Account"
+                    'Create Account'
                   )}
                 </button>
 
                 <div className="my-6 flex items-center justify-center">
                   <span className="mx-4 text-gray-500 text-sm">or</span>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">
+                    Already have an account?{' '}
+                    <Link
+                      href="/login"
+                      className="text-indigo-600 hover:text-indigo-800"
+                    >
+                      Sign in
+                    </Link>
+                  </p>
                 </div>
               </Form>
             );
