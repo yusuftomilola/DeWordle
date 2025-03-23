@@ -7,7 +7,7 @@ export default function PlayOurGame() {
   const deworldeBlockRef = useRef(null);
 
   useEffect(() => {
-    // Remove sessionStorage logic if you want the animations to always trigger on scroll.
+
     const observer = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach((entry) => {
@@ -19,7 +19,6 @@ export default function PlayOurGame() {
         });
       },
       {
-        // Trigger the animation a bit earlier than when the element is fully in view.
         rootMargin: "0px 0px -20% 0px",
         threshold: 0,
       }
