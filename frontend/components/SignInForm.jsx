@@ -38,7 +38,6 @@ const SignInForm = () => {
       mutate(userData, {
         onError: (err) => {
           console.error('siginin error:', 'error occur while siginin') || err;
-          toast.error("Something went wrong. Please try again.");
           setStatus({
             error:
               err.response?.data?.message ||
@@ -46,10 +45,6 @@ const SignInForm = () => {
           });
           setSubmitting(false);
         },
-        onSuccess:()=>
-        {
-          toast.success("Signin successful");
-        }
       });
 
       // Redirect or perform additional actions on success
@@ -145,12 +140,6 @@ const SignInForm = () => {
                 </Link>
               </div>
             </div>
-
-            {status && status.error && (
-              <div className="text-red-500 text-sm text-center">
-                {status.error}
-              </div>
-            )}
 
             <button
               type="submit"
