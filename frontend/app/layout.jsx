@@ -7,6 +7,7 @@ import { ThemeProvider } from "../context/ThemeContext";
 import { Manrope } from "next/font/google";
 import { Roboto } from "next/font/google";
 import { QueryProvider, SessionProvider } from "@/app/providers";
+import { Bounce, ToastContainer } from "react-toastify";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -42,6 +43,19 @@ export default function RootLayout({ children }) {
         <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
           <QueryProvider>
             <main className="flex-grow ">{children}</main>
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+            />
           </QueryProvider>
         </body>
       </html>

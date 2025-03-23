@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Formik, Form, Field } from 'formik';
 import { signInSchema } from '@/utils/authValidationSchema';
 import { useSignin } from '@/app/hooks/useSignIn';
+import { toast } from 'react-toastify';
 
 const SignInForm = () => {
   const router = useRouter();
@@ -37,6 +38,7 @@ const SignInForm = () => {
       mutate(userData, {
         onError: (err) => {
           console.error('siginin error:', 'error occur while siginin') || err;
+          toast.error("Something went wrong. Please try again.");
           setStatus({
             error:
               err.response?.data?.message ||
@@ -44,12 +46,17 @@ const SignInForm = () => {
           });
           setSubmitting(false);
         },
+        onSuccess:()=>
+        {
+          toast.success("Signin successful");
+        }
       });
 
       // Redirect or perform additional actions on success
     } catch (error) {
       console.error('Submission error:', error);
       setStatus({ error: 'Invalid email or password. Please try again.' });
+      toast.error("Invalid email or password. Please try again.");
     } finally {
       setSubmitting(false);
     }
