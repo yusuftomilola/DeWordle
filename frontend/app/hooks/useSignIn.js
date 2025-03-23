@@ -13,7 +13,7 @@ export function useSignin() {
     },
     onError: (error) => {
       console.error('Something went wrong', error);
-      toast.error(error?.message);
+      toast.error(error?.response?.data?.message);
     },
   });
 }

@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Formik, Form, Field } from "formik";
 import { signUpSchema } from "@/utils/authValidationSchema";
 import { useSignup } from "@/app/hooks/useSignup";
-import { toast } from "react-toastify";
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -56,7 +55,6 @@ const SignUpForm = () => {
     } catch (error) {
       console.error("Submission error:", error);
       setStatus({ error: "Something went wrong. Please try again." });
-      toast.error("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
