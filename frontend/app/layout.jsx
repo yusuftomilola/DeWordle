@@ -8,6 +8,9 @@ import { Manrope } from "next/font/google";
 import { Roboto } from "next/font/google";
 import { QueryProvider, SessionProvider } from "@/app/providers";
 import { Bounce, ToastContainer } from "react-toastify";
+import Footer from "@/components/footer";
+import { usePathname } from "next/navigation";
+import LandingPageNavbar from "@/components/LandingPageNavbar";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -30,6 +33,11 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+  // Define the routes where you want to hide the footer
+  const hideFooterRoutes = ["/signin", "/signup", "/game"];
+  const hideNavbarRoutes = ["/signin", "/signup", "/admin-signin","/subadmin-signin", "/dewordle", "/game", "/spelling-bee"];
+
   return (
     <ThemeProvider>
       <html
@@ -42,6 +50,7 @@ export default function RootLayout({ children }) {
         </head>
         <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
           <QueryProvider>
+            {!hideNavbarRoutes.includes(pathname) && <LandingPageNavbar />}
             <main className="flex-grow ">{children}</main>
             <ToastContainer
               position="top-right"
@@ -56,6 +65,8 @@ export default function RootLayout({ children }) {
               theme="light"
               transition={Bounce}
             />
+            {/* Render Footer only if the current route is NOT in hideFooterRoutes */}
+            {!hideFooterRoutes.includes(pathname) && <Footer />}
           </QueryProvider>
         </body>
       </html>

@@ -1,57 +1,65 @@
-import React from "react";
+"use client";
 
-function DeWordle() {
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+// import NavbarLandingPage from "./NavbarLandingPage";
+
+const navigation = [{ name: "How to play", href: "#" }];
+
+const Dewordle = () => {
+  const [hasShadow, setHasShadow] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasShadow(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 400 120"
-      width="500"
-      height="500"
-    >
-      <g fill="none" stroke="#29296E" strokeWidth="1.5" opacity="0.2">
-        <path d="M20,40 L40,30 L60,40 L60,60 L40,70 L20,60 Z" />
-        <path d="M70,40 L90,30 L110,40 L110,60 L90,70 L70,60 Z" />
-      </g>
-
-      <g fontFamily="Montserrat, sans-serif" fontWeight="900">
-        <text x="50" y="80" fontSize="60" fill="#29296E">
-          DE
-        </text>
-
-        <text x="140" y="80" fontSize="60" fill="#B14CF9">
-          W
-        </text>
-
-        <text x="220" y="80" fontSize="60" fill="#29296E">
-          RDLE
-        </text>
-      </g>
-
-      <g stroke="#B14CF9" strokeWidth="2" fill="none">
-        <path d="M300,20 L320,30 L320,50 L300,60 L280,50 L280,30 Z" />
-        <path
-          d="M330,25 L350,35 L350,55 L330,65 L310,55 L310,35 Z"
-          opacity="0.4"
-        />
-      </g>
-
-      <g stroke="#B14CF9" strokeWidth="1.5">
-        <line x1="50" y1="90" x2="350" y2="90" opacity="0.6" />
-
-        <circle cx="50" cy="90" r="3" fill="#B14CF9" />
-        <circle cx="200" cy="90" r="3" fill="#B14CF9" />
-        <circle cx="350" cy="90" r="3" fill="#B14CF9" />
-      </g>
-
-      <path
-        d="M365,45 L375,50 L375,60 L365,65 L355,60 L355,50 Z"
-        fill="none"
-        stroke="#29296E"
-        strokeWidth="1.5"
-        opacity="0.3"
-      />
-    </svg>
+    <div className="w-full h-full relative px-4 m-24 sm:px-10 xl:px-20">
+      <div className="w-full h-full max-w-7xl mx-auto">
+        <div className="mx-auto justify-between lg:flex gap-10 xl:gap-24 mt-8 ">
+          <div className="lg:mx-0 pt-8 sm:pt-10 lg:pb-1 xl:max-w-[548px] ">
+            <h1 className=" text-3xl text-[#29296E] font-roboto sm:pr-20 break-words lg:pr-0 sm:text-5xl font-semibold sm:leading-[58px] lg:leading-[70px] tracking-[1.2px]">
+              Get 6 Chances to guess a 5-letter word.
+            </h1>
+            <p className="mt-6 text-lg text-black sm:text-[24px] font-normal break-words leading-[40px] w-full">
+              Think fast, you have 6 chances to guess the right 5-letter word.
+              Test your skills and challenge yourself with every round.
+            </p>
+            <div className="lg:mt-16 mt-8 flex items-center gap-5">
+              <Link
+                href="/signin"
+                className="border hover:bg-accent border-[#29296E] font-bold text-[#29296E]  inline-flex items-center justify-center rounded-3xl w-[12rem]  px-4 py-2 text-lg "
+              >
+                Log In
+              </Link>
+              <Link
+                href="/game"
+                className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
+              >
+                Play as Guest
+              </Link>
+            </div>
+          </div>
+          <div className="relative w-full h-auto min-h-[400px] flex items-center justify-center">
+            <div className="relative w-full h-full max-w-[630px] max-h-[630px]">
+              <Image
+                src="/landingpageImg.svg"
+                alt="Word game illustration"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
 
-export default DeWordle;
+export default Dewordle;
