@@ -8,8 +8,8 @@ const AdminSignin = () => {
   const [password, setPassword] = useState("");
 
   return (
-    <div className="flex h-96 mt-10  items-center justify-center px-4">
-      <div className="w-full max-w-[498px] bg-white px-6 py-3 sm:px-12">
+    <div className="flex mt-10  items-center justify-center px-4">
+      <div className="w-full max-w-[498px] bg-white px-6  sm:px-12">
         {/* Title */}
         <h2 className="text-center text-4xl font-bold text-[#29296E]">
           Admin Sign In

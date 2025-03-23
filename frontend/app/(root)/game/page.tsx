@@ -3,7 +3,7 @@ import WordGrid from "@/components/WordGrid.jsx";
 
 export default function page() {
   return (
-    <div>
+    <div className= "mt-24  h-screen">
       <WordGrid />
       <Keyboard />
     </div>
