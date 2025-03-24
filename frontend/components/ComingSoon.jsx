@@ -18,7 +18,7 @@ export default function ComingSoon() {
   })
   return (
     <>
-     <div className="flex justify-center items-center h-screen">
+     <div className="flex">
       <img ref={imageRef} src="coming-soon.png" alt="coming soon image" className="" />
     </div>
     </>
