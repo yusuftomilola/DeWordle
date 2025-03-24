@@ -165,7 +165,7 @@ const TrendingGames = () => {
 	}, []);
 
 	return (
-		<div className="mt-[110vh]" ref={trendingContainerRef}>
+		<div ref={trendingContainerRef}>
 			{/* Trending Games Section */}
 			<h2 className="text-5xl text-[#29296e] text-center my-24">
 				Trending Games
