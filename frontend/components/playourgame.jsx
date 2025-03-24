@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import gsap from "gsap";
 
 export default function PlayOurGame() {
   const spellinbeeBlockRef = useRef(null);
@@ -30,6 +32,19 @@ export default function PlayOurGame() {
     return () => observer.disconnect();
   }, []);
 
+  const imageRef = useRef(null);
+    useEffect(() => { 
+      if(imageRef.current){
+        gsap.to(imageRef.current,{
+          scale: 1.1,
+          duration: 1,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut"
+        })
+      }
+    })
+
   return (
     <div className="w-full bg-white dark:bg-gray-800 overflow-hidden px-4">
       <div className="max-w-7xl mx-auto">
@@ -57,12 +72,14 @@ export default function PlayOurGame() {
                 aliquip.
               </p>
               <Image
+                ref={imageRef}
                 src="/comingsoon.png"
                 alt="coming soon"
                 width={191}
                 height={107}
                 className="mt-10"
               />
+            
             </div>
           </div>
 
@@ -73,19 +90,19 @@ export default function PlayOurGame() {
             className="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-0 transform -translate-x-10 transition-all duration-1000 mt-8 delay-200"
           >
             <div className="w-full md:w-[650px] h-[465px] text-left p-8 pt-6">
-              <h3 className="font-medium mb-3 text-[32px]">Deworlde</h3>
+              <h3 className="font-bold mb-3 text-[32px]">Deworlde</h3>
               <p className="text-[16px]">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
                 ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
                 aliquip.
               </p>
-              <button
-                type="button"
+              <Link
+                href='/game'
                 className="text-white bg-[#29296E] hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 mt-5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Play Now
-              </button>
+              </Link>
             </div>
             <Image
               src="/abc.png"
