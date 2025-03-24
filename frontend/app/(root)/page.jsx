@@ -1,12 +1,12 @@
 
 
-import LandingPage from "@/components/LandingPage";
+import { HeroSlider } from "@/components/HeroSlider";
 import PlayOurGame from "@/components/playourgame";
 
 export default function Page() {
   return (
     <div className="bg-[#ffffff]">
-      <LandingPage />
+      <HeroSlider />
       <PlayOurGame />
     </div>
   );
