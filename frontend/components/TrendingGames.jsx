@@ -171,7 +171,7 @@ const TrendingGames = () => {
 				Trending Games
 			</h2>
 			<div className="container mx-auto px-4 py-8" ref={cardsContainerRef}>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-screen-xl mx-auto">
 					{cards.map((card, index) => (
 						<GameCard {...card} key={index} />
 					))}
