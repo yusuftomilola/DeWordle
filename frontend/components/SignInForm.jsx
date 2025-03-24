@@ -139,12 +139,6 @@ const SignInForm = () => {
               </div>
             </div>
 
-            {status && status.error && (
-              <div className="text-red-500 text-sm text-center">
-                {status.error}
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={isSubmitting || isPending}

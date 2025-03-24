@@ -7,6 +7,7 @@ import { ThemeProvider } from "../context/ThemeContext";
 import { Manrope } from "next/font/google";
 import { Roboto } from "next/font/google";
 import { QueryProvider, SessionProvider } from "@/app/providers";
+import { Bounce, ToastContainer } from "react-toastify";
 import Footer from "@/components/footer";
 import { usePathname } from "next/navigation";
 import LandingPageNavbar from "@/components/LandingPageNavbar";
@@ -51,6 +52,19 @@ export default function RootLayout({ children }) {
           <QueryProvider>
             {!hideNavbarRoutes.includes(pathname) && <LandingPageNavbar />}
             <main className="flex-grow ">{children}</main>
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              transition={Bounce}
+            />
             {/* Render Footer only if the current route is NOT in hideFooterRoutes */}
             {!hideFooterRoutes.includes(pathname) && <Footer />}
           </QueryProvider>

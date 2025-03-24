@@ -55,6 +55,7 @@ const SignUpForm = () => {
     } catch (error) {
       console.error("Submission error:", error);
       setStatus({ error: "Something went wrong. Please try again." });
+    } finally {
       setSubmitting(false);
     }
   };
@@ -250,10 +251,6 @@ const SignUpForm = () => {
                     </div>
                   )}
                 </div>
-
-                {status && status.error && (
-                  <div className="text-red-500 text-sm">{status.error}</div>
-                )}
 
                 <div className="mt-4">
                   <div className="flex items-start">
