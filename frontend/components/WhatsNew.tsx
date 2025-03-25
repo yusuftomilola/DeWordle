@@ -52,7 +52,7 @@ const WhatsNew = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6 }}
-        className="text-[48px] text-center text-[#29296E] mb-[5rem]"
+        className="text-[30px] text-center text-[#29296E] mb-[5rem]"
       >
         What's New
       </motion.h2>
