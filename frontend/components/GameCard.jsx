@@ -18,8 +18,8 @@ function GameCard({ bgColor, icon, title, description, available }) {
 					/>
 				</div>
 			</div>
-			<div className="p-6 bg-white flex-grow">
-				<h3 className="text-3xl font-bold mb-2">{title}</h3>
+			<div className="p-4 bg-white flex-grow">
+				<h3 className="text-3xl font-bold">{title}</h3>
 				<p className="text-xl py-4 mb-4">{description}</p>
 				{available ? (
 					<Button
