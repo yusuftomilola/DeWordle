@@ -97,7 +97,7 @@ export default function PlayOurGame() {
                 ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
                 aliquip.
               </p>
-              <Link href='/game' className="mt-6 text-white bg-[#29296E] hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              <Link href='/dewordle' className="mt-6 text-white bg-[#29296E] hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Play Now
               </Link>
