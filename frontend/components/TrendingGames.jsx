@@ -36,27 +36,6 @@ const TrendingGames = () => {
 			icon: '/tiles.jpeg',
 			bgColor: 'bg-[#b1ecc9]',
 		},
-		{
-			title: 'Connections',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing.',
-			available: true,
-			icon: '/connections.png',
-			bgColor: 'bg-indigo-300',
-		},
-		{
-			title: 'Strands',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing.',
-			available: false,
-			icon: '/strands.png',
-			bgColor: 'bg-gray-600',
-		},
-		{
-			title: 'Tiles',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing.',
-			available: true,
-			icon: '/tiles.jpeg',
-			bgColor: 'bg-[#b1ecc9]',
-		},
 	];
 
 	// Register ScrollTrigger with GSAP
@@ -171,14 +150,14 @@ const TrendingGames = () => {
 				Trending Games
 			</h2>
 			<div className="container mx-auto px-4 py-8" ref={cardsContainerRef}>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-screen-xl mx-auto">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1180px] mx-auto">
 					{cards.map((card, index) => (
 						<GameCard {...card} key={index} />
 					))}
 				</div>
 			</div>
 			<div
-				className="grid grid-cols-1 md:grid-cols-2 md:gap-8 md:p-8"
+				className="grid grid-cols-1 md:grid-cols-2 md:gap-8 md:p-8 max-w-screen-2xl mx-auto"
 				ref={gridContainerRef}
 			>
 				<div
