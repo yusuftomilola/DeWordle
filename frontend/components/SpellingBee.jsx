@@ -1,12 +1,48 @@
-import React from 'react'
+"use client";
 
+import React, { use } from "react";
+import Header from "./SpellingBeeHeader";
+import threeBees from "../assets/threeBees.png";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const SpellingBee = () => { 
-    return (
-        <div>
-            <h1>Spelling Bee</h1>
+const SpellingBee = () => {
+  const router = useRouter(); // Initialize the router
+
+  const handleSignIn = () => {
+    router.push("/signin"); // Navigate to the sign-in page
+  };
+
+  return (
+    <>
+      <Header />
+      <section className="flex flex-col items-center justify-center text-center py-16 bg-gradient-to-b bg-indigo-400">
+        <div className="mb-4">
+          <Image
+            src={threeBees}
+            alt="Spelling Bee"
+            className="w-[170px] h-[100px]"
+          />
         </div>
-    )
-}
+        <h2 className="text-3xl font-semibold text-white">Spelling bee</h2>
+        <p className="text-white mt-2 max-w-md">
+          Test your spelling skills. Compete, learn and become a spelling
+          champion!
+        </p>
+        <div className="mt-6 flex space-x-4">
+          <button className="px-10 py-1 bg-white text-indigo-900 font-medium rounded-full shadow hover:bg-gray-100">
+            Play
+          </button>
+          <button
+            className="px-8 py-1 border border-white text-white font-medium rounded-full hover:bg-white hover:text-indigo-900"
+            onClick={handleSignIn}
+          >
+            Sign In
+          </button>
+        </div>
+      </section>
+    </>
+  );
+};
 
-export default SpellingBee
+export default SpellingBee;
