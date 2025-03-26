@@ -13,7 +13,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-300 shadow-sm">
+    <header className="flex items-center justify-between px-6 py-5 bg-white border-b border-gray-300 shadow-sm">
       <div className="flex items-center space-x-4">
         <h1 className="text-lg font-semibold text-indigo-900">
           Spelling <span className="text-gray-500">bee</span>
@@ -26,7 +26,7 @@ const Header = () => {
         </Link>
       </div>
       <button
-        className="px-6 py-1 text-white bg-indigo-900 text-sm rounded-full hover:bg-indigo-800"
+        className="px-12 py-3 text-white bg-indigo-900 text-sm rounded-full hover:bg-indigo-800"
         onClick={handleSignIn}
       >
         Sign Up

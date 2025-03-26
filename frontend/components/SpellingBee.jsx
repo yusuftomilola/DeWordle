@@ -16,7 +16,7 @@ const SpellingBee = () => {
   return (
     <>
       <Header />
-      <section className="flex flex-col items-center justify-center text-center py-16 bg-gradient-to-b bg-indigo-400">
+      <section className="flex flex-col items-center justify-center text-center py-32 bg-gradient-to-b bg-indigo-400">
         <div className="mb-4">
           <Image
             src={threeBees}
@@ -24,17 +24,17 @@ const SpellingBee = () => {
             className="w-[170px] h-[100px]"
           />
         </div>
-        <h2 className="text-3xl font-semibold text-white">Spelling bee</h2>
-        <p className="text-white mt-2 max-w-md">
+        <h2 className="text-5xl font-semibold text-white">Spelling bee</h2>
+        <p className="text-white mt-6 text-[18px] max-w-md">
           Test your spelling skills. Compete, learn and become a spelling
           champion!
         </p>
         <div className="mt-6 flex space-x-4">
-          <button className="px-10 py-1 bg-white text-indigo-900 font-medium rounded-full shadow hover:bg-gray-100">
+          <button className="px-16 py-3 bg-white text-indigo-900 font-medium rounded-full shadow hover:bg-gray-100">
             Play
           </button>
           <button
-            className="px-8 py-1 border border-white text-white font-medium rounded-full hover:bg-white hover:text-indigo-900"
+            className="px-16 py-1 border border-white text-white font-medium rounded-full hover:bg-white hover:text-indigo-900"
             onClick={handleSignIn}
           >
             Sign In
