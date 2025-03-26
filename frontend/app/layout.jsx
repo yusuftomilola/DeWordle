@@ -35,8 +35,8 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   // Define the routes where you want to hide the footer
-  const hideFooterRoutes = ["/signin", "/signup", "/game"];
-  const hideNavbarRoutes = ["/signin", "/signup", "/admin-signin","/subadmin-signin", "/dewordle", "/game", "/spelling-bee", '/profile','/setting', '/stats', '/forgot-password' ];
+  const hideFooterRoutes = ["/signin", "/signup", "/game", '/spelling-bee', '/dewordle'];
+  const hideNavbarRoutes = ["/signin", "/signup", "/admin-signin","/subadmin-signin", "/dewordle", "/game", "/spelling-bee", '/profile','/setting', '/stats', '/forgot-password'];
 
   return (
     <ThemeProvider>

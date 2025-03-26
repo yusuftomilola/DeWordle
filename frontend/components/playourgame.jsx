@@ -65,20 +65,24 @@ export default function PlayOurGame() {
             />
             <div className="w-full md:w-[650px] h-[465px] text-left p-8 pt-6">
               <h3 className="font-bold mb-3 text-[32px]">Spelling Bee</h3>
-              <p className="text-[16px]">
+              <p className="text-[16px] mb-6">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
                 ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
                 aliquip.
               </p>
-              <Image
+              {/* <Image
                 ref={imageRef}
                 src="/comingsoon.png"
                 alt="coming soon"
                 width={191}
                 height={107}
                 className="mt-10"
-              />
+              /> */}
+               <Link href='/spelling-bee' className="mt-6 text-white bg-[#29296E] hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-8 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Play Now
+              </Link>
             
             </div>
           </div>

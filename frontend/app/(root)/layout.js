@@ -5,7 +5,7 @@ import { AppProvider } from "@/context/AppContext";
 
 const Layout = ({ children }) => {
   const pathname = usePathname();
-  const hideNavbar = pathname === "/";
+  const hideNavbar = pathname === "/" || pathname === '/spelling-bee'
   return (
     <main>
       <AppProvider>
