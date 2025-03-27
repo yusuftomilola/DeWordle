@@ -58,8 +58,11 @@ const Navbar = () => {
 
   // Navigation handlers
   const handleNavigation = (path) => {
+    localStorage.removeItem('authToken'); // or whatever key you use
+    router.push('/');
+
     setIsProfileOpen(false);
-    router.push(path);
+    // router.push(path);
   };
 
   return (
