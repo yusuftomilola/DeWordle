@@ -11,6 +11,19 @@ export const AppProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [message, setMessage] = useState("")
   const [gameOver, setGameOver] = useState(false)
+  const [userData, setUserData] = useState({});
+
+
+
+
+  // Get user data from local storage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      setUserData(JSON.parse(storedUser));
+    }
+  }, [])
+
 
   const [gridData, setGridData] = useState(
     Array(30)
@@ -52,26 +65,26 @@ export const AppProvider = ({ children }) => {
 
     let remainingLetters = [...targetWord]
     const newGridData = [...gridData]
-    
+
     // First pass: Mark correct letters (green)
     for (let i = 0; i < 5; i++) {
       const cellIndex = startIdx + i
       const guessedLetter = currentWord[i]
-      
+
       if (guessedLetter === targetWord[i]) {
         newGridData[cellIndex].status = "correct"
         remainingLetters[i] = null // Mark this position as used
       }
     }
-    
+
     // Second pass: Mark present letters (orange)
     for (let i = 0; i < 5; i++) {
       const cellIndex = startIdx + i
       const guessedLetter = currentWord[i]
-      
+
       // Skip letters that were already marked as correct
       if (newGridData[cellIndex].status === "correct") continue
-      
+
       const letterPosition = remainingLetters.indexOf(guessedLetter)
       if (letterPosition !== -1) {
         newGridData[cellIndex].status = "present"
@@ -143,6 +156,8 @@ export const AppProvider = ({ children }) => {
         gameOver,
         validateCurrentWord,
         resetGame,
+        userData,
+        setUserData
       }}
     >
       {children}

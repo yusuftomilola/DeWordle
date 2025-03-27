@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { HelpGuide } from "./HelpGuide";
+import { AppContext } from "@/context/AppContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +23,8 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const profileButtonRef = useRef(null);
   const router = useRouter();
-
+  const { userData } = useContext(AppContext);
+  console.log('userData from navabr', userData);
   const user = {
     name: "John Stones",
     email: "johnstones1@gmail.com",
@@ -91,21 +93,21 @@ const Navbar = () => {
               className="flex items-center gap-2 text-[#29296E] font-medium"
             >
               <div className="w-8 h-8 rounded-full  overflow-hidden flex items-center justify-center border-2 border-[#29296E]">
-                {user.avatar ? (
+                {userData.avatar ? (
                   <Image
-                    src={user.avatar}
-                    alt={user.name}
+                    src={userData.avatar ||user.avatar}
+                    alt={userData.name}
                     width={32}
                     height={32}
                     className="object-cover"
                   />
                 ) : (
                   <span className="text-sm font-medium text-[#29296E]">
-                    {user.name.charAt(0)}
+                    {userData?.userName?.charAt(0)}
                   </span>
                 )}
               </div>
-              <span className="hidden sm:inline">Hi John</span>
+              <span className="hidden sm:inline">Hi {userData.userName || "Guest"}</span>
               <ChevronDown size={16} />
             </button>
 
@@ -118,25 +120,25 @@ const Navbar = () => {
                 {/* Profile Info */}
                 <div className="flex flex-col items-center justify-center px-4 py-4">
                   <div className="w-20 h-20 rounded-full  overflow-hidden flex items-center justify-center border-4 border-[#29296E] mb-2">
-                    {user.avatar ? (
+                    {userData.avatar ? (
                       <Image
-                        src={user.avatar}
-                        alt={user.name}
+                        src={userData.avatar}
+                        alt={userData.name}
                         width={80}
                         height={80}
                         className="object-cover"
                       />
                     ) : (
                       <span className="text-2xl font-medium text-[#29296E]">
-                        {user.name.charAt(0)}
+                        {userData.userName.charAt(0)}
                       </span>
                     )}
                   </div>
                   <h3 className="text-xl font-semibold text-center">
-                    {user.name}
+                    {userData.userName}
                   </h3>
                   <p className="text-sm text-gray-500 text-center">
-                    {user.email}
+                    {userData.email}
                   </p>
 
                   <button
