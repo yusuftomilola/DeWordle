@@ -28,6 +28,6 @@
     "**/*.ts",
     "**/*.tsx",
     "components/Leaderboard.jsx"
-  ],
+, "components/games.jsx", "app/(auth)/games/page.jsx"  ],
   "exclude": ["node_modules"]
 }
