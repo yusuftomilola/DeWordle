@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-// import NavbarLandingPage from "./NavbarLandingPage";
 
 const navigation = [{ name: "How to play", href: "#" }];
 
@@ -38,7 +37,7 @@ const Dewordle = () => {
                 Log In
               </Link>
               <Link
-                href="/game"
+                href="/dewordle"
                 className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
               >
                 Play as Guest

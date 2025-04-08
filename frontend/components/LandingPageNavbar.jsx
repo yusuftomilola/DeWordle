@@ -25,7 +25,7 @@ export default function LandingPageNavbar() {
             <Link href="/" className="text-gray-700 hover:text-[#29296e] transition-colors">
               Home
             </Link>
-            <Link href="/games" className="text-gray-700 hover:text-[#29296e] transition-colors">
+            <Link href="/all-games" className="text-gray-700 hover:text-[#29296e] transition-colors">
               All games
             </Link>
             <Link href="/categories" className="text-gray-700 hover:text-[#29296e] transition-colors">
