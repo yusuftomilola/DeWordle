@@ -3,11 +3,9 @@ import SigninWithGoogle from "@/components/sigInWithGoogle";
 import Link from "next/link";
 import { FaApple } from "react-icons/fa";
 
-interface AuthLayoutProps {
-  children: React.ReactNode;
-}
 
-const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+
+const AuthLayout = ({ children }) => {
   const handleSignInWithApple = () => {
     console.log("Sign in with Apple clicked");
   };

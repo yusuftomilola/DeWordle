@@ -12,7 +12,7 @@ export default function ComingSoon() {
   useEffect(() => { 
     if(imageRef.current){
       gsap.to(imageRef.current,{
-        scale: 1.1,
+        scale: 1.2,
         duration: 1,
         repeat: -1,
         yoyo: true,

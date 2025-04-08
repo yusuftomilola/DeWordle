@@ -17,22 +17,22 @@ const TrendingGames = () => {
 	const cards = [
 		{
 			title: 'Connections',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing.',
-			available: true,
+			description: "Group four words that share a common connection. Find all the sets before you run out of guesses!",
+			available: false,
 			icon: '/connections.png',
 			bgColor: 'bg-indigo-300',
 		},
 		{
 			title: 'Strands',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing.',
+			description: "Highlight interconnected words hidden in a grid. Find the themed words and uncover the pangram!",
 			available: false,
 			icon: '/strands.png',
 			bgColor: 'bg-gray-600',
 		},
 		{
 			title: 'Tiles',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing.',
-			available: true,
+			description: "Form words using a selection of tiles. Choose wisely to score big with limited moves!",
+			available: false,
 			icon: '/tiles.jpeg',
 			bgColor: 'bg-[#b1ecc9]',
 		},
@@ -156,10 +156,8 @@ const TrendingGames = () => {
 					))}
 				</div>
 			</div>
-			<div
-				className="grid grid-cols-1 md:grid-cols-2 md:gap-8 md:p-8 max-w-screen-2xl mx-auto"
-				ref={gridContainerRef}
-			>
+			<div className="grid grid-cols-1 md:grid-cols-2 md:gap-8 md:p-8 max-w-screen-2xl mx-auto"
+				ref={gridContainerRef}>
 				<div
 					ref={spellingBeeRef}
 					className="text-white bg-gray-100 p-6 flex justify-evenly items-center"
@@ -168,8 +166,7 @@ const TrendingGames = () => {
 					<div className="w-full mb-6 flex flex-col">
 						<h3 className="text-4xl font-bold mb-2">Spelling Bee</h3>
 						<p className="mb-6 mt-6">
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis,
-							dolorum ad.
+						Create as many words as possible from seven letters. How many points can you score?
 						</p>
 						<ComingSoon />
 					</div>
@@ -188,15 +185,14 @@ const TrendingGames = () => {
 					<div className="text-white w-full mb-6 ">
 						<h3 className="text-4xl font-bold mb-2">Dewordle</h3>
 						<p className="mt-6">
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis,
-							dolorum ad.
+						"Test your vocabulary skills with our word-guessing game. Six attempts to find the hidden word!"
 						</p>
 						<Button
 							variant="outline"
 							className="font-bold text-md text-[#29296e] rounded-full px-10 py-6 mt-8 hover:text-[#29296e]"
 							asChild
 						>
-							<Link href="/game">Play Now</Link>
+							<Link href="/onboard-dewordle">Play Now</Link>
 						</Button>
 					</div>
 					<img

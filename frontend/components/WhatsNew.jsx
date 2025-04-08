@@ -1,42 +1,37 @@
 "use client";
+import { motion, useInView } from "framer-motion";
+import Image from "next/image";
+import { useRef } from "react";
+
 import whatsNew1 from "@/assets/whats-new-1.svg";
 import whatsNew2 from "@/assets/whats-new-2.svg";
 import whatsNew3 from "@/assets/whats-new-3.svg";
 import whatsNew4 from "@/assets/whats-new-4.svg";
 
-import { motion, useInView } from "framer-motion";
-import Image from "next/image";
-import { useRef } from "react";
 
-interface GameCard {
-  title: string;
-  description: string;
-  icon: string;
-  status: "coming-soon" | "available";
-}
 
-const games: GameCard[] = [
+const games = [
   {
     title: "Connectors",
-    description: "Lorem ipsum dolor sit.",
+    description: "Group related words and find the hidden connection!",
     icon: whatsNew1,
     status: "coming-soon",
   },
   {
     title: "Letter Boxed",
-    description: "Lorem ipsum dolor sit.",
+    description: "Use every letter to form words that link together",
     icon: whatsNew2,
     status: "coming-soon",
   },
   {
     title: "Strands",
-    description: "Lorem ipsum dolor sit.",
+    description: "Unravel the theme by finding all the hidden words.",
     icon: whatsNew3,
     status: "coming-soon",
   },
   {
     title: "Spelling Bee",
-    description: "Lorem ipsum dolor sit.",
+    description: "Make as many words as you can using 7 letters.",
     icon: whatsNew4,
     status: "coming-soon",
   },
@@ -71,8 +66,8 @@ const WhatsNew = () => {
                 <h3 className="font-semibold text-[14px] text-[#1F1F1F]">
                   {game.title}
                 </h3>
-                <p className="text-[#303030] text-[14px]">{game.description}</p>
-                <p className="text-[14px] text-[#29296E] mt-3">Coming Soon</p>
+                <p className="text-[#303030] text-sm">{game.description}</p>
+                <p className="text-[14px] text-[#29296E] mt-3 font-bold">Coming Soon!</p>
               </div>
             </div>
           </motion.div>
