@@ -1,5 +1,4 @@
 import Games from "@/components/Games";
-import React from "react";
 
 const pages = () => {
   return (
