@@ -3,14 +3,17 @@
 import { Geist, Azeret_Mono as Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { metadata } from "./metadata";
-import { ThemeProvider } from "../context/ThemeContext";
 import { Manrope } from "next/font/google";
 import { Roboto } from "next/font/google";
-import { QueryProvider, SessionProvider } from "@/app/providers";
+
 import { Bounce, ToastContainer } from "react-toastify";
+import LandingPageNavbar from "@/components/LandingPageNavbar";
 import Footer from "@/components/footer";
 import { usePathname } from "next/navigation";
-import LandingPageNavbar from "@/components/LandingPageNavbar";
+
+import { QueryProvider, SessionProvider } from "@/app/providers";
+import { ThemeProvider } from "../context/ThemeContext";
+import { AppProvider } from "@/context/AppContext";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -36,8 +39,27 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   // Define the routes where you want to hide the footer
-  const hideFooterRoutes = ["/signin", "/signup", "/game", '/spelling-bee', '/onboard-dewordle'];
-  const hideNavbarRoutes = ["/signin", "/signup", "/admin-signin","/subadmin-signin", "/onboard-dewordle", "/dewordle", "/spelling-bee", '/profile','/setting', '/stats', '/forgot-password', "/game-guide"];
+  const hideFooterRoutes = [
+    "/signin",
+    "/signup",
+    "/game",
+    "/spelling-bee",
+    "/onboard-dewordle",
+  ];
+  const hideNavbarRoutes = [
+    "/signin",
+    "/signup",
+    "/admin-signin",
+    "/subadmin-signin",
+    "/onboard-dewordle",
+    "/dewordle",
+    "/spelling-bee",
+    "/profile",
+    "/setting",
+    "/stats",
+    "/forgot-password",
+    "/game-guide",
+  ];
 
   return (
     <ThemeProvider>
@@ -51,23 +73,25 @@ export default function RootLayout({ children }) {
         </head>
         <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
           <QueryProvider>
-            {!hideNavbarRoutes.includes(pathname) && <LandingPageNavbar />}
-            <main className="flex-grow ">{children}</main>
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick={false}
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              transition={Bounce}
-            />
-            {/* Render Footer only if the current route is NOT in hideFooterRoutes */}
-            {!hideFooterRoutes.includes(pathname) && <Footer />}
+            <AppProvider>
+              {!hideNavbarRoutes.includes(pathname) && <LandingPageNavbar />}
+              <main className="flex-grow ">{children}</main>
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+              />
+              {/* Render Footer only if the current route is NOT in hideFooterRoutes */}
+              {!hideFooterRoutes.includes(pathname) && <Footer />}
+            </AppProvider>
           </QueryProvider>
         </body>
       </html>
