@@ -24,7 +24,7 @@ const Navbar = () => {
   const profileButtonRef = useRef(null);
   const router = useRouter();
   const { userData } = useContext(AppContext);
-  console.log('userData from navabr', userData);
+  console.log("userData from navabr", userData);
   const user = {
     name: "John Stones",
     email: "johnstones1@gmail.com",
@@ -60,8 +60,9 @@ const Navbar = () => {
 
   // Navigation handlers
   const handleNavigation = (path) => {
-    localStorage.removeItem('authToken'); // or whatever key you use
-    router.push('/');
+    // localStorage.removeItem("authToken"); // or whatever key you use
+    localStorage.clear();
+    router.push("/");
 
     setIsProfileOpen(false);
     // router.push(path);
@@ -95,31 +96,31 @@ const Navbar = () => {
               <div className="w-8 h-8 rounded-full  overflow-hidden flex items-center justify-center border-2 border-[#29296E]">
                 {userData.avatar ? (
                   <Image
-                    src={userData.avatar ||user.avatar}
+                    src={userData.avatar || user.avatar}
                     alt={userData.name}
                     width={32}
                     height={32}
                     className="object-cover"
                   />
                 ) : (
-                  <span className="text-sm font-medium text-[#29296E]">
-                    {userData?.userName?.charAt(0)}
-                  </span>
+                  <span className="text-sm font-medium text-[#29296E]">😃</span>
                 )}
               </div>
-              <span className="hidden sm:inline">Hi {userData.userName || "Guest"}</span>
+              <span className="hidden sm:inline">
+                Hi {userData.userName || "Guest"}
+              </span>
               <ChevronDown size={16} />
             </button>
 
             {/* Profile Dropdown */}
-            {isProfileOpen && (
+            {userData?.userName && isProfileOpen && (
               <div
                 ref={dropdownRef}
                 className="absolute -right-20 mt-2 bg-white rounded-lg shadow-lg py-4 z-50 w-[20rem]"
               >
                 {/* Profile Info */}
                 <div className="flex flex-col items-center justify-center px-4 py-4">
-                  <div className="w-20 h-20 rounded-full  overflow-hidden flex items-center justify-center border-4 border-[#29296E] mb-2">
+                  <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center border-4 border-[#29296E] mb-2">
                     {userData.avatar ? (
                       <Image
                         src={userData.avatar}
@@ -130,7 +131,7 @@ const Navbar = () => {
                       />
                     ) : (
                       <span className="text-2xl font-medium text-[#29296E]">
-                        {userData.userName.charAt(0)}
+                        😃
                       </span>
                     )}
                   </div>
@@ -177,7 +178,10 @@ const Navbar = () => {
 
                   <div className="mt-12">
                     <button
-                      onClick={() => handleNavigation("/logout")}
+                      onClick={() => {
+                        localStorage.clear();
+                        window.location.href = "/";
+                      }}
                       className="w-full px-4 py-2 text-left flex items-center gap-3"
                     >
                       <LogOut size={18} className="text-[#29296E]" />
