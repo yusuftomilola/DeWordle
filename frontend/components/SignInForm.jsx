@@ -15,7 +15,7 @@ const SignInForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push('/onboard-dewordle');
+      router.push('/');
     }
   }, [isSuccess, router]);
 
