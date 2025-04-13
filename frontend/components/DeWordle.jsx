@@ -1,12 +1,15 @@
 "use client";
 
-import Image from "next/image";
+import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { AppContext } from "@/context/AppContext";
 
 const navigation = [{ name: "How to play", href: "#" }];
 
 const Dewordle = () => {
+  const { userData } = useContext(AppContext);
+  const isLoggedIn = userData?.userName;
   const [hasShadow, setHasShadow] = useState(false);
 
   useEffect(() => {
@@ -29,19 +32,32 @@ const Dewordle = () => {
               Think fast, you have 6 chances to guess the right 5-letter word.
               Test your skills and challenge yourself with every round.
             </p>
-            <div className="lg:mt-16 mt-8 flex items-center gap-5">
-              <Link
-                href="/signin"
-                className="border hover:bg-accent border-[#29296E] font-bold text-[#29296E]  inline-flex items-center justify-center rounded-3xl w-[12rem]  px-4 py-2 text-lg "
-              >
-                Log In
-              </Link>
-              <Link
-                href="/dewordle"
-                className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
-              >
-                Play as Guest
-              </Link>
+            <div className="lg:mt-16 mt-8  flex items-center gap-5">
+              <div>
+                {isLoggedIn ? (
+                  <Link
+                    href="/dewordle"
+                    className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
+                  >
+                    Play Now
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/signin"
+                      className="border hover:bg-accent border-[#29296E] font-bold text-[#29296E]  inline-flex items-center justify-center rounded-3xl w-[12rem] mr-4 px-4 py-2 text-lg "
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      href="/dewordle"
+                      className="bg-[#29296E] text-lg font-bold text-white hover:bg-opacity-90 inline-flex items-center justify-center rounded-3xl w-[12rem] px-4 py-2 "
+                    >
+                      Play as Guest
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className="relative w-full h-auto min-h-[400px] flex items-center justify-center">
