@@ -74,7 +74,7 @@ export default function LandingPageNavbar() {
                 </Button>
               </>
             ) : (
-              <span className="text-[#29296e] font-medium text-sm">
+              <span className="text-[#29296e] font-medium text-base">
                 Hello, {userData.userName}
               </span>
             )}
