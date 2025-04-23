@@ -1,13 +1,14 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { WordsService } from './words.service';
 
-@Controller('/api/v1/words')
+@Controller('/words')
 export class WordsController {
   constructor(private readonly wordsService: WordsService) {}
 
   @Get('daily')
   getWordOfTheDay() {
-    return { word: this.wordsService.getWordOfTheDay() };
+    const word = this.wordsService.getWordOfTheDay();
+    return { word };
   }
 
   @Get('guess/:word')
