@@ -12,13 +12,13 @@ import {
   HelpCircle,
   LogOut,
   ChevronDown,
+  User,
 } from "lucide-react";
 import { HelpGuide } from "./HelpGuide";
 import { AppContext } from "@/context/AppContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const profileButtonRef = useRef(null);
@@ -103,7 +103,9 @@ const Navbar = () => {
                     className="object-cover"
                   />
                 ) : (
-                  <span className="text-sm font-medium text-[#29296E]">😃</span>
+                  <span className="text-sm font-medium text-[#29296E]">
+                    <User/>
+                  </span>
                 )}
               </div>
               <span className="hidden sm:inline">
@@ -113,7 +115,7 @@ const Navbar = () => {
             </button>
 
             {/* Profile Dropdown */}
-            {userData?.userName && isProfileOpen && (
+            {userData && isProfileOpen && (
               <div
                 ref={dropdownRef}
                 className="absolute -right-20 mt-2 bg-white rounded-lg shadow-lg py-4 z-50 w-[20rem]"
@@ -193,15 +195,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Help Button */}
-          <button
-            onClick={() => setIsHelpGuideOpen(true)}
-            className="flex items-center text-[#29296E]"
-          >
-            <HelpCircle size={24} />
-            <span className="ml-1 hidden sm:inline">Help</span>
-          </button>
-
           {/* Connect Button */}
           <button className="bg-[#29296E] w-[150px] h-[39px] text-white text-sm font-semibold rounded-full flex items-center justify-center transform transition-transform hover:scale-110 hover:shadow-lg">
             Connect
@@ -230,12 +223,6 @@ const Navbar = () => {
             </svg>
           </button>
         </div>
-
-        {/* Help Guide Modal */}
-        <HelpGuide
-          isOpen={isHelpGuideOpen}
-          onClose={() => setIsHelpGuideOpen(false)}
-        />
       </div>
     </div>
   );
