@@ -9,12 +9,10 @@ import {
   BarChartIcon,
   Settings as SettingsIcon,
   Bell,
-  HelpCircle,
   LogOut,
   ChevronDown,
   User,
 } from "lucide-react";
-import { HelpGuide } from "./HelpGuide";
 import { AppContext } from "@/context/AppContext";
 
 const Navbar = () => {
@@ -24,7 +22,6 @@ const Navbar = () => {
   const profileButtonRef = useRef(null);
   const router = useRouter();
   const { userData } = useContext(AppContext);
-  console.log("userData from navabr", userData);
   const user = {
     name: "John Stones",
     email: "johnstones1@gmail.com",
@@ -60,12 +57,10 @@ const Navbar = () => {
 
   // Navigation handlers
   const handleNavigation = (path) => {
-    // localStorage.removeItem("authToken"); // or whatever key you use
     localStorage.clear();
     router.push("/");
 
     setIsProfileOpen(false);
-    // router.push(path);
   };
 
   return (
@@ -104,7 +99,7 @@ const Navbar = () => {
                   />
                 ) : (
                   <span className="text-sm font-medium text-[#29296E]">
-                    <User/>
+                    <User />
                   </span>
                 )}
               </div>
