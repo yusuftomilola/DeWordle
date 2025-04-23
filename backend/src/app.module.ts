@@ -29,6 +29,7 @@ import { PaginationModule } from './common/pagination/pagination-controller.cont
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
+import { WordsModule } from './words/words.module';
 
 @Module({
   imports: [
@@ -113,6 +114,7 @@ import { join } from 'path';
     GuestUserModule,
     GuestFeaturesModule,
     MailModule,
+    WordsModule
   ],
   controllers: [AppController, GuestUserController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
