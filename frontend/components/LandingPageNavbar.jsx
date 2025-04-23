@@ -1,20 +1,55 @@
 "use client";
-
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import {
+  BarChartIcon,
+  Bell,
+  ChevronDown,
+  LogOut,
+  Menu,
+  SettingsIcon,
+  X,
+} from "lucide-react";
 import { AppContext } from "@/context/AppContext";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 export default function LandingPageNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userData } = useContext(AppContext);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileButtonRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleProfileDropdown = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
   const isLoggedIn = userData?.userName;
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        profileButtonRef.current &&
+        !profileButtonRef.current.contains(event.target)
+      ) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="w-full border-b border-gray-100 relative">
@@ -74,9 +109,108 @@ export default function LandingPageNavbar() {
                 </Button>
               </>
             ) : (
-              <span className="text-[#29296e] font-medium text-base">
-                Hello, {userData.userName}
-              </span>
+              <div className="navbar-end flex items-center gap-x-8 mt-4">
+                <div className="relative">
+                  <button
+                    ref={profileButtonRef}
+                    onClick={toggleProfileDropdown}
+                    className="flex items-center gap-2 text-[#29296E] font-medium"
+                  >
+                    <span className="text-[#29296e] font-medium text-base">
+                      Hello, {userData.userName}
+                    </span>
+                    <ChevronDown size={16} />
+                  </button>
+                </div>
+              
+                {/* Profile Dropdown */}
+                <AnimatePresence>
+                  {userData && isProfileOpen && (
+                    <motion.div
+                      ref={dropdownRef}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="absolute top-10 right-10 mt-2 bg-white rounded-lg shadow-lg py-4 z-50 w-[20rem] overflow-hidden"
+                    >
+                      {/* Profile Info */}
+                      <div className="flex flex-col items-center justify-center px-4 py-4">
+                        <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center border-4 border-[#29296E] mb-2">
+                          {userData.avatar ? (
+                            <Image
+                              src={userData.avatar}
+                              alt={userData.name}
+                              width={80}
+                              height={80}
+                              className="object-cover"
+                            />
+                          ) : (
+                            <span className="text-2xl font-medium text-[#29296E]">
+                              😃
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="text-xl font-semibold text-center">
+                          {userData.userName}
+                        </h3>
+                        <p className="text-sm text-gray-500 text-center">
+                          {userData.email}
+                        </p>
+              
+                        <button
+                          onClick={() => handleNavigation("/profile")}
+                          className="w-full mt-3 py-2 bg-[#29296E] text-white font-medium rounded-full"
+                        >
+                          View Profile
+                        </button>
+                      </div>
+              
+                      {/* Menu Items */}
+                      <div className="mt-2">
+                        <button
+                          onClick={() => handleNavigation("/setting")}
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 bg-gray-100"
+                        >
+                          <SettingsIcon size={18} className="text-[#29296E]" />
+                          <span>Settings</span>
+                        </button>
+              
+                        <button
+                          onClick={() => handleNavigation("/stats")}
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
+                        >
+                          <BarChartIcon size={18} className="text-[#29296E]" />
+                          <span>Stats</span>
+                        </button>
+              
+                        <button
+                          onClick={() => handleNavigation("/notifications")}
+                          className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
+                        >
+                          <Bell size={18} className="text-[#29296E]" />
+                          <span>Notifications</span>
+                        </button>
+              
+                        <div className="mt-12">
+                          <button
+                            onClick={() => {
+                              localStorage.clear();
+                              window.location.href = "/";
+                            }}
+                            className="w-full px-4 py-2 text-left flex items-center gap-3"
+                          >
+                            <LogOut size={18} className="text-[#29296E]" />
+                            <span>Log Out</span>
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              
+              
             )}
           </div>
 
