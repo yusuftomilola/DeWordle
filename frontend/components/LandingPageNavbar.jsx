@@ -13,12 +13,15 @@ import {
 } from "lucide-react";
 import { AppContext } from "@/context/AppContext";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { Settings } from "./Settings";
+import LeaderBoardModal from "./LeaderBoardModal";
 
 export default function LandingPageNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userData } = useContext(AppContext);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const profileButtonRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -122,7 +125,7 @@ export default function LandingPageNavbar() {
                     <ChevronDown size={16} />
                   </button>
                 </div>
-              
+
                 {/* Profile Dropdown */}
                 <AnimatePresence>
                   {userData && isProfileOpen && (
@@ -157,33 +160,41 @@ export default function LandingPageNavbar() {
                         <p className="text-sm text-gray-500 text-center">
                           {userData.email}
                         </p>
-              
-                        <button
-                          onClick={() => handleNavigation("/profile")}
-                          className="w-full mt-3 py-2 bg-[#29296E] text-white font-medium rounded-full"
+
+                        <Link
+                          href="/profile"
+                          className="w-full mt-3 py-2 text-center bg-[#29296E] text-white font-medium rounded-full"
                         >
                           View Profile
-                        </button>
+                        </Link>
                       </div>
-              
+
                       {/* Menu Items */}
                       <div className="mt-2">
                         <button
-                          onClick={() => handleNavigation("/setting")}
+                          onClick={() => setIsSettingsOpen(true)}
                           className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 bg-gray-100"
                         >
                           <SettingsIcon size={18} className="text-[#29296E]" />
                           <span>Settings</span>
                         </button>
-              
+                        <Settings
+                          isOpen={isSettingsOpen}
+                          onClose={() => setIsSettingsOpen(false)}
+                        />
+
                         <button
-                          onClick={() => handleNavigation("/stats")}
+                          // onClick={() => isStatsOpen(true)}
                           className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
                         >
                           <BarChartIcon size={18} className="text-[#29296E]" />
                           <span>Stats</span>
                         </button>
-              
+                        <LeaderBoardModal
+                          // isOpen={isStatsOpen}
+                          // onClose={() => setIsStatsOpen(false)}
+                        />
+
                         <button
                           onClick={() => handleNavigation("/notifications")}
                           className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3"
@@ -191,7 +202,7 @@ export default function LandingPageNavbar() {
                           <Bell size={18} className="text-[#29296E]" />
                           <span>Notifications</span>
                         </button>
-              
+
                         <div className="mt-12">
                           <button
                             onClick={() => {
@@ -209,8 +220,6 @@ export default function LandingPageNavbar() {
                   )}
                 </AnimatePresence>
               </div>
-              
-              
             )}
           </div>
 
