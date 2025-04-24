@@ -1,5 +1,5 @@
-import SignInWithGoogle from "@/components/sigInWithGoogle";
-import SignInForm from "@/components/SignInForm";
+import SignInWithGoogle from "@/components/auth/sigInWithGoogle";
+import SignInForm from "@/components/auth/SignInForm";
 
 export default function SignInPage() {
   return (

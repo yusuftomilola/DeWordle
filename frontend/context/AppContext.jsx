@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useState, useEffect } from "react";
-import { useGetWord, useValidateGuess } from "@/app/hooks/useGetWord";
+import { useGetWord, useValidateGuess } from "@/hooks/useGetWord";
 
 export const AppContext = createContext();
 

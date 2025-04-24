@@ -1,10 +1,10 @@
+import SpellingBee from "@/components/organism/games/Spelling-bee/SpellingBee";
 import React from "react";
-import Games from "@/components/organism/games/Dewordle/games";
 
 const page = () => {
   return (
     <div>
-      <Games />
+      <SpellingBee />
     </div>
   );
 };

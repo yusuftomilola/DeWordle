@@ -1,10 +1,10 @@
 import React from "react";
-import Games from "@/components/organism/games/Dewordle/games";
+import DewordleTutorial from "@/components/atoms/Dewordle/GameGuide";
 
 const page = () => {
   return (
     <div>
-      <Games />
+      <DewordleTutorial />
     </div>
   );
 };

@@ -1,23 +1,15 @@
 "use client";
-import { usePathname } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import Footer from "@/components/atoms/footer";
 import { AppProvider } from "@/context/AppContext";
+import LandingPageNavbar from "@/components/organism/landing-page/LandingPageNavbar";
 
 // landing page layout
 const Layout = ({ children }) => {
-  const pathname = usePathname();
-  const hideNavbar =
-    pathname === "/" ||
-    pathname === "/spelling-bee" ||
-    pathname === "/all-games" ||
-    pathname === "/game-guide" ||
-    pathname === "/forgot-password";
   return (
     <main>
-      <AppProvider>
-        {!hideNavbar && <Navbar />}
-        {children}
-      </AppProvider>
+      <LandingPageNavbar />
+      {children}
+      <Footer />
     </main>
   );
 };

@@ -1,10 +1,10 @@
+import ResetPassword from "@/components/auth/ResetPassword";
 import React from "react";
-import Games from "@/components/organism/games/Dewordle/games";
 
 const page = () => {
   return (
     <div>
-      <Games />
+      <ResetPassword />
     </div>
   );
 };

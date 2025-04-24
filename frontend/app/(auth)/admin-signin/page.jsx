@@ -1,10 +1,10 @@
 import React from "react";
-import Games from "@/components/organism/games/Dewordle/games";
+import AdminSignin from "@/components/auth/AdminSignin";
 
 const page = () => {
   return (
     <div>
-      <Games />
+      <AdminSignin />
     </div>
   );
 };

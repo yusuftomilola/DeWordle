@@ -1,10 +1,11 @@
+"use client";
 import React from "react";
-import Games from "@/components/organism/games/Dewordle/games";
+import ForgotPassword from "@/components/auth/ForgotPassword";
 
 const page = () => {
   return (
     <div>
-      <Games />
+      <ForgotPassword />
     </div>
   );
 };

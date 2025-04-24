@@ -7,11 +7,11 @@ import { Manrope } from "next/font/google";
 import { Roboto } from "next/font/google";
 
 import { Bounce, ToastContainer } from "react-toastify";
-import LandingPageNavbar from "@/components/LandingPageNavbar";
-import Footer from "@/components/footer";
+import LandingPageNavbar from "@/components/organism/landing-page/LandingPageNavbar";
+
 import { usePathname } from "next/navigation";
 
-import { QueryProvider, SessionProvider } from "@/app/providers";
+import { QueryProvider, SessionProvider } from "@/providers";
 import { ThemeProvider } from "../context/ThemeContext";
 import { AppProvider } from "@/context/AppContext";
 
@@ -74,7 +74,7 @@ export default function RootLayout({ children }) {
         <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
           <QueryProvider>
             <AppProvider>
-              {!hideNavbarRoutes.includes(pathname) && <LandingPageNavbar />}
+              
               <main className="flex-grow ">{children}</main>
               <ToastContainer
                 position="top-right"
@@ -90,7 +90,7 @@ export default function RootLayout({ children }) {
                 transition={Bounce}
               />
               {/* Render Footer only if the current route is NOT in hideFooterRoutes */}
-              {!hideFooterRoutes.includes(pathname) && <Footer />}
+            
             </AppProvider>
           </QueryProvider>
         </body>

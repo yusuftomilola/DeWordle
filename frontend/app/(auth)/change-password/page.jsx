@@ -1,6 +1,6 @@
 "use client";
 
-import PasswordChangeForm from "@/components/PasswordChangeForm";
+import PasswordChangeForm from "@/components/auth/PasswordChangeForm";
 
 export default function SignInPage() {
   return (

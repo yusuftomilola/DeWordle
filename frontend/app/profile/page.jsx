@@ -1,10 +1,10 @@
 import React from "react";
-import Games from "@/components/organism/games/Dewordle/games";
+import ProfilePage from "@/components/organism/landing-page/Profile";
 
 const page = () => {
   return (
     <div>
-      <Games />
+      <ProfilePage />
     </div>
   );
 };

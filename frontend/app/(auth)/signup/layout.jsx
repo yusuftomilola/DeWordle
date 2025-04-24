@@ -1,9 +1,7 @@
 import React from "react";
-import SigninWithGoogle from "@/components/sigInWithGoogle";
+import SigninWithGoogle from "@/components/auth/sigInWithGoogle";
 import Link from "next/link";
 import { FaApple } from "react-icons/fa";
-
-
 
 const AuthLayout = ({ children }) => {
   const handleSignInWithApple = () => {
