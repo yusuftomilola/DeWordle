@@ -15,7 +15,7 @@ const SignInForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      router.push('/game');
+      router.push('/');
     }
   }, [isSuccess, router]);
 

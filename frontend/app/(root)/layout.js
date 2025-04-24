@@ -3,9 +3,15 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { AppProvider } from "@/context/AppContext";
 
+// landing page layout
 const Layout = ({ children }) => {
   const pathname = usePathname();
-  const hideNavbar = pathname === "/" || pathname === '/spelling-bee'
+  const hideNavbar =
+    pathname === "/" ||
+    pathname === "/spelling-bee" ||
+    pathname === "/all-games" ||
+    pathname === "/game-guide" ||
+    pathname === "/forgot-password";
   return (
     <main>
       <AppProvider>

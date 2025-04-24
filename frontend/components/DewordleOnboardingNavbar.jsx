@@ -8,7 +8,6 @@ import HowToPlayModal from "./HowToPlayModal";
 import Link from "next/link";
 
 const DewordleOnboardingNavbar = () => {
-  const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const helpGuideRef = useRef(null);
 

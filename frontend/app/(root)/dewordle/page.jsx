@@ -1,12 +1,11 @@
-import Dewordle from '@/components/DeWordle'
-import React from 'react'
+import Keyboard from "@/components/Keyboard";
+import WordGrid from "@/components/WordGrid.jsx";
 
-const page = () => {
+export default function page() {
   return (
-    <div>
-        <Dewordle />
+    <div className= "mt-24  h-screen">
+      <WordGrid />
+      <Keyboard />
     </div>
-  )
+  );
 }
-
-export default page

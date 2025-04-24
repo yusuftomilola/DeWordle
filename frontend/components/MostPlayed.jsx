@@ -6,13 +6,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import grid from "@/assets/grid.svg";
 
-interface GameCard {
-  title: string;
-  description: string;
-  link: string;
-}
-
-const games: GameCard[] = [
+const games = [
   {
     title: "Dewordle",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing.",

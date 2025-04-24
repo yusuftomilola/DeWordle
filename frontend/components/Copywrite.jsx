@@ -1,6 +1,6 @@
 import React from "react";
 
-const Copywrite = () => {
+const Copyright = () => {
   return (
     <div>
       <span className="whitespace-nowrap">
@@ -11,4 +11,4 @@ const Copywrite = () => {
   );
 };
 
-export default Copywrite;
+export default Copyright;

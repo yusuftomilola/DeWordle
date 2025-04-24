@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { Switch } from "@headlessui/react";
-import Copywrite from "./Copywrite";
 import { useTheme } from "@/context/ThemeContext";
+import Copyright from "./Copywrite";
 
-export const Setting = ({ isOpen, onClose }) => {
+export const Settings = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -103,7 +103,7 @@ export const Setting = ({ isOpen, onClose }) => {
         ))}
 
         <div className="flex items-center gap-1 py-3">
-          <Copywrite />
+          <Copyright />
         </div>
       </div>
     </div>

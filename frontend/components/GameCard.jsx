@@ -30,8 +30,8 @@ function GameCard({ bgColor, icon, title, description, available }) {
 						<Link href="/game?id=someid">Play Now</Link>
 					</Button>
 				) : (
-					<p className="text-indigo-800 font-medium text-sm md:text-xl">
-						Comming Soon
+					<p className="text-indigo-800 text-sm md:text-xl font-extrabold">
+						Coming Soon!
 					</p>
 				)}
 			</div>
