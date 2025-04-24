@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Leaderboard } from './entities/leaderboard.entity';
 import { UsersService } from 'src/users/users.service';
-import { DatabaseErrorException } from '../common/exceptions/database-error.exception';
+import { DatabaseErrorException } from '../../../common/exceptions/database-error.exception';
 
 @Injectable()
 export class LeaderboardService {

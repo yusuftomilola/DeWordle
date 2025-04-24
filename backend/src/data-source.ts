@@ -5,8 +5,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { User } from './users/entities/user.entity';
-import { Result } from './result/entities/result.entity';
-import { Leaderboard } from './leaderboard/entities/leaderboard.entity';
+import { Result } from './games/dewordle/result/entities/result.entity';
+import { Leaderboard } from './games/dewordle/leaderboard/entities/leaderboard.entity';
 import { Admin } from './admin/entities/admin.entity';
 import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 

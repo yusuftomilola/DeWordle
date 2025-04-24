@@ -4,13 +4,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { LeaderboardModule } from './games/dewordle/leaderboard/leaderboard.module';
 import { AdminModule } from './admin/admin.module';
-import { ResultModule } from './result/result.module';
+import { ResultModule } from './games/dewordle/result/result.module';
 import { SubAdminModule } from './sub-admin/sub-admin.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Leaderboard } from './leaderboard/entities/leaderboard.entity';
-import { Result } from './result/entities/result.entity';
+import { Leaderboard } from './games/dewordle/leaderboard/entities/leaderboard.entity';
+import { Result } from './games/dewordle/result/entities/result.entity';
 import { User } from './users/entities/user.entity';
 import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 import { Admin } from './admin/entities/admin.entity';
@@ -29,7 +29,8 @@ import { PaginationModule } from './common/pagination/pagination-controller.cont
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
-import { WordsModule } from './words/words.module';
+import { WordsModule } from './games/dewordle/words/words.module';
+import { GamesModule } from './games/games.module';
 
 @Module({
   imports: [
@@ -114,7 +115,8 @@ import { WordsModule } from './words/words.module';
     GuestUserModule,
     GuestFeaturesModule,
     MailModule,
-    WordsModule
+    WordsModule,
+    GamesModule,
   ],
   controllers: [AppController, GuestUserController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],

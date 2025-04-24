@@ -1,5 +1,5 @@
-import { Leaderboard } from 'src/leaderboard/entities/leaderboard.entity';
-import { Result } from 'src/result/entities/result.entity';
+import { Leaderboard } from 'src/games/dewordle/leaderboard/entities/leaderboard.entity';
+import { Result } from 'src/games/dewordle/result/entities/result.entity';
 import {
   Column,
   CreateDateColumn,

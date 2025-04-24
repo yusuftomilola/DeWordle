@@ -10,7 +10,7 @@ import {
   ValidateNested,
   IsOptional,
 } from 'class-validator';
-import { Result } from 'src/result/entities/result.entity';
+import { Result } from 'src/games/dewordle/result/entities/result.entity';
 
 export class CreateUserDto {
   @ApiProperty({

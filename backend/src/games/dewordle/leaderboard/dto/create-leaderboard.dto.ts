@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsInt, IsNumber, IsOptional } from 'class-validator';
-import { Result } from 'src/result/entities/result.entity';
+import { Result } from 'src/games/dewordle/result/entities/result.entity';
 export class CreateLeaderboardDto {
   @ApiProperty({
     description: 'The unique identifier of the leaderboard entry (optional)',

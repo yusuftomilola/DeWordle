@@ -10,8 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HashingProvider } from 'src/auth/providers/hashing-provider';
-import { LeaderboardService } from 'src/leaderboard/leaderboard.service';
-import { ResultService } from '../../result/result.service';
+import { LeaderboardService } from 'src/games/dewordle/leaderboard/leaderboard.service';
+import { ResultService } from '../../games/dewordle/result/result.service';
 
 @Injectable()
 export class CreateUsersProvider {
