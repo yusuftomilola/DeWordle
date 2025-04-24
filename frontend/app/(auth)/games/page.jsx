@@ -1,5 +1,5 @@
 import React from 'react'
-import Games from '@/components/games'
+import Games from '@/components/Games'
 
 const page = () => {
   return (
