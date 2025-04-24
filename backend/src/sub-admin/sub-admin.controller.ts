@@ -35,7 +35,7 @@ import { UserRole } from 'src/common/enums/users-roles.enum';
 
 @ApiTags('SubAdmin')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
-@Controller('/api/v1/sub-admin')
+@Controller('sub-admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @RoleDecorator(UserRole.Admin)
 @UseFilters(

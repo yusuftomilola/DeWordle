@@ -25,7 +25,7 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @ApiTags('Admin')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
-@Controller('/api/v1/admin')
+@Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}

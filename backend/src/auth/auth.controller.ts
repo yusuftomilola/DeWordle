@@ -21,7 +21,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { EmailDto } from './dto/email.dto';
 
 @ApiTags('Auth') // Group all endpoints under the 'Auth' tag
-@Controller('/api/v1/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

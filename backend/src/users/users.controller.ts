@@ -31,7 +31,7 @@ import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
 @ApiTags('Users')
 @ApiBearerAuth() // Enable Bearer Token authentication for all endpoints
-@Controller('/api/v1/users')
+@Controller('users')
 // @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
