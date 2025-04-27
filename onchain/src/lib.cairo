@@ -3,4 +3,5 @@ pub mod interfaces;
 pub mod utils;
 pub mod contracts {
     pub mod dewordle;
+    pub mod erc20;
 }
