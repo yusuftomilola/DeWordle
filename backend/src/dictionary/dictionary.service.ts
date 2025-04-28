@@ -6,16 +6,12 @@ import * as path from 'path';
 export class DictionaryService {
   private words: string[] = [];
 
-  constructor(words?: string[]) {
-    if (words) {
-      this.words = words.map(word => word.toLowerCase());
-    } else {
-      this.loadWords();
-    }
+  constructor() {
+    this.loadWords();
   }
 
-  private loadWords(): void {
-    const filePath = path.join(__dirname, '../../static', 'words.txt');
+  private loadWords() {
+    const filePath = path.join(process.cwd(), 'static', 'words.txt');
     if (!fs.existsSync(filePath)) {
       throw new Error(`File not found: ${filePath}`);
     }

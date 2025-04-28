@@ -3,23 +3,9 @@ import { DictionaryService } from './dictionary.service';
 describe('DictionaryService', () => {
   let service: DictionaryService;
 
-  const mockWords = [
-    'example',
-    'ample',
-    'maple',
-    'apple',
-    'exemplary',
-    'lampe',
-    'lamp',
-    'meal',
-    'peal',
-    'male',
-    'pale',
-    'leap',
-  ];
 
   beforeEach(() => {
-    service = new DictionaryService(mockWords);
+    service = new DictionaryService();
   });
 
   it('should load and process words correctly', () => {
