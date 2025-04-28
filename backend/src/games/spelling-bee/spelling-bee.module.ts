@@ -6,6 +6,6 @@ import { SpellingBeeService } from './spelling-bee.service';
   imports: [],
   controllers: [SpellingBeeController],
   providers: [SpellingBeeService],
-  exports: [SpellingBeeService]
+  exports: [SpellingBeeService],
 })
 export class SpellingBeeModule {}

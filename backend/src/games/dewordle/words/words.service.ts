@@ -25,27 +25,27 @@ import { Injectable } from '@nestjs/common';
 //       'plush', 'quail', 'ridge', 'spout', 'thumb', 'unwed', 'voter', 'wince', 'xenon', 'yield',
 //       'zonal'
 //     ];
-  
+
 //     private wordOfTheDay: string = '';
-  
+
 //     constructor() {
 //       this.generateWordOfTheDay();
 //       setInterval(() => this.generateWordOfTheDay(), 24 * 60 * 60 * 1000);
 //     }
-  
+
 //     generateWordOfTheDay() {
 //       const today = new Date();
 //       const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
 //       this.wordOfTheDay = this.words[dayOfYear % this.words.length];
 //     }
-  
+
 //     getWordOfTheDay() {
 //       return this.wordOfTheDay;
 //     }
-  
+
 //     validateGuess(guess: string): { correct: boolean; hint: string } {
 //       let hint = '';
-  
+
 //       for (let i = 0; i < guess.length; i++) {
 //         if (guess[i] === this.wordOfTheDay[i]) {
 //           hint += '🟩';
@@ -55,48 +55,49 @@ import { Injectable } from '@nestjs/common';
 //           hint += '⬜';
 //         }
 //       }
-  
+
 //       return { correct: guess === this.wordOfTheDay, hint };
 //     }
 //   }
-  
+
 export class WordsService {
-    private wordOfTheDay: string = '';
-  
-    constructor() {
-      this.generateWordOfTheDay();
-      setInterval(() => this.generateWordOfTheDay(), 24 * 60 * 60 * 1000); // Refresh every 24 hours
-    }
-  
-    async generateWordOfTheDay() {
-      try {
-        const response = await fetch('https://random-word-api.herokuapp.com/word?length=5');
-        const data = await response.json();
-        this.wordOfTheDay = data[0];
-      } catch (error) {
-        console.error('Error fetching word of the day:', error);
-        this.wordOfTheDay = 'apple'; // Fallback in case of an error
-      }
-    }
-  
-    getWordOfTheDay() {
-      return this.wordOfTheDay;
-    }
-  
-    validateGuess(guess: string): { correct: boolean; hint: string } {
-      let hint = '';
-  
-      for (let i = 0; i < guess.length; i++) {
-        if (guess[i] === this.wordOfTheDay[i]) {
-          hint += '🟩'; // Correct letter in the correct position
-        } else if (this.wordOfTheDay.includes(guess[i])) {
-          hint += '🟨'; // Correct letter in the wrong position
-        } else {
-          hint += '⬜'; // Incorrect letter
-        }
-      }
-  
-      return { correct: guess === this.wordOfTheDay, hint };
+  private wordOfTheDay: string = '';
+
+  constructor() {
+    this.generateWordOfTheDay();
+    setInterval(() => this.generateWordOfTheDay(), 24 * 60 * 60 * 1000); // Refresh every 24 hours
+  }
+
+  async generateWordOfTheDay() {
+    try {
+      const response = await fetch(
+        'https://random-word-api.herokuapp.com/word?length=5',
+      );
+      const data = await response.json();
+      this.wordOfTheDay = data[0];
+    } catch (error) {
+      console.error('Error fetching word of the day:', error);
+      this.wordOfTheDay = 'apple'; // Fallback in case of an error
     }
   }
-  
+
+  getWordOfTheDay() {
+    return this.wordOfTheDay;
+  }
+
+  validateGuess(guess: string): { correct: boolean; hint: string } {
+    let hint = '';
+
+    for (let i = 0; i < guess.length; i++) {
+      if (guess[i] === this.wordOfTheDay[i]) {
+        hint += '🟩'; // Correct letter in the correct position
+      } else if (this.wordOfTheDay.includes(guess[i])) {
+        hint += '🟨'; // Correct letter in the wrong position
+      } else {
+        hint += '⬜'; // Incorrect letter
+      }
+    }
+
+    return { correct: guess === this.wordOfTheDay, hint };
+  }
+}

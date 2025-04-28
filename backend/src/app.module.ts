@@ -31,6 +31,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from 'path';
 import { WordsModule } from './games/dewordle/words/words.module';
 import { GamesModule } from './games/games.module';
+import { DictionaryModule } from './dictionary/dictionary.module';
 
 @Module({
   imports: [
@@ -117,6 +118,7 @@ import { GamesModule } from './games/games.module';
     MailModule,
     WordsModule,
     GamesModule,
+    DictionaryModule,
   ],
   controllers: [AppController, GuestUserController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
