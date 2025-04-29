@@ -32,6 +32,7 @@ import { join } from 'path';
 import { WordsModule } from './games/dewordle/words/words.module';
 import { GamesModule } from './games/games.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
+import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
 
 @Module({
   imports: [
@@ -119,6 +120,7 @@ import { DictionaryModule } from './dictionary/dictionary.module';
     WordsModule,
     GamesModule,
     DictionaryModule,
+    SpellingBeeModule,
   ],
   controllers: [AppController, GuestUserController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
