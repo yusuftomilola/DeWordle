@@ -1,15 +1,16 @@
-"use client";
+'use client';
 
-import React, { use } from "react";
-import Header from "./SpellingBeeHeader";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import React, { use } from 'react';
+import Header from './SpellingBeeHeader';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const SpellingBee = () => {
   const router = useRouter(); // Initialize the router
 
   const handleSignIn = () => {
-    router.push("/signin"); // Navigate to the sign-in page
+    router.push('/signin'); // Navigate to the sign-in page
   };
 
   return (
@@ -31,9 +32,11 @@ const SpellingBee = () => {
           champion!
         </p>
         <div className="mt-6 flex space-x-4">
-          <button className="px-16 py-3 bg-white text-indigo-900 font-medium rounded-full shadow hover:bg-gray-100">
-            Play
-          </button>
+          <Link href="/spelling-bee/honeycomb">
+            <button className="px-16 py-3 bg-white text-indigo-900 font-medium rounded-full shadow hover:bg-gray-100">
+              Play
+            </button>
+          </Link>
           <button
             className="px-16 py-1 border border-white text-white font-medium rounded-full hover:bg-white hover:text-indigo-900"
             onClick={handleSignIn}
