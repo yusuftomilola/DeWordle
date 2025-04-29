@@ -32,6 +32,9 @@ import { join } from 'path';
 import { WordsModule } from './games/dewordle/words/words.module';
 import { GamesModule } from './games/games.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
+import { LetteredBoxModule } from './games/lettered-box/lettered-box.module';
+import { GamesController } from './games/games.controller';
+
 
 @Module({
   imports: [
@@ -119,8 +122,9 @@ import { DictionaryModule } from './dictionary/dictionary.module';
     WordsModule,
     GamesModule,
     DictionaryModule,
+    LetteredBoxModule,
   ],
-  controllers: [AppController, GuestUserController],
+  controllers: [AppController, GuestUserController, GamesController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
 })
 export class AppModule {}
