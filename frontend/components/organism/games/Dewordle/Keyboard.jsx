@@ -5,7 +5,7 @@ import { AppContext } from "@/context/AppContext"
 import gsap from "gsap"
 
 const Keyboard = () => {
-  const { currentRow, setCurrentRow, currentCol, setCurrentCol, gridData, setGridData, validateCurrentWord, gameOver } =
+  const { currentRow, setCurrentRow, currentCol, setCurrentCol, gridData, setGridData, validateCurrentWord, gameOver, showNotification, targetWord } =
     useContext(AppContext)
 
   // Track key statuses for coloring the keyboard
@@ -42,7 +42,8 @@ const Keyboard = () => {
 
       const currentPosition = currentRow * 5 + currentCol
 
-      if (key === "Backspace" || (typeof key === "object" && key.type === "icon")) {
+      // Handle backspace/delete key
+      if (key === "Backspace" || key === "Delete" || (typeof key === "object" && key.type === "icon")) {
         if (currentCol > 0) {
           const newGridData = [...gridData]
           newGridData[currentPosition - 1] = { char: "", status: "" }
@@ -54,10 +55,21 @@ const Keyboard = () => {
 
       if (key === "Enter") {
         if (currentCol === 5) {
-          // Validate the word
+          // Special handling for the last row (row 5)
+          if (currentRow === 5) {
+            validateCurrentWord().then((isCorrect) => {
+              // Game over regardless of the result in the last row
+              if (!isCorrect) {
+                showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
+              }
+            })
+            return;
+          }
+          
+          // Normal validation for other rows
           validateCurrentWord().then((isCorrect) => {
-            if (!isCorrect) {
-              // Move to next row only if word is incorrect
+            if (!isCorrect && currentRow < 5) {
+              // Move to next row only if word is incorrect and not in the last row
               setCurrentRow((prev) => prev + 1)
               setCurrentCol(0)
             }
@@ -73,14 +85,14 @@ const Keyboard = () => {
         setCurrentCol((prev) => prev + 1)
       }
     },
-    [currentRow, currentCol, gridData, setGridData, setCurrentCol, setCurrentRow, validateCurrentWord, gameOver],
+    [currentRow, currentCol, gridData, setGridData, setCurrentCol, setCurrentRow, validateCurrentWord, gameOver, showNotification, targetWord],
   )
 
   // Define rows array first
   const rows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Enter", "Z", "X", "C", "V", "B", "N", "M", { label: "", icon: <Delete />, type: "icon" }],
+    ["Enter", "Z", "X", "C", "V", "B", "N", "M", { label: "", icon: <Delete />, type: "icon", action: "Delete" }],
   ]
 
   // Colors for animations
@@ -206,7 +218,12 @@ const Keyboard = () => {
         delay: 0.1,
       })
 
-    handleKeyPress(key)
+    // Handle the actual key press
+    if (typeof key === "object" && key.type === "icon" && key.action === "Delete") {
+      handleKeyPress("Backspace")
+    } else {
+      handleKeyPress(key)
+    }
   }
 
   // Add this function to trigger animations
@@ -216,8 +233,9 @@ const Keyboard = () => {
 
     const buttons = keyboardDiv.querySelectorAll("button")
     const targetButton = Array.from(buttons).find((button) => {
-      if (keyValue === "Backspace") {
-        return button.innerHTML.includes("delete")
+      if (keyValue === "Backspace" || keyValue === "Delete") {
+        // Look for the SVG icon instead of text
+        return button.querySelector("svg") !== null;
       }
       return button.textContent === keyValue.toUpperCase() || (keyValue === "Enter" && button.textContent === "Enter")
     })
@@ -269,36 +287,36 @@ const Keyboard = () => {
           0.2,
         )
 
-      gsap
-        .timeline()
-        .set(targetButton, {
-          border: "2px solid transparent",
-        })
-        .to(targetButton, {
-          borderRightColor: borderColor,
-          duration: 0.15,
-          ease: "power1.inOut",
-        })
-        .to(targetButton, {
-          borderTopColor: borderColor,
-          duration: 0.15,
-          ease: "power1.inOut",
-        })
-        .to(targetButton, {
-          borderLeftColor: borderColor,
-          duration: 0.15,
-          ease: "power1.inOut",
-        })
-        .to(targetButton, {
-          borderBottomColor: borderColor,
-          duration: 0.15,
-          ease: "power1.inOut",
-        })
-        .to(targetButton, {
-          borderColor: "transparent",
-          duration: 0.3,
-          delay: 0.1,
-        })
+      // Border trace animation - Fix syntax error
+      const tl = gsap.timeline();
+      tl.set(targetButton, {
+        border: "2px solid transparent",
+      })
+      .to(targetButton, {
+        borderRightColor: borderColor,
+        duration: 0.15,
+        ease: "power1.inOut",
+      })
+      .to(targetButton, {
+        borderTopColor: borderColor,
+        duration: 0.15,
+        ease: "power1.inOut",
+      })
+      .to(targetButton, {
+        borderLeftColor: borderColor,
+        duration: 0.15,
+        ease: "power1.inOut",
+      })
+      .to(targetButton, {
+        borderBottomColor: borderColor,
+        duration: 0.15,
+        ease: "power1.inOut",
+      })
+      .to(targetButton, {
+        borderColor: "transparent",
+        duration: 0.3,
+        delay: 0.1,
+      })
     }
   }
 
@@ -337,7 +355,6 @@ const Keyboard = () => {
                     className="relative overflow-hidden bg-[#EAEAF1] text-[#29296E] font-normal w-[100px] h-[58px] rounded-lg shadow-md flex items-center justify-center transition-all duration-150 font-roboto text-2xl hover:brightness-95"
                   >
                     {key.icon}
-                    <span>{key.label}</span>
                   </button>
                 )
               }

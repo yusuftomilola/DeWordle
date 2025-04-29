@@ -12,6 +12,7 @@ export const AppProvider = ({ children }) => {
   const [message, setMessage] = useState("");
   const [gameOver, setGameOver] = useState(false);
   const [userData, setUserData] = useState({});
+  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
 
   // Get user data from local storage
   useEffect(() => {
@@ -23,11 +24,48 @@ export const AppProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const [gridData, setGridData] = useState(
-    Array(30)
-      .fill()
-      .map(() => ({ char: "", status: "" }))
-  );
+  // Initialize grid data from localStorage or empty grid
+  const [gridData, setGridData] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedGridData = localStorage.getItem('dewordle_grid');
+      if (savedGridData) {
+        return JSON.parse(savedGridData);
+      }
+    }
+    return Array(30).fill().map(() => ({ char: "", status: "" }));
+  });
+
+  // Save current game state to localStorage
+  useEffect(() => {
+    if (gridData.some(cell => cell.char !== "")) {
+      localStorage.setItem('dewordle_grid', JSON.stringify(gridData));
+    }
+  }, [gridData]);
+
+  // Save current row and column to localStorage
+  useEffect(() => {
+    localStorage.setItem('dewordle_position', JSON.stringify({ row: currentRow, col: currentCol }));
+  }, [currentRow, currentCol]);
+  
+  // Save game over state to localStorage
+  useEffect(() => {
+    localStorage.setItem('dewordle_gameOver', JSON.stringify(gameOver));
+  }, [gameOver]);
+
+  // Load position from localStorage
+  useEffect(() => {
+    const savedPosition = localStorage.getItem('dewordle_position');
+    if (savedPosition) {
+      const { row, col } = JSON.parse(savedPosition);
+      setCurrentRow(row);
+      setCurrentCol(col);
+    }
+
+    const savedGameOver = localStorage.getItem('dewordle_gameOver');
+    if (savedGameOver) {
+      setGameOver(JSON.parse(savedGameOver));
+    }
+  }, []);
 
   const { mutate: fetchWord, isLoading: wordLoading } = useGetWord();
   const { mutate: validateGuess, isLoading: validationLoading } =
@@ -39,6 +77,10 @@ export const AppProvider = ({ children }) => {
         const word = response.data.word;
         console.log("Word set in context:", word);
         setTargetWord(word.toUpperCase());
+        
+        // Save the target word to localStorage
+        localStorage.setItem('dewordle_targetWord', word.toUpperCase());
+        
         setIsLoading(false);
       },
       onError: (error) => {
@@ -49,9 +91,37 @@ export const AppProvider = ({ children }) => {
     });
   }, [fetchWord]);
 
+  // Restore target word from localStorage if available
+  useEffect(() => {
+    const savedTargetWord = localStorage.getItem('dewordle_targetWord');
+    if (savedTargetWord && !targetWord) {
+      setTargetWord(savedTargetWord);
+      setIsLoading(false);
+    }
+  }, [targetWord]);
+
+  // Show notification
+  const showNotification = (message, type = "info") => {
+    setNotification({ show: true, message, type });
+    
+    // Auto-hide after 5 seconds for longer messages, 3 seconds for shorter ones
+    // Give game over messages a longer display time (7 seconds)
+    let duration = 3000;
+    
+    if (message.includes("You've used all your tries") || message.includes("You guessed the correct word")) {
+      duration = 7000; // Game over and success messages stay longer
+    } else if (message.length > 50) {
+      duration = 5000; // Other longer messages
+    }
+    
+    setTimeout(() => {
+      setNotification({ show: false, message: "", type: "" });
+    }, duration);
+  };
+
   const validateCurrentWord = async () => {
     if (currentCol !== 5) {
-      setMessage("Word must be 5 letters");
+      showNotification("Word must be 5 letters", "warning");
       return false;
     }
 
@@ -60,6 +130,26 @@ export const AppProvider = ({ children }) => {
       .slice(startIdx, startIdx + 5)
       .map((cell) => cell.char)
       .join("");
+
+    // Validate if the word exists in the dictionary
+    try {
+      const response = await new Promise((resolve, reject) => {
+        validateGuess(currentWord.toLowerCase(), {
+          onSuccess: (response) => resolve(response),
+          onError: (error) => reject(error)
+        });
+      });
+      
+      // If the word is not valid
+      if (!response.data.valid) {
+        showNotification("Not a valid word", "error");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error validating word:", error);
+      showNotification("Not a valid word", "error");
+      return false;
+    }
 
     let remainingLetters = [...targetWord];
     const newGridData = [...gridData];
@@ -97,14 +187,15 @@ export const AppProvider = ({ children }) => {
     // Check if the word is correct
     const isCorrect = currentWord === targetWord;
     if (isCorrect) {
-      setMessage("Congratulations! You got it right!");
+      showNotification("🎉 You guessed the correct word! Check back tomorrow!", "success");
       setGameOver(true);
       return true;
     }
 
     // Check if game is over (all rows used)
+    // Note: Since rows are 0-indexed, currentRow 5 is the 6th row
     if (currentRow === 5) {
-      setMessage(`Game over! The word was ${targetWord}`);
+      showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
       setGameOver(true);
     }
 
@@ -124,10 +215,17 @@ export const AppProvider = ({ children }) => {
     setGameOver(false);
     setIsLoading(true);
 
+    // Clear localStorage
+    localStorage.removeItem('dewordle_grid');
+    localStorage.removeItem('dewordle_position');
+    localStorage.removeItem('dewordle_gameOver');
+    localStorage.removeItem('dewordle_targetWord');
+
     fetchWord(undefined, {
       onSuccess: (response) => {
         const word = response.data.word;
         setTargetWord(word.toUpperCase());
+        localStorage.setItem('dewordle_targetWord', word.toUpperCase());
         setIsLoading(false);
       },
       onError: (error) => {
@@ -156,6 +254,8 @@ export const AppProvider = ({ children }) => {
         resetGame,
         userData,
         setUserData,
+        notification,
+        showNotification,
       }}
     >
       {children}
