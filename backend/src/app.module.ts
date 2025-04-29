@@ -32,9 +32,9 @@ import { join } from 'path';
 import { WordsModule } from './games/dewordle/words/words.module';
 import { GamesModule } from './games/games.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
+import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
 import { LetteredBoxModule } from './games/lettered-box/lettered-box.module';
 import { GamesController } from './games/games.controller';
-
 
 @Module({
   imports: [
@@ -122,6 +122,7 @@ import { GamesController } from './games/games.controller';
     WordsModule,
     GamesModule,
     DictionaryModule,
+    SpellingBeeModule,
     LetteredBoxModule,
   ],
   controllers: [AppController, GuestUserController, GamesController],

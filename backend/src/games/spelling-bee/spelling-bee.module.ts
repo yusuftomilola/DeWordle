@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
+import { WordValidatorService } from './providers/word-validator-service.service';
+import { DictionaryModule } from 'src/dictionary/dictionary.module';
 import { SpellingBeeController } from './spelling-bee.controller';
-import { SpellingBeeService } from './spelling-bee.service';
 
 @Module({
-  imports: [],
-  controllers: [SpellingBeeController],
-  providers: [SpellingBeeService],
-  exports: [SpellingBeeService],
+  imports: [DictionaryModule],
+  providers: [WordValidatorService],
+  exports: [WordValidatorService],
+  controllers: [SpellingBeeController]
 })
 export class SpellingBeeModule {}
