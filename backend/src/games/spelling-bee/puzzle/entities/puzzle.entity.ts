@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { GameResult } from './game-result.entity';
+import { GameResult } from '../../game-result/entities/game-result.entity'; // Updated import path
 
-@Entity()
+@Entity() 
 export class Puzzle {
   @PrimaryGeneratedColumn()
   id: number;

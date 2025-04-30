@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { User } from './user.entity';
-import { Puzzle } from './puzzle.entity';
+import { User } from '../../user/entities/user.entity'; // Updated import path
+import { Puzzle } from '../../puzzle/entities/puzzle.entity'; // Updated import path
 
-@Entity()
+@Entity('game_results') 
 export class GameResult {
   @PrimaryGeneratedColumn()
   id: number;
