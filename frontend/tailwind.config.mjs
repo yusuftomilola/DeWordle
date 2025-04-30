@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -77,7 +77,12 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      dropShadow: {
+        'error': '0 0 10px rgb(239, 68, 68)',
+        'success': '0 0 10px rgb(4, 120, 87)',
+      }
     },
   },
-  plugins: [require("tailwindcss-animate")],
 };
+
+export default config;
