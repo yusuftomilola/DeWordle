@@ -111,8 +111,7 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     fetchWord(undefined, {
       onSuccess: (response) => {
-        const word = response.data.word;
-        console.log("Word set in context:", word);
+        const word = response.data.word;        
         setTargetWord(word.toUpperCase());
         
         // Save the target word to localStorage
@@ -164,9 +163,7 @@ export const AppProvider = ({ children }) => {
     const currentWord = gridData
       .slice(startIdx, startIdx + 5)
       .map((cell) => cell.char)
-      .join("");
-
-    console.log(`Validating word: ${currentWord.toLowerCase()} against target: ${targetWord}`);
+      .join("");    
 
     // Validate if the word exists in the dictionary
     try {
@@ -189,9 +186,7 @@ export const AppProvider = ({ children }) => {
     }
 
     let remainingLetters = [...targetWord];
-    const newGridData = [...gridData];
-
-    console.log("Before validation - remaining letters:", remainingLetters);
+    const newGridData = [...gridData];    
 
     // First pass: Mark correct letters (green)
     for (let i = 0; i < 5; i++) {
@@ -200,8 +195,7 @@ export const AppProvider = ({ children }) => {
 
       if (guessedLetter === targetWord[i]) {
         newGridData[cellIndex].status = "correct";
-        remainingLetters[i] = null; // Mark this position as used
-        console.log(`Letter ${guessedLetter} at position ${i} is correct`);
+        remainingLetters[i] = null; // Mark this position as used        
       }
     }
 
@@ -216,16 +210,11 @@ export const AppProvider = ({ children }) => {
       const letterPosition = remainingLetters.indexOf(guessedLetter);
       if (letterPosition !== -1) {
         newGridData[cellIndex].status = "present";
-        remainingLetters[letterPosition] = null; // Mark this letter as used
-        console.log(`Letter ${guessedLetter} at position ${i} is present`);
+        remainingLetters[letterPosition] = null; // Mark this letter as used        
       } else {
-        newGridData[cellIndex].status = "absent";
-        console.log(`Letter ${guessedLetter} at position ${i} is absent`);
+        newGridData[cellIndex].status = "absent";        
       }
-    }
-
-    // Log the resulting grid data after validation
-    console.log("Grid data after validation:", newGridData.slice(startIdx, startIdx + 5));
+    }        
 
     setGridData(newGridData);
 

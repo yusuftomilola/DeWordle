@@ -69,27 +69,15 @@ export function useGetWord() {
 export function useValidateGuess() {
   return useMutation({
     mutationFn: async (guess) => {
-      try {
-        console.log(`Attempting to validate word: ${guess}`);
+      try {        
         // First try to validate with the API
-        const response = await API.get(`${API_URL}/guess/${guess}`);
-        console.log(`API validation result:`, response.data);
+        const response = await API.get(`${API_URL}/guess/${guess}`);        
         return response;
-      } catch (error) {
-        console.error("API validation failed, using fallback validation", error);
+      } catch (error) {        
         
         // Fallback to local validation if API fails
         const upperGuess = guess.toUpperCase();
-        const valid = COMMON_WORDS.includes(upperGuess);
-        
-        console.log(`Local validation for "${upperGuess}": ${valid ? 'valid' : 'invalid'}`);
-        console.log(`Word is ${COMMON_WORDS.includes(upperGuess) ? '' : 'not '}in the COMMON_WORDS list`);
-        
-        // For debugging: Check if the word is in the list case insensitively
-        const wordExists = COMMON_WORDS.some(word => word.toUpperCase() === upperGuess);
-        if (!wordExists) {
-          console.log(`Word "${upperGuess}" not found in common words list after case-insensitive check`);
-        }
+        const valid = COMMON_WORDS.includes(upperGuess);                
         
         // Return a similar structure to what the API would return
         return { 
