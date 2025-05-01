@@ -9,20 +9,14 @@ import useGuesses from '@/hooks/honeycomb/useGuess';
 import RankingProgress from '@/components/atoms/Spelling-bee/RankingProgess';
 import CurrentWord from '@/components/atoms/Spelling-bee/CurrentWord';
 
-import { useState, useEffect, useCallback } from "react";
-import { RefreshCw, CircleHelp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { HowToPlayModal } from "@/components/atoms/Spelling-bee/HowToPlayModal";
-import { Progress } from "@/components/atoms/Spelling-bee/Progress";
 // Hexagon positions in a honeycomb pattern
 const OUTER_POSITIONS = [
-  { top: 0, left: "50%" }, // top
-  { top: "25%", left: "85%" }, // top right
-  { top: "75%", left: "85%" }, // bottom right
-  { top: "100%", left: "50%" }, // bottom
-  { top: "75%", left: "15%" }, // bottom left
-  { top: "25%", left: "15%" }, // top left
+  { top: 0, left: '50%' }, // top
+  { top: '25%', left: '85%' }, // top right
+  { top: '75%', left: '85%' }, // bottom right
+  { top: '100%', left: '50%' }, // bottom
+  { top: '75%', left: '15%' }, // bottom left
+  { top: '25%', left: '15%' }, // top left
 ];
 
 export default function HoneycombGame() {
@@ -124,9 +118,10 @@ export default function HoneycombGame() {
 
   // Highlight letters in the current word
   const getLetterColor = (letter, isCenter) => {
-    if (isCenter) return "bg-yellow-200 text-indigo-900";
-    return "bg-gray-200 text-indigo-900 hover:bg-gray-300";
+    if (isCenter) return 'bg-yellow-200 text-indigo-900';
+    return 'bg-gray-200 text-indigo-900 hover:bg-gray-300';
   };
+
 
 
   return (
@@ -160,7 +155,7 @@ export default function HoneycombGame() {
                   style={{
                     top: OUTER_POSITIONS[index].top,
                     left: OUTER_POSITIONS[index].left,
-                    transform: "translate(-50%, -50%)",
+                    transform: 'translate(-50%, -50%)',
                   }}
                   onClick={() => handleLetterClick(letter)}
                   animate={{
@@ -195,7 +190,7 @@ export default function HoneycombGame() {
               disabled={isShuffling}
             >
               <RefreshCw
-                className={`w-4 h-4 ${isShuffling ? "animate-spin" : ""}`}
+                className={`w-4 h-4 ${isShuffling ? 'animate-spin' : ''}`}
               />
             </Button>
             <Button
@@ -217,26 +212,6 @@ export default function HoneycombGame() {
           {guessedWords.map(renderGuessedWord)}
         </div> 
       </div>
-      <div className="flex flex-col gap-2 max-w-md">
-        {/* Help Icon - placed above or beside the box */}
-        <div className="flex justify-end">
-        <Progress value={progress} className="mb-4"/>
-          <button
-            onClick={() => {
-              setIsHowToPlayOpen(true);
-              setProgress(25)
-            }}
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-black"
-            title="How to Play"
-          >
-            <CircleHelp className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-      <HowToPlayModal
-        open={isHowToPlayOpen}
-        onOpenChange={setIsHowToPlayOpen}
-      />
     </div>
   );
 
