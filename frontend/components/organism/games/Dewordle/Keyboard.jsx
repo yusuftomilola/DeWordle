@@ -54,35 +54,46 @@ const Keyboard = () => {
       }
 
       if (key === "Enter") {
-        if (currentCol === 5) {
-          // Special handling for the last row (row 5)
-          if (currentRow === 5) {
-            validateCurrentWord().then((isCorrect) => {
-              // Game over regardless of the result in the last row
-              if (!isCorrect) {
-                showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
-              }
-            })
-            return;
-          }
-          
-          // Normal validation for other rows
+        // Check if the row has fewer than 5 letters
+        if (currentCol < 5) {
+          showNotification(`Word must be 5 letters. You've typed ${currentCol} so far.`, "warning");
+          return;
+        }
+
+        // Special handling for the last row (row 5)
+        if (currentRow === 5) {
           validateCurrentWord().then((isCorrect) => {
-            if (!isCorrect && currentRow < 5) {
-              // Move to next row only if word is incorrect and not in the last row
-              setCurrentRow((prev) => prev + 1)
-              setCurrentCol(0)
+            // Game over regardless of the result in the last row
+            if (!isCorrect) {
+              showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
             }
           })
+          return;
         }
+        
+        // Normal validation for other rows
+        validateCurrentWord().then((isCorrect) => {
+          if (!isCorrect && currentRow < 5) {
+            // Move to next row only if word is incorrect and not in the last row
+            setCurrentRow((prev) => prev + 1)
+            setCurrentCol(0)
+          }
+        })
         return
       }
 
-      if (currentCol < 5) {
-        const newGridData = [...gridData]
-        newGridData[currentPosition] = { char: key, status: "" }
-        setGridData(newGridData)
-        setCurrentCol((prev) => prev + 1)
+      // Handle normal letter input
+      if (typeof key === 'string' && /^[A-Z]$/.test(key)) {
+        // Only allow typing if we haven't filled the row yet
+        if (currentCol < 5) {
+          const newGridData = [...gridData]
+          newGridData[currentPosition] = { char: key, status: "" }
+          setGridData(newGridData)
+          setCurrentCol((prev) => prev + 1)
+        } else {
+          // We've already filled 5 letters, show notification
+          showNotification("You've already typed 5 letters. Press Enter to submit or Backspace to edit.", "info");
+        }
       }
     },
     [currentRow, currentCol, gridData, setGridData, setCurrentCol, setCurrentRow, validateCurrentWord, gameOver, showNotification, targetWord],
@@ -322,16 +333,23 @@ const Keyboard = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      event.preventDefault() // Prevent default keyboard behavior
+      // Only prevent default for keyboard inputs we're handling
+      const key = event.key;
+      const preventKeys = ['Backspace', 'Enter'];
+      const isLetter = /^[a-zA-Z]$/.test(key);
 
-      if (event.key === "Backspace") {
+      if (preventKeys.includes(key) || isLetter) {
+        event.preventDefault(); // Prevent default keyboard behavior
+      }
+
+      if (key === "Backspace") {
         handleKeyPress("Backspace")
         setTimeout(() => triggerButtonAnimation("Backspace"), 0)
-      } else if (event.key === "Enter") {
+      } else if (key === "Enter") {
         handleKeyPress("Enter")
         setTimeout(() => triggerButtonAnimation("Enter"), 0)
-      } else if (/^[a-zA-Z]$/.test(event.key)) {
-        const upperKey = event.key.toUpperCase()
+      } else if (isLetter) {
+        const upperKey = key.toUpperCase()
         handleKeyPress(upperKey)
         setTimeout(() => triggerButtonAnimation(upperKey), 0)
       }

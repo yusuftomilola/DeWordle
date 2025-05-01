@@ -35,6 +35,58 @@ export const AppProvider = ({ children }) => {
     return Array(30).fill().map(() => ({ char: "", status: "" }));
   });
 
+  // Load position from localStorage - moved this up so it runs before other effects
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Load game over state
+      const savedGameOver = localStorage.getItem('dewordle_gameOver');
+      if (savedGameOver) {
+        setGameOver(JSON.parse(savedGameOver));
+      }
+
+      // Load grid data
+      const savedGridData = localStorage.getItem('dewordle_grid');
+      if (savedGridData) {
+        const parsedGridData = JSON.parse(savedGridData);
+        
+        // Calculate currentRow based on the grid data
+        // Find the last row that has any characters
+        let lastFilledRow = 0;
+        let lastFilledCol = 0;
+        
+        for (let row = 0; row < 6; row++) {
+          const rowStart = row * 5;
+          const rowData = parsedGridData.slice(rowStart, rowStart + 5);
+          
+          // Check if this row has any filled cells
+          if (rowData.some(cell => cell.char !== "")) {
+            lastFilledRow = row;
+            
+            // Find the last filled column in this row
+            for (let col = 0; col < 5; col++) {
+              if (rowData[col].char !== "") {
+                lastFilledCol = col + 1; // +1 because we want the position after the last filled cell
+              }
+            }
+            
+            // If the row is complete (all 5 columns filled) and has status values set,
+            // then we should move to the next row and reset the column
+            if (lastFilledCol === 5 && rowData.every(cell => cell.status !== "")) {
+              lastFilledRow++;
+              lastFilledCol = 0;
+            }
+          }
+        }
+        
+        // Only update if there's actual data to consider
+        if (parsedGridData.some(cell => cell.char !== "")) {
+          setCurrentRow(lastFilledRow);
+          setCurrentCol(lastFilledCol);
+        }
+      }
+    }
+  }, []);
+
   // Save current game state to localStorage
   useEffect(() => {
     if (gridData.some(cell => cell.char !== "")) {
@@ -51,21 +103,6 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('dewordle_gameOver', JSON.stringify(gameOver));
   }, [gameOver]);
-
-  // Load position from localStorage
-  useEffect(() => {
-    const savedPosition = localStorage.getItem('dewordle_position');
-    if (savedPosition) {
-      const { row, col } = JSON.parse(savedPosition);
-      setCurrentRow(row);
-      setCurrentCol(col);
-    }
-
-    const savedGameOver = localStorage.getItem('dewordle_gameOver');
-    if (savedGameOver) {
-      setGameOver(JSON.parse(savedGameOver));
-    }
-  }, []);
 
   const { mutate: fetchWord, isLoading: wordLoading } = useGetWord();
   const { mutate: validateGuess, isLoading: validationLoading } =
@@ -120,16 +157,16 @@ export const AppProvider = ({ children }) => {
   };
 
   const validateCurrentWord = async () => {
-    if (currentCol !== 5) {
-      showNotification("Word must be 5 letters", "warning");
-      return false;
-    }
-
+    // We've already verified in the Keyboard component that currentCol === 5,
+    // so we don't need to check again here
+    
     const startIdx = currentRow * 5;
     const currentWord = gridData
       .slice(startIdx, startIdx + 5)
       .map((cell) => cell.char)
       .join("");
+
+    console.log(`Validating word: ${currentWord.toLowerCase()} against target: ${targetWord}`);
 
     // Validate if the word exists in the dictionary
     try {
@@ -154,6 +191,8 @@ export const AppProvider = ({ children }) => {
     let remainingLetters = [...targetWord];
     const newGridData = [...gridData];
 
+    console.log("Before validation - remaining letters:", remainingLetters);
+
     // First pass: Mark correct letters (green)
     for (let i = 0; i < 5; i++) {
       const cellIndex = startIdx + i;
@@ -162,6 +201,7 @@ export const AppProvider = ({ children }) => {
       if (guessedLetter === targetWord[i]) {
         newGridData[cellIndex].status = "correct";
         remainingLetters[i] = null; // Mark this position as used
+        console.log(`Letter ${guessedLetter} at position ${i} is correct`);
       }
     }
 
@@ -177,10 +217,15 @@ export const AppProvider = ({ children }) => {
       if (letterPosition !== -1) {
         newGridData[cellIndex].status = "present";
         remainingLetters[letterPosition] = null; // Mark this letter as used
+        console.log(`Letter ${guessedLetter} at position ${i} is present`);
       } else {
         newGridData[cellIndex].status = "absent";
+        console.log(`Letter ${guessedLetter} at position ${i} is absent`);
       }
     }
+
+    // Log the resulting grid data after validation
+    console.log("Grid data after validation:", newGridData.slice(startIdx, startIdx + 5));
 
     setGridData(newGridData);
 
