@@ -2,6 +2,7 @@
 
 import API from "@/utils/axios";
 import { useMutation } from "@tanstack/react-query";
+import { validateWord, mightBeValidWord } from "@/utils/wordValidator";
 
 // List of common 5-letter words for validation if the API fails
 const COMMON_WORDS = [
@@ -62,7 +63,7 @@ const API_URL = "https://dewordle.onrender.com/api/v1";
 
 export function useGetWord() {
   return useMutation({
-    mutationFn: () => API.get(`${API_URL}/words/daily`),
+    mutationFn: () => API.get(`${API_URL}/words/daily`),    
   });
 }
 
@@ -71,19 +72,93 @@ export function useValidateGuess() {
     mutationFn: async (guess) => {
       try {        
         // First try to validate with the API
-        const response = await API.get(`${API_URL}/guess/${guess}`);        
-        return response;
-      } catch (error) {        
+        const response = await API.get(`${API_URL}/words/guess/${guess}`);              
         
-        // Fallback to local validation if API fails
+        // Make sure we have a properly formatted hint
+        let hint = response.data.hint;
+        if (hint) {
+          // Ensure we're working with the exact characters from the API
+          if (typeof hint === 'string') {
+            hint = Array.from(hint).join('');
+          }
+        }
+
+        // If the API explicitly says the word is invalid
+        if (response.data.valid === false) {
+          return {
+            data: {
+              valid: false,
+              word: guess
+            }
+          };
+        }
+        
+        // If the API response indicates the word is correct
+        if (response.data && response.data.correct === true) {
+          return {
+            data: {
+              valid: true,
+              correct: true,
+              word: guess,
+              hint: hint
+            }
+          };
+        }
+        
+        // Check if the API returned a hint, which means it's a valid word
+        // even if the word is not the correct one for the day
+        if (response.data && hint) {
+          return {
+            data: {
+              valid: true,
+              word: guess,
+              hint: hint
+            }
+          };
+        }
+        
+        // If there's no hint but the response indicates it's valid in some way
+        if (response.data && response.data.valid === true) {
+          return response;
+        }
+        
+        // If we get here, we have a response but no hint and no explicit valid flag
+        // Treat this as an invalid word
+        return {
+          data: {
+            valid: false,
+            word: guess,
+            message: "Not a valid dictionary word"
+          }
+        };
+      } catch (error) {        
+        // Log the error for debugging
+        console.error(`API error for word "${guess}":`, error);
+        
+        // For API errors, check if it's a 404 (word not found) vs other errors
+        if (error.response && error.response.status === 404) {
+          return {
+            data: {
+              valid: false,
+              word: guess,
+              message: "Word not found in dictionary"
+            }
+          };
+        }
+        
+        // For other types of errors, fallback to local validation
         const upperGuess = guess.toUpperCase();
-        const valid = COMMON_WORDS.includes(upperGuess);                
+        
+        // Use our dictionary validator
+        const validationResult = validateWord(upperGuess);
+        const valid = validationResult.valid;
         
         // Return a similar structure to what the API would return
         return { 
           data: { 
             valid,
-            word: guess
+            word: guess,
+            message: valid ? undefined : (validationResult.reason || "Not a valid word")
           } 
         };
       }

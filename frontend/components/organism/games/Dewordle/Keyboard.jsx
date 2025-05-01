@@ -2,6 +2,7 @@
 import { useContext, useEffect, useCallback, useState } from "react"
 import { Delete } from "lucide-react"
 import { AppContext } from "@/context/AppContext"
+import { validateWord } from "@/utils/wordValidator"
 import gsap from "gsap"
 
 const Keyboard = () => {
@@ -57,6 +58,20 @@ const Keyboard = () => {
         // Check if the row has fewer than 5 letters
         if (currentCol < 5) {
           showNotification(`Word must be 5 letters. You've typed ${currentCol} so far.`, "warning");
+          return;
+        }
+        
+        // Get the current word
+        const startIdx = currentRow * 5;
+        const currentWord = gridData
+          .slice(startIdx, startIdx + 5)
+          .map((cell) => cell.char)
+          .join("");
+        
+        // Use the dictionary-based word validator for early client-side validation
+        const validationResult = validateWord(currentWord);
+        if (!validationResult.valid) {
+          showNotification(validationResult.reason, "error");
           return;
         }
 

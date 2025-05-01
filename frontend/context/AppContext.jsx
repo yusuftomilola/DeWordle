@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useState, useEffect } from "react";
 import { useGetWord, useValidateGuess } from "@/hooks/useGetWord";
+import { validateWord } from "@/utils/wordValidator";
 
 export const AppContext = createContext();
 
@@ -163,7 +164,14 @@ export const AppProvider = ({ children }) => {
     const currentWord = gridData
       .slice(startIdx, startIdx + 5)
       .map((cell) => cell.char)
-      .join("");    
+      .join("");
+      
+    // Use the dictionary-based word validator first
+    const validationResult = validateWord(currentWord);
+    if (!validationResult.valid) {
+      showNotification(validationResult.reason, "error");
+      return false;
+    }
 
     // Validate if the word exists in the dictionary
     try {
@@ -174,63 +182,142 @@ export const AppProvider = ({ children }) => {
         });
       });
       
+      console.log("Validation response:", response.data);
+      
       // If the word is not valid
       if (!response.data.valid) {
-        showNotification("Not a valid word", "error");
+        const message = response.data.message || "Not a valid word";
+        console.log("Word invalid:", message);
+        showNotification(message, "error");
         return false;
       }
+
+      let newGridData = [...gridData];
+      
+      // Check if the API confirmed this is the correct word
+      if (response.data.correct === true) {
+        // Mark all letters as correct
+        for (let i = 0; i < 5; i++) {
+          const cellIndex = startIdx + i;
+          newGridData[cellIndex].status = "correct";
+        }
+        
+        setGridData(newGridData);
+        showNotification("🎉 You guessed the correct word! Check back tomorrow!", "success");
+        setGameOver(true);
+        return true;
+      }
+      
+      // If API returned a hint, use it to color the letters
+      else if (response.data.hint) {
+        const hint = response.data.hint;
+        console.log("API Hint received:", hint); // Debug log to see exact hint format
+        console.log("Hint length:", hint.length);
+        
+        // Convert the hint to an array of characters to ensure proper emoji handling
+        const hintChars = Array.from(hint);
+        console.log("Hint characters array:", hintChars);
+        
+        // Apply the hint colors to the grid
+        for (let i = 0; i < 5 && i < hintChars.length; i++) {
+          const cellIndex = startIdx + i;
+          const hintChar = hintChars[i];
+          
+          console.log(`Processing hint char at position ${i}: "${hintChar}"`);
+          
+          // Direct check for emoji characters
+          if (hintChar === '🟩') {
+            console.log(`Setting letter ${currentWord[i]} at position ${i} to "correct"`);
+            newGridData[cellIndex].status = "correct";
+          } else if (hintChar === '🟨') {
+            console.log(`Setting letter ${currentWord[i]} at position ${i} to "present"`);
+            newGridData[cellIndex].status = "present";
+          } else {
+            console.log(`Setting letter ${currentWord[i]} at position ${i} to "absent"`);
+            newGridData[cellIndex].status = "absent";
+          }
+        }
+        
+        console.log("Final grid statuses:", newGridData.slice(startIdx, startIdx + 5).map(cell => cell.status));
+        
+        setGridData(newGridData);
+        
+        // Check if the word is correct based on the API response
+        if (response.data.correct === true) {
+          showNotification("🎉 You guessed the correct word! Check back tomorrow!", "success");
+          setGameOver(true);
+          return true;
+        }
+        
+        // Also check if all hints are green (all correct)
+        const allGreen = hintChars.length === 5 && hintChars.every(char => char === '🟩');
+        if (allGreen) {
+          showNotification("🎉 You guessed the correct word! Check back tomorrow!", "success");
+          setGameOver(true);
+          return true;
+        }
+        
+        // Check if game is over (all rows used)
+        if (currentRow === 5) {
+          showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
+          setGameOver(true);
+        }
+        
+        return false;
+      }
+      
+      // If no hint is available, fall back to the original logic
+      let remainingLetters = [...targetWord];      
+
+      // First pass: Mark correct letters (green)
+      for (let i = 0; i < 5; i++) {
+        const cellIndex = startIdx + i;
+        const guessedLetter = currentWord[i];
+
+        if (guessedLetter === targetWord[i]) {
+          newGridData[cellIndex].status = "correct";
+          remainingLetters[i] = null; // Mark this position as used        
+        }
+      }
+
+      // Second pass: Mark present letters (orange)
+      for (let i = 0; i < 5; i++) {
+        const cellIndex = startIdx + i;
+        const guessedLetter = currentWord[i];
+
+        // Skip letters that were already marked as correct
+        if (newGridData[cellIndex].status === "correct") continue;
+
+        const letterPosition = remainingLetters.indexOf(guessedLetter);
+        if (letterPosition !== -1) {
+          newGridData[cellIndex].status = "present";
+          remainingLetters[letterPosition] = null; // Mark this letter as used        
+        } else {
+          newGridData[cellIndex].status = "absent";        
+        }
+      }        
+
+      setGridData(newGridData);
+
+      // Check if the word is correct
+      const isCorrect = currentWord === targetWord;
+      if (isCorrect) {
+        showNotification("🎉 You guessed the correct word! Check back tomorrow!", "success");
+        setGameOver(true);
+        return true;
+      }
+
+      // Check if game is over (all rows used)
+      // Note: Since rows are 0-indexed, currentRow 5 is the 6th row
+      if (currentRow === 5) {
+        showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
+        setGameOver(true);
+      }
+
     } catch (error) {
       console.error("Error validating word:", error);
       showNotification("Not a valid word", "error");
       return false;
-    }
-
-    let remainingLetters = [...targetWord];
-    const newGridData = [...gridData];    
-
-    // First pass: Mark correct letters (green)
-    for (let i = 0; i < 5; i++) {
-      const cellIndex = startIdx + i;
-      const guessedLetter = currentWord[i];
-
-      if (guessedLetter === targetWord[i]) {
-        newGridData[cellIndex].status = "correct";
-        remainingLetters[i] = null; // Mark this position as used        
-      }
-    }
-
-    // Second pass: Mark present letters (orange)
-    for (let i = 0; i < 5; i++) {
-      const cellIndex = startIdx + i;
-      const guessedLetter = currentWord[i];
-
-      // Skip letters that were already marked as correct
-      if (newGridData[cellIndex].status === "correct") continue;
-
-      const letterPosition = remainingLetters.indexOf(guessedLetter);
-      if (letterPosition !== -1) {
-        newGridData[cellIndex].status = "present";
-        remainingLetters[letterPosition] = null; // Mark this letter as used        
-      } else {
-        newGridData[cellIndex].status = "absent";        
-      }
-    }        
-
-    setGridData(newGridData);
-
-    // Check if the word is correct
-    const isCorrect = currentWord === targetWord;
-    if (isCorrect) {
-      showNotification("🎉 You guessed the correct word! Check back tomorrow!", "success");
-      setGameOver(true);
-      return true;
-    }
-
-    // Check if game is over (all rows used)
-    // Note: Since rows are 0-indexed, currentRow 5 is the 6th row
-    if (currentRow === 5) {
-      showNotification(`😔 You've used all your tries. The correct word was '${targetWord}'. Come back tomorrow!`, "error");
-      setGameOver(true);
     }
 
     return false;
