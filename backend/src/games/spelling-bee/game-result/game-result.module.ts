@@ -6,4 +6,4 @@ import { GameResultController } from './game-result.controller';
   controllers: [GameResultController],
   providers: [GameResultService],
 })
-export class GameResultModule {}
+export class GameResult {}

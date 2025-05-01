@@ -5,11 +5,13 @@ import { SpellingBeeController } from './spelling-bee.controller';
 
 import { SpellingBeeService } from './spelling-bee.service';
 import { UserModule } from './user/user.module';
-import { PuzzleModule } from './games/spelling-bee/puzzle/puzzle.module';
-import { GameResultModule } from './games/spelling-bee/game-result/game-result.module';
+// import { GameResultModule } from './games/spelling-bee/game-result/game-result.module';
+import { PuzzleModule } from './puzzle/puzzle.module';
+import { GameResult } from './game-result/game-result.module';
+
 
 @Module({
-  imports: [UserModule, PuzzleModule, GameResultModule],
+  imports: [UserModule, PuzzleModule, GameResult],
   controllers: [SpellingBeeController],
   providers: [SpellingBeeService],
   exports: [SpellingBeeService],

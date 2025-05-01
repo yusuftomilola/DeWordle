@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../../user/entities/user.entity'; // Updated import path
 import { Puzzle } from '../../puzzle/entities/puzzle.entity'; // Updated import path
 
-@Entity('game_results') 
+@Entity() 
 export class GameResult {
   @PrimaryGeneratedColumn()
   id: number;
