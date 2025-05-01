@@ -1,34 +1,36 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-
+import { useState, useEffect, useCallback } from "react";
+import { RefreshCw, CircleHelp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { HowToPlayModal } from "@/components/atoms/Spelling-bee/HowToPlayModal";
+import { Progress } from "@/components/atoms/Spelling-bee/Progress";
 // Hexagon positions in a honeycomb pattern
 const OUTER_POSITIONS = [
-  { top: 0, left: '50%' }, // top
-  { top: '25%', left: '85%' }, // top right
-  { top: '75%', left: '85%' }, // bottom right
-  { top: '100%', left: '50%' }, // bottom
-  { top: '75%', left: '15%' }, // bottom left
-  { top: '25%', left: '15%' }, // top left
+  { top: 0, left: "50%" }, // top
+  { top: "25%", left: "85%" }, // top right
+  { top: "75%", left: "85%" }, // bottom right
+  { top: "100%", left: "50%" }, // bottom
+  { top: "75%", left: "15%" }, // bottom left
+  { top: "25%", left: "15%" }, // top left
 ];
 
 export default function HoneycombGame() {
-  const [centerLetter, setCenterLetter] = useState('P');
+  const [centerLetter, setCenterLetter] = useState("P");
   const [outerLetters, setOuterLetters] = useState([
-    'O',
-    'I',
-    'N',
-    'A',
-    'C',
-    'T',
+    "O",
+    "I",
+    "N",
+    "A",
+    "C",
+    "T",
   ]);
-  const [currentWord, setCurrentWord] = useState('');
+  const [currentWord, setCurrentWord] = useState("");
   const [foundWords, setFoundWords] = useState([]);
   const [isShuffling, setIsShuffling] = useState(false);
-
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
+  const [progress,setProgress]=useState(0)
   // Handle keyboard input
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -43,18 +45,18 @@ export default function HoneycombGame() {
       }
 
       // Handle delete/backspace
-      if (e.key === 'Backspace' || e.key === 'Delete') {
+      if (e.key === "Backspace" || e.key === "Delete") {
         setCurrentWord((prev) => prev.slice(0, -1));
       }
 
       // Handle enter
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         handleSubmit();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [centerLetter, outerLetters]);
 
   // Handle letter click
@@ -98,20 +100,20 @@ export default function HoneycombGame() {
           setFoundWords((prev) => [...prev, currentWord]);
         }
       }
-      setCurrentWord('');
+      setCurrentWord("");
     }
   }, [currentWord, centerLetter, foundWords]);
 
   // Highlight letters in the current word
   const getLetterColor = (letter, isCenter) => {
-    if (isCenter) return 'bg-yellow-200 text-indigo-900';
-    return 'bg-gray-200 text-indigo-900 hover:bg-gray-300';
+    if (isCenter) return "bg-yellow-200 text-indigo-900";
+    return "bg-gray-200 text-indigo-900 hover:bg-gray-300";
   };
 
   // Highlight letters in the current word display
   const getDisplayLetterColor = (letter, index) => {
-    if (letter === centerLetter) return 'text-yellow-500';
-    return 'text-indigo-900';
+    if (letter === centerLetter) return "text-yellow-500";
+    return "text-indigo-900";
   };
 
   return (
@@ -119,7 +121,7 @@ export default function HoneycombGame() {
       <div className="flex-1 flex flex-col items-center justify-center">
         {/* Current word display */}
         <div className="text-4xl font-bold  h-12 tracking-wider">
-          {currentWord.split('').map((letter, index) => (
+          {currentWord.split("").map((letter, index) => (
             <span key={index} className={getDisplayLetterColor(letter, index)}>
               {letter}
             </span>
@@ -151,7 +153,7 @@ export default function HoneycombGame() {
                   style={{
                     top: OUTER_POSITIONS[index].top,
                     left: OUTER_POSITIONS[index].left,
-                    transform: 'translate(-50%, -50%)',
+                    transform: "translate(-50%, -50%)",
                   }}
                   onClick={() => handleLetterClick(letter)}
                   animate={{
@@ -186,7 +188,7 @@ export default function HoneycombGame() {
               disabled={isShuffling}
             >
               <RefreshCw
-                className={`w-4 h-4 ${isShuffling ? 'animate-spin' : ''}`}
+                className={`w-4 h-4 ${isShuffling ? "animate-spin" : ""}`}
               />
             </Button>
             <Button
@@ -204,6 +206,26 @@ export default function HoneycombGame() {
       <div className="flex-1 border rounded-lg p-6 max-w-md">
         <h2 className="text-lg mb-4">You have found 0</h2>
       </div>
+      <div className="flex flex-col gap-2 max-w-md">
+        {/* Help Icon - placed above or beside the box */}
+        <div className="flex justify-end">
+        <Progress value={progress} className="mb-4"/>
+          <button
+            onClick={() => {
+              setIsHowToPlayOpen(true);
+              setProgress(25)
+            }}
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-black"
+            title="How to Play"
+          >
+            <CircleHelp className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      <HowToPlayModal
+        open={isHowToPlayOpen}
+        onOpenChange={setIsHowToPlayOpen}
+      />
     </div>
   );
 }
