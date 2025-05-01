@@ -9,7 +9,7 @@ import {
   Play,
   BookOpen,
 } from "lucide-react";
-
+import { HowToPlayModal } from "../Spelling-bee/HowToPlayModal";
 export default function DewordleTutorial() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -176,6 +176,9 @@ export default function DewordleTutorial() {
             Learn to Play
           </button>
         </div>
+        {showTutorial && (
+        <HowToPlayModal onClose={() => setShowTutorial(false)} />
+      )}
       </div>
 
       {/* Tutorial Modal */}

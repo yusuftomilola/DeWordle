@@ -4,7 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  experimental: {},
+  experimental: {
+    turbo: false,
+  },
 };
 
 export default nextConfig;
