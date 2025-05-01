@@ -1,4 +1,13 @@
-"use client";
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import useLetters from '@/hooks/honeycomb/useLetters';
+import useGuesses from '@/hooks/honeycomb/useGuess';
+import RankingProgress from '@/components/atoms/Spelling-bee/RankingProgess';
+import CurrentWord from '@/components/atoms/Spelling-bee/CurrentWord';
 
 import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, CircleHelp } from "lucide-react";
@@ -17,48 +26,32 @@ const OUTER_POSITIONS = [
 ];
 
 export default function HoneycombGame() {
-  const [centerLetter, setCenterLetter] = useState("P");
-  const [outerLetters, setOuterLetters] = useState([
-    "O",
-    "I",
-    "N",
-    "A",
-    "C",
-    "T",
-  ]);
-  const [currentWord, setCurrentWord] = useState("");
-  const [foundWords, setFoundWords] = useState([]);
+  const { alphabet, centerLetter, outerLetters, load, isLoaded} = useLetters()
+  const { guessedWords, guess, score } = useGuesses(centerLetter, alphabet)
+
+  const [currentWord, setCurrentWord] = useState('');
+  const [textColor, setTextColor] = useState('');
   const [isShuffling, setIsShuffling] = useState(false);
-  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
-  const [progress,setProgress]=useState(0)
-  // Handle keyboard input
+  
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      const key = e.key.toUpperCase();
+    load();
+  }, [])
 
-      // Handle letter keys
-      if (/^[A-Z]$/.test(key)) {
-        const validLetters = [centerLetter, ...outerLetters];
-        if (validLetters.includes(key)) {
-          setCurrentWord((prev) => prev + key);
-        }
-      }
+  const resetWord = useCallback((state) => {
 
-      // Handle delete/backspace
-      if (e.key === "Backspace" || e.key === "Delete") {
-        setCurrentWord((prev) => prev.slice(0, -1));
-      }
+    const color = state === 'success' ? 'text-green-500 drop-shadow-success' : 'text-red-500 drop-shadow-error'
 
-      // Handle enter
-      if (e.key === "Enter") {
-        handleSubmit();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [centerLetter, outerLetters]);
-
+    setTextColor(color)
+    setTimeout(() => {
+      setTextColor(color + ' opacity-0 transition-opacity duration-200 ease-in')
+   }, 0) 
+  
+    setTimeout(() => {
+      setTextColor(undefined)
+      setCurrentWord('')
+   }, 200) 
+  })
+ 
   // Handle letter click
   const handleLetterClick = (letter) => {
     setCurrentWord((prev) => prev + letter);
@@ -91,18 +84,43 @@ export default function HoneycombGame() {
   };
 
   // Handle submit button click
-  const handleSubmit = useCallback(() => {
-    if (currentWord.length > 0) {
-      // Check if the word contains the center letter
-      if (currentWord.includes(centerLetter)) {
-        // Check if the word hasn't been found before
-        if (!foundWords.includes(currentWord)) {
-          setFoundWords((prev) => [...prev, currentWord]);
+  const handleSubmit = useCallback(async () => {
+    const state = await guess(currentWord.toLowerCase())
+    resetWord(state)
+  }, [currentWord, centerLetter]);
+
+   // Handle keyboard input
+   useEffect(() => {
+
+    const handleKeyDown = (e) => {
+      const key = e.key.toLowerCase();
+
+      console.log('key', key)
+
+      // Handle letter keys
+      if (/^[a-z]$/.test(key)) {
+        const validLetters = [centerLetter, ...outerLetters];
+        if (validLetters.includes(key)) {
+          setCurrentWord((prev) => prev + key);
         }
       }
-      setCurrentWord("");
-    }
-  }, [currentWord, centerLetter, foundWords]);
+
+      // Handle delete/backspace
+      if (key === 'backspace' || key === 'delete') {
+        setCurrentWord((prev) => prev.slice(0, -1));
+      }
+
+      // Handle enter
+      if (key === 'enter') {
+        handleSubmit();
+        e.preventDefault()
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [centerLetter, outerLetters, handleSubmit]);
+
 
   // Highlight letters in the current word
   const getLetterColor = (letter, isCenter) => {
@@ -110,35 +128,24 @@ export default function HoneycombGame() {
     return "bg-gray-200 text-indigo-900 hover:bg-gray-300";
   };
 
-  // Highlight letters in the current word display
-  const getDisplayLetterColor = (letter, index) => {
-    if (letter === centerLetter) return "text-yellow-500";
-    return "text-indigo-900";
-  };
 
   return (
-    <div className="flex flex-col md:flex-row w-full max-w-6xl mx-auto p-4 gap-8 container">
-      <div className="flex-1 flex flex-col items-center justify-center">
+    <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto p-4 gap-8 container">
+      <div className="flex-1 flex flex-col items-center">
         {/* Current word display */}
-        <div className="text-4xl font-bold  h-12 tracking-wider">
-          {currentWord.split("").map((letter, index) => (
-            <span key={index} className={getDisplayLetterColor(letter, index)}>
-              {letter}
-            </span>
-          ))}
-        </div>
+        <CurrentWord word={currentWord} centerLetter={centerLetter} textColor={textColor} />
         <div>
           {/* Honeycomb grid */}
           <div className="relative  mx-auto w-[300px] h-56 lg:md:mr-20 ">
             {/* Center hexagon */}
             <button
-              className={`absolute top-1/2 left-1/2 transform   w-24 h-24 ${getLetterColor(
+              className={`absolute top-1/2 left-1/2 transform w-24 h-24 ${getLetterColor(
                 centerLetter,
                 true
               )} hexagon flex items-center justify-center text-2xl font-bold cursor-pointer`}
               onClick={() => handleLetterClick(centerLetter)}
             >
-              {centerLetter}
+              {centerLetter.toUpperCase()}
             </button>
 
             {/* Outer hexagons */}
@@ -166,7 +173,7 @@ export default function HoneycombGame() {
                   exit={{ opacity: 0, scale: 0.8 }}
                   initial={isShuffling ? { scale: 0.8, opacity: 0.5 } : false}
                 >
-                  {letter}
+                  {letter.toUpperCase()} 
                 </motion.button>
               ))}
             </AnimatePresence>
@@ -203,8 +210,12 @@ export default function HoneycombGame() {
       </div>
 
       {/* Found words panel */}
-      <div className="flex-1 border rounded-lg p-6 max-w-md">
-        <h2 className="text-lg mb-4">You have found 0</h2>
+      <div className="flex-1 mb-5">
+        <RankingProgress score={score} className="mb-5" />
+        <div className="border rounded-lg p-6">
+          <h2 className="text-lg mb-4">You have found {guessedWords.length} {guessedWords.length === 1 ? 'word' : 'words'}</h2>
+          {guessedWords.map(renderGuessedWord)}
+        </div> 
       </div>
       <div className="flex flex-col gap-2 max-w-md">
         {/* Help Icon - placed above or beside the box */}
@@ -228,4 +239,8 @@ export default function HoneycombGame() {
       />
     </div>
   );
+
+  function renderGuessedWord(word) {
+    return <div key={word} className="w-40 mb-4 border-b border-slate-300">{ word.toUpperCase() }</div>
+  }
 }
