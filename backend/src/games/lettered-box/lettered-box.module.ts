@@ -1,12 +1,18 @@
-import { Module } from '@nestjs/common';
-import { LetteredBoxService } from './lettered-box.service';
-import { LetteredBoxController } from './lettered-box.controller';
-import { LetteredBoxEntity } from './entities/lettered-box.entity';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Game } from '../entities/game.entity';
+import { GamesModule } from '../games.module';
+import { LetteredBoxController } from './lettered-box.controller';
+import { LetteredBoxService } from './lettered-box.service';
+import { LetteredBoxStateService } from './lettered-box-state.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LetteredBoxEntity])],
+  imports: [
+    TypeOrmModule.forFeature([Game]),
+    forwardRef(() => GamesModule) 
+  ],
   controllers: [LetteredBoxController],
-  providers: [LetteredBoxService],
+  providers: [LetteredBoxStateService, LetteredBoxService],
+  exports: [LetteredBoxStateService, LetteredBoxService],
 })
 export class LetteredBoxModule {}

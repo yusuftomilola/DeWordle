@@ -3,10 +3,10 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagg
 import type { WordsService } from "./words.service"
 import type { CreateWordDto } from "./dto/create-word.dto"
 import type { UpdateWordDto } from "./dto/update-word.dto"
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
-import { RolesGuard } from "../auth/guards/roles.guard"
-import { Roles } from "../auth/decorators/roles.decorator"
+import { JwtAuthGuard } from "security/guards/jwt-auth.guard"
 import { Throttle } from "@nestjs/throttler"
+import { RolesGuard } from "security/guards/rolesGuard/roles.guard"
+import { Roles } from "src/games/lettered-box/auth/decorators/roles.decorator"
 
 @ApiTags("words")
 @Controller("words")
@@ -23,7 +23,7 @@ export class WordsController {
   @Get('random')
   @ApiOperation({ summary: 'Get a random word' })
   @ApiResponse({ status: 200, description: 'Return a random word.' })
-  @Throttle(5, 60) // Limit to 5 requests per minute
+//  @Throttle({ limit: 5, ttl: 60 }) // ✅ Limit to 5 requests per 60 seconds
   getRandomWord(@Query('category') category?: string) {
     return this.wordsService.getRandomWord(category);
   }
@@ -31,7 +31,7 @@ export class WordsController {
   @Get("random/:difficulty")
   @ApiOperation({ summary: "Get a random word by difficulty" })
   @ApiResponse({ status: 200, description: "Return a random word of specified difficulty." })
-  @Throttle(5, 60) // Limit to 5 requests per minute
+//  @Throttle({ limit: 5, ttl: 60 }) // Limit to 5 requests per minute
   getRandomWordByDifficulty(@Param('difficulty') difficulty: string, @Query('category') category?: string) {
     return this.wordsService.getRandomWordByDifficulty(Number(difficulty), category)
   }
