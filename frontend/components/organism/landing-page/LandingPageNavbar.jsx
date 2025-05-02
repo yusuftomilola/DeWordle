@@ -14,6 +14,7 @@ import {
 import { AppContext } from "@/context/AppContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings } from "./Settings";
+import { ArgentInvisibleWalletButton } from "./ArgentInvisibleWalletConnect";
 
 
 export default function LandingPageNavbar() {
@@ -267,6 +268,7 @@ export default function LandingPageNavbar() {
           >
             New
           </Link>
+          <ArgentInvisibleWalletButton />
           {/* mobile auth buttons/Users */}
           <div className="flex flex-col space-y-3 pt-2">
             {!isLoggedIn ? (
