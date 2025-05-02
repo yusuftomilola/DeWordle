@@ -14,7 +14,7 @@ import {
 import { AppContext } from "@/context/AppContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings } from "./Settings";
-import { ArgentInvisibleWalletButton } from "./ArgentInvisibleWalletConnect";
+import ArgentInvisibleWalletButton from "./ArgentInvisibleWalletConnect";
 
 
 export default function LandingPageNavbar() {
@@ -96,6 +96,7 @@ export default function LandingPageNavbar() {
 
           {/* Desktop Auth Buttons/User */}
           <div className="hidden md:flex items-center space-x-4">
+          <ArgentInvisibleWalletButton />
             {!isLoggedIn ? (
               <>
                 <Button
@@ -103,7 +104,7 @@ export default function LandingPageNavbar() {
                   className="border-[#29296e] text-[#29296e] hover:bg-[#29296e]/10 rounded-full px-6"
                   asChild
                 >
-                  <Link href="/signin">Log In</Link>
+                  <Link href="/signin">Log In to china</Link>
                 </Button>
                 <Button
                   className="bg-[#29296e] hover:bg-[#29296e]/90 text-white rounded-full px-6"
@@ -191,7 +192,7 @@ export default function LandingPageNavbar() {
                           <BarChartIcon size={18} className="text-[#29296E]" />
                           <span>Stats</span>
                         </button>
-                       
+
 
 
                         <button
@@ -235,9 +236,8 @@ export default function LandingPageNavbar() {
 
       {/* Mobile Menu with slide animation */}
       <div
-        className={`md:hidden bg-white shadow-md overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? "max-h-96" : "max-h-0"
-        }`}
+        className={`md:hidden bg-white shadow-md overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "max-h-96" : "max-h-0"
+          }`}
       >
         <nav className="flex flex-col space-y-4 p-4">
           <Link
@@ -268,7 +268,6 @@ export default function LandingPageNavbar() {
           >
             New
           </Link>
-          <ArgentInvisibleWalletButton />
           {/* mobile auth buttons/Users */}
           <div className="flex flex-col space-y-3 pt-2">
             {!isLoggedIn ? (
