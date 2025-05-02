@@ -1,15 +1,13 @@
 import Home from '@/components/atoms/footer';
 import LetterBoxedGame from '@/components/organism/games/letterboxed/create-letteredboxed/create-letteredboxed';
-import HoneycombGame from '@/components/organism/games/Spelling-bee/honeycomb/honeycomb-game';
-import Header from '@/components/organism/games/Spelling-bee/SpellingBeeHeader';
-
+import LetteredBoxedHeader from '@/components/organism/games/letterboxed/latteredboxed-header';
 import React from 'react';
 
 const page = () => {
   return (
     <div>
-      <Header />
-      <HoneycombGame />
+      <LetteredBoxedHeader />
+      <LetterBoxedGame />
       <Home />
     </div>
   );
