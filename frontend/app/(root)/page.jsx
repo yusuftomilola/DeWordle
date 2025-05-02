@@ -6,6 +6,7 @@ import PlayOurGame from "@/components/organism/landing-page/playourgame";
 import TrendingGames from "@/components/organism/landing-page/TrendingGames";
 import WhatsNew from "@/components/organism/landing-page/WhatsNew";
 import { LandingPageSkeletonLoader } from "@/components/ui/LandingPageSkeletonLoader";
+import HangmanSection from "@/components/organism/landing-page/HangManSection";
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +27,7 @@ export default function Page() {
     <div className="bg-[#ffffff]">
       <HeroSlider />
       <PlayOurGame />
+      <HangmanSection />
       <TrendingGames />
       <WhatsNew />
       <MostPlayed />
