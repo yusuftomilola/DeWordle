@@ -9,8 +9,8 @@ const isMainnet = envName === "mainnet";
 const chainId = isMainnet ? constants.StarknetChainId.SN_MAIN : constants.StarknetChainId.SN_SEPOLIA;
 
 
-const DUMMY_CONTRACT_ADDRESS = isMainnet 
-  ? "0x001c515f991f706039696a54f6f33730e9b0e8cc5d04187b13c2c714401acfd4" 
+const DUMMY_CONTRACT_ADDRESS = isMainnet
+  ? "0x001c515f991f706039696a54f6f33730e9b0e8cc5d04187b13c2c714401acfd4"
   : "0x07557a2fbe051e6327ab603c6d1713a91d2cfba5382ac6ca7de884d3278636d7";
 const DUMMY_CONTRACT_ENTRYPOINT = "increase_number";
 
@@ -46,7 +46,7 @@ const ArgentInvisibleWalletButton = () => {
     webwalletTheme: "dark",
     paymasterParams,
   });
-  
+
   // Auto-connect on component mount
   useEffect(() => {
     if (!argentWebWallet) {
@@ -115,9 +115,9 @@ const ArgentInvisibleWalletButton = () => {
           setConnectStatus("Deploying account");
 
           const resp = await deployAndExecuteWithPaymaster(
-            sessionAccount, 
-            paymasterParams, 
-            response.deploymentPayload, 
+            sessionAccount,
+            paymasterParams,
+            response.deploymentPayload,
             response.approvalRequestsCalls
           );
 
@@ -142,7 +142,7 @@ const ArgentInvisibleWalletButton = () => {
 
         setAccount(sessionAccount);
         setConnectStatus("Connect");
-        
+
         // Fetch counter after connection
         const newCounter = await fetchCounter(sessionAccount);
         setCounter(newCounter);
@@ -210,14 +210,14 @@ const ArgentInvisibleWalletButton = () => {
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span className="font-medium">Connected</span>
           </div>
-          
+
           <div className="mt-2">
             <div className="text-sm text-gray-400">Wallet Address</div>
             <div className="font-mono text-sm bg-gray-700 p-2 rounded mt-1 break-all">
               {account.address}
             </div>
           </div>
-          
+
           {counter !== undefined && (
             <div className="mt-2">
               <div className="text-sm text-gray-400">Transaction Count</div>
