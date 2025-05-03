@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import LetteredBoxedHowToPlayModal from './create-letteredboxed/how-to-play';
+import { AnimatePresence } from 'framer-motion';
 const LetteredBoxedHeader = () => {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
   const router = useRouter(); // Initialize the router
@@ -42,10 +43,13 @@ const LetteredBoxedHeader = () => {
       >
         Sign Up
       </button>
-      <LetteredBoxedHowToPlayModal
-        isOpen={showHowToPlay}
-        onClose={() => setShowHowToPlay(false)}
-      />
+      <AnimatePresence>
+        {showHowToPlay && (
+          <LetteredBoxedHowToPlayModal
+            onClose={() => setShowHowToPlay(false)}
+          />
+        )}
+      </AnimatePresence>
     </header>
   );
 };
