@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger"
 import type { AuthService } from "./auth.service"
 import type { RegisterDto } from "./dto/register.dto"
 import type { LoginDto } from "./dto/login.dto"
-import { Throttle } from "@nestjs/throttler"
+// import { Throttle } from "@nestjs/throttler"
 
 @ApiTags("auth")
 @Controller("auth")
@@ -13,7 +13,7 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'The user has been successfully registered.' })
-  @Throttle(5, 60)
+  // @Throttle({ limit: 5, ttl: 60 })
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
@@ -21,7 +21,7 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login a user' })
   @ApiResponse({ status: 200, description: 'The user has been successfully logged in.' })
-  @Throttle(10, 60)
+  // @Throttle({ limit: 10, ttl: 60 })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
