@@ -44,16 +44,12 @@ import { SecurityConfig } from '../../config/security.config';
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule, SecurityConfig],
       inject: [ConfigService, SecurityConfig],
-      useFactory: (configService: ConfigService, securityConfig: SecurityConfig) => [
-        {
-          ttl: securityConfig.defaultRateTtl * 1000, 
-        },
-        {
-          name: 'login',
-          ttl: securityConfig.loginRateTtl * 1000,
-          limit: securityConfig.loginRateLimit,
-        },
-      ],
+      useFactory: (configService: ConfigService, securityConfig: SecurityConfig) => ({
+        ttl: securityConfig.defaultRateTtl * 1000,
+        limit: securityConfig.defaultRateLimit,
+        ignoreUserAgents: [/googlebot/i],
+        throttlers: [], // Add an empty array or configure as needed
+      }),
     }),
   ],
   controllers: [AuthController, GoogleAuthenticationController],

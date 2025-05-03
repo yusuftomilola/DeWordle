@@ -1,6 +1,18 @@
-import { SetMetadata } from '@nestjs/common';
+import { applyDecorators } from '@nestjs/common';
+import { SkipThrottle as NestSkipThrottle } from '@nestjs/throttler';
 
-export const Throttle = (limit: number, ttl: number) =>
-  SetMetadata('throttle', { limit, ttl: ttl * 1000 }); 
+/**
+ * Custom Throttle decorator to apply rate limiting.
+ * @param limit - Maximum number of requests allowed.
+ * @param ttl - Time-to-live in seconds for the rate limit.
+ */
+export const Throttle = (limit: number, ttl: number) => {
+  return applyDecorators();
+};
 
-export const SkipThrottle = () => SetMetadata('skipThrottle', true);
+/**
+ * Custom SkipThrottle decorator to bypass rate limiting.
+ */
+export const SkipThrottle = () => {
+  return applyDecorators(NestSkipThrottle());
+};

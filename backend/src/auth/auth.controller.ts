@@ -20,7 +20,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { EmailDto } from './dto/email.dto';
 import { RegisterDto } from './dto/register.dto'; 
-import { Throttle } from '../../common/decorators/throttle.decorator'; 
+import { Throttle } from '../../src/common/decorators/throttle.decorator'; 
 
 @ApiTags('Auth')
 @Controller('auth')
