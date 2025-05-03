@@ -43,7 +43,7 @@ const ArgentInvisibleWalletButton = () => {
       ],
       validityDays: Number(process.env.NEXT_PUBLIC_VALIDITY_DAYS) || undefined,
     },
-    webwalletTheme: "dark",
+    // webwalletTheme: "dark",
     paymasterParams,
   });
 
