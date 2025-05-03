@@ -1,18 +1,12 @@
 'use client';
-
-import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import useLetters from '@/hooks/honeycomb/useLetters';
 import useGuesses from '@/hooks/honeycomb/useGuess';
 import RankingProgress from '@/components/atoms/Spelling-bee/RankingProgess';
 import CurrentWord from '@/components/atoms/Spelling-bee/CurrentWord';
-
 import { useState, useEffect, useCallback } from "react";
 import { RefreshCw, CircleHelp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { HowToPlayModal } from "@/components/atoms/Spelling-bee/HowToPlayModal";
 import { Progress } from "@/components/atoms/Spelling-bee/Progress";
 // Hexagon positions in a honeycomb pattern
@@ -28,10 +22,11 @@ const OUTER_POSITIONS = [
 export default function HoneycombGame() {
   const { alphabet, centerLetter, outerLetters, load, isLoaded} = useLetters()
   const { guessedWords, guess, score } = useGuesses(centerLetter, alphabet)
-
+  const [progress, setProgress] = useState(0);
   const [currentWord, setCurrentWord] = useState('');
   const [textColor, setTextColor] = useState('');
   const [isShuffling, setIsShuffling] = useState(false);
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
   
   useEffect(() => {
     load();

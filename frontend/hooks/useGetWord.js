@@ -2,7 +2,6 @@
 
 import API from "@/utils/axios";
 import { useMutation } from "@tanstack/react-query";
-
 const URL = "/words";
 
 export function useGetWord() {
