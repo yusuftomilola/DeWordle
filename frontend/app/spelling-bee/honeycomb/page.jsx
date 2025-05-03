@@ -1,5 +1,4 @@
 import Home from '@/components/atoms/footer';
-import LetterBoxedGame from '@/components/organism/games/letterboxed/create-letteredboxed/create-letteredboxed';
 import HoneycombGame from '@/components/organism/games/Spelling-bee/honeycomb/honeycomb-game';
 import Header from '@/components/organism/games/Spelling-bee/SpellingBeeHeader';
 
