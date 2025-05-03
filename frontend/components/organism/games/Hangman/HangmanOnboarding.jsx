@@ -3,7 +3,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AppContext } from "@/context/AppContext";
 
