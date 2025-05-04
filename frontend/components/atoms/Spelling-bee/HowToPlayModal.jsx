@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function HowToPlayModal({ open, onOpenChange }) {
   const [currentStep, setCurrentStep] = useState(0);
+
   const steps = [
     {
       title: "Find Words",
