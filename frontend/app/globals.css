@@ -98,3 +98,44 @@ body {
   aspect-ratio: 1;
   clip-path: polygon(75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%, 25% 6.7%);
 }
+
+/* Animation for drawing lines */
+@keyframes drawLine {
+  0% {
+    stroke-dashoffset: 300;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pulseSlight {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.animate-draw-line {
+  stroke-dashoffset: 300;
+  animation: drawLine 1.5s ease-in-out forwards;
+}
+
+.animate-draw-line-delay-1 {
+  stroke-dashoffset: 300;
+  animation: drawLine 1.5s ease-in-out 0.5s forwards;
+}
+
+.animate-draw-line-delay-2 {
+  stroke-dashoffset: 300;
+  animation: drawLine 1.5s ease-in-out 1s forwards;
+}
+
+.animate-pulse-subtle {
+  animation: pulseSlight 1.5s infinite;
+}
