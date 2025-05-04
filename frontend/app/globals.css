@@ -562,3 +562,58 @@ body {
 .signin-button {
   margin-top: 0.5rem;
 }
+
+.fancy-button {
+  background: white;
+  position: relative;
+  padding: 5px 28px;
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid #29296e;
+  border-radius: 25px;
+  outline: none;
+  overflow: hidden;
+  color: #29296e;
+  transition: color 0.3s 0.1s ease-out;
+  text-align: center;
+  min-width: 140px;
+  height: 48px;
+  justify-content: center;
+}
+
+.fancy-button span {
+  margin: 10px;
+  z-index: 1;
+}
+
+.fancy-button::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  content: '';
+  border-radius: 50%;
+  display: block;
+  width: 20em;
+  height: 20em;
+  left: -5em;
+  text-align: center;
+  transition: box-shadow 0.5s ease-out;
+  z-index: 0;
+}
+
+.fancy-button:hover {
+  color: #fff;
+  border: 1px solid #29296e;
+}
+
+.fancy-button:hover::before {
+  box-shadow: inset 0 0 0 10em #29296e;
+}
+
