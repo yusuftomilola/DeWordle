@@ -1,0 +1,19 @@
+// Open with https://dbdiagram.io/d
+
+Table users {
+  id integer
+}
+
+Table spelling_bee_puzzles {
+  id integer [primary key]
+  letters varchar
+  centerLetter varchar
+  date Date
+}
+
+Table spelling_bee_user_games {
+  id integer
+  puzzleId interger [ref: < spelling_bee_puzzles.id]
+  userId integer [ref: < users.id]
+}
+
