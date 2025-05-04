@@ -24,12 +24,6 @@ interface Props {
 }
 
 export default function HexKeyboard({ centerLetter, outerLetters, onKeyTap, onKeyTapListener, keySize }: Props) {
-  console.log("render HexKeyboard", {
-    centerLetter,
-    outerLetters,
-  })
-
-  const [isShuffling, setIsShuffling] = useState(false)
   const [shuffledOuterLetters, setShuffledOuterLetters] = useState<string[]>(outerLetters)
 
   const buttonsRefs = useRef<Record<string, RefObject<HexKeyRef>>>({})
@@ -52,7 +46,6 @@ export default function HexKeyboard({ centerLetter, outerLetters, onKeyTap, onKe
   useEffect(() => {
     if (outerLetters.length === 0) return
 
-    setIsShuffling(true)
     Object.entries(buttonsRefs.current)
       .filter(([letter]) => letter !== centerLetter)
       .forEach(([, keyRef]) => keyRef.current?.animate("shuffling"))
@@ -60,13 +53,7 @@ export default function HexKeyboard({ centerLetter, outerLetters, onKeyTap, onKe
     setTimeout(() => {
       setShuffledOuterLetters(outerLetters)
     }, 250)
-
-    // Reset shuffling state after animation completes
-    setTimeout(() => {
-      setIsShuffling(false)
-    }, 500)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [outerLetters])
+  }, [centerLetter, outerLetters])
 
   const handleLetterTap = useCallback(
     (key: string) => {

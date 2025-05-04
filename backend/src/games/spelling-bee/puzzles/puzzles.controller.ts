@@ -54,7 +54,6 @@ export class PuzzlesController {
   @Get('current')
   async findCurrent() {
     const puzzle = await this.puzzleService.findCurrent();
-    console.log('puzzle', puzzle);
 
     if (!puzzle) {
       throw new NotFoundException('Not current puzzle found!');
