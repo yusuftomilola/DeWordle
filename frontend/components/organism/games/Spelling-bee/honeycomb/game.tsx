@@ -1,25 +1,41 @@
 "use client"
 
 import useGuess from "@/hooks/honeycomb/useGuess"
-import useLetters from "@/hooks/honeycomb/useLetters"
+import usePuzzle from "@/hooks/honeycomb/usePuzzle"
 
 import HoneycombInputSection from "./InputSection"
 import ScoreSection from "./ScoreSection"
 import { useEffect } from "react"
 
 export default function HoneycomgGame() {
-  const { alphabet, centerLetter, outerLetters, load, shuffleLetters, isLoaded } = useLetters()
-  const { guessedWords, guess, score } = useGuess(centerLetter, alphabet)
+  const { puzzle, outerLetters, load, shuffleLetters, isLoaded } = usePuzzle()
+  const { guessedWords, guess, score } = useGuess(puzzle)
 
   useEffect(() => {
     load()
   }, [load])
 
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p>Loading puzzle</p>
+      </div>
+    )
+  }
+
+  if (!puzzle) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p>No available puzzle</p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col grow md:flex-row w-full max-w-7xl mx-auto p-4 gap-8 container">
       <HoneycombInputSection
         onSubmitWord={guess}
-        centerLetter={centerLetter}
+        centerLetter={puzzle.centerLetter}
         outerLetters={outerLetters}
         shuffleLetters={shuffleLetters}
       />

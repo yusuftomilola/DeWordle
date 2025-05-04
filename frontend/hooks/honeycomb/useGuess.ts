@@ -4,31 +4,34 @@ import { useCallback, useState } from "react"
 
 import API from "@/utils/axios"
 import { canSendWord } from "@/utils/honeycomb/word"
+import { submitWord } from "@/services/spelling-bee/connectors/puzzle"
+import { Puzzle } from "@/services/spelling-bee/interfaces/puzzle"
 
-export default function useGuess(centerLetter: string, alphabet: string[]) {
+export default function useGuess(puzzle: Puzzle | undefined) {
   const [guessedWords, setGuessedWords] = useState<string[]>([])
   const [score, setScore] = useState(0)
 
   const guess = useCallback(
     async (word: string) => {
-      if (!canSendWord(word, { mandatoryLetter: centerLetter, blacklistWords: guessedWords })) {
+      if (!puzzle) {
         return "error"
       }
 
-      const response = await API.post("/spelling-bee/submit-word", {
-        word,
-        puzzle: { centerLetter, allowedLetters: alphabet, submittedWords: [] },
-      })
+      if (!canSendWord(word, { mandatoryLetter: puzzle.centerLetter, blacklistWords: guessedWords })) {
+        return "error"
+      }
 
-      if (response.data.valid === true) {
+      const submitResponse = await submitWord(puzzle.id, word)
+
+      if (submitResponse.valid === true) {
         setGuessedWords((words) => [...words, word])
-        setScore((currentScore) => currentScore + response.data.score)
+        setScore((currentScore) => currentScore + submitResponse.score)
         return "success"
       } else {
         return "error"
       }
     },
-    [alphabet, guessedWords, centerLetter],
+    [puzzle, guessedWords],
   )
 
   return {
