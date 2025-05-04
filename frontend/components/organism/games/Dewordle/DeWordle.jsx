@@ -1,28 +1,27 @@
-"use client";
+'use client';
 
-import { useContext, useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { AppContext } from "@/context/AppContext";
-import { HelpCircle } from "lucide-react";
-import { HelpGuide } from "./HelpGuide";
-import Image from 'next/image';
-
-const navigation = [{ name: "How to play", href: "#" }];
+import React, { useState, useEffect } from 'react';
 
 const Dewordle = () => {
-  const { userData } = useContext(AppContext);
-  const isLoggedIn = userData?.userName;
-  const [hasShadow, setHasShadow] = useState(false);
-  const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    const handleScroll = () => {
-      setHasShadow(window.scrollY > 10);
+    // Set initial window size
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+
+    // Handle window resize
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
