@@ -1,32 +1,51 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useContext, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { AppContext } from "@/context/AppContext";
+import { HelpCircle } from "lucide-react";
+import { HelpGuide } from "./HelpGuide";
+import Image from 'next/image';
+import "@/styles/buttons.css";
+
+const navigation = [{ name: "How to play", href: "#" }];
 
 const Dewordle = () => {
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const { userData } = useContext(AppContext);
+  const isLoggedIn = userData?.userName;
+  const [hasShadow, setHasShadow] = useState(false);
+  const [isHelpGuideOpen, setIsHelpGuideOpen] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
-    // Set initial window size
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight
-    });
-
-    // Handle window resize
-    const handleResize = () => {
-      setWindowSize({
+    // Handle window dimensions
+    const updateDimensions = () => {
+      setDimensions({
         width: window.innerWidth,
         height: window.innerHeight
       });
     };
+    
+    // Initial dimensions
+    updateDimensions();
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    // Handle scroll
+    const handleScroll = () => {
+      setHasShadow(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", updateDimensions);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateDimensions);
+    };
   }, []);
 
   return (
     <div className="w-full relative px-4 sm:px-10 xl:px-20 overflow-hidden">
-      {/* Enhanced Blockchain-inspired Animated Background */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[#29296E]/10">
           {/* Hexagonal Grid Pattern */}
@@ -42,20 +61,20 @@ const Dewordle = () => {
               key={i}
               className="absolute rounded-full border-2 border-[#29296E]/30"
               initial={{
-                width: Math.random() * 60 + 60, // Random size between 60-120px
+                width: Math.random() * 60 + 60,
                 height: Math.random() * 60 + 60,
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
+                x: Math.random() * (dimensions.width || 1200) * 0.9,
+                y: Math.random() * (dimensions.height || 800) * 0.9,
                 opacity: 0.2,
               }}
               animate={{
                 x: [
-                  Math.random() * window.innerWidth * 0.9,
-                  Math.random() * window.innerWidth * 0.9,
+                  Math.random() * (dimensions.width || 1200) * 0.9,
+                  Math.random() * (dimensions.width || 1200) * 0.9,
                 ],
                 y: [
-                  Math.random() * window.innerHeight * 0.9,
-                  Math.random() * window.innerHeight * 0.9,
+                  Math.random() * (dimensions.height || 800) * 0.9,
+                  Math.random() * (dimensions.height || 800) * 0.9,
                 ],
                 opacity: [0.15, 0.3, 0.15],
                 rotate: [0, 360],

@@ -7,10 +7,10 @@ import Lottie from "lottie-react";
 import beeAnimation from "@/public/animation/spelling-bee/bee.json";
 import "@/styles/buttons.css";
 
-const SpellingBee = () => {
+const SpellingBee = (): React.ReactElement => {
   const router = useRouter();
 
-  const handleSignIn = () => {
+  const handleSignIn = (): void => {
     router.push("/signin");
   };
 
