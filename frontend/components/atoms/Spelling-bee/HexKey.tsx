@@ -42,7 +42,6 @@ export default function HexKey({ className, onClick, text, ref, keySize }: Props
     ref.current = {
       animate(animationName: AnimationName) {
         const animation = animationVariants[animationName]
-        console.log("animate cell", animationName)
 
         if (animation) {
           const duration = animation.transition.duration * 1000
