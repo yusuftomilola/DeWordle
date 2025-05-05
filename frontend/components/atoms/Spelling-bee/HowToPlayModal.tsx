@@ -10,12 +10,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion} from "framer-motion";
 
-export function HowToPlayModal({ open, onOpenChange }) {
-  const [currentStep, setCurrentStep] = useState(0);
+type Step = {
+  title: string;
+  description: string;
+  animation: React.ReactNode;
+};
 
-  const steps = [
+interface HowToPlayModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
+  const [currentStep, setCurrentStep] = useState<number>(0);
+
+  const steps: Step[] = [
     {
       title: "Find Words",
       description:
@@ -132,7 +143,7 @@ export function HowToPlayModal({ open, onOpenChange }) {
       animation: (
         <motion.div className="flex flex-col items-center space-y-4">
           <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-            {[
+            {([
               ["ROOM", "1 point"],
               ["MORAL", "5 points"],
               ["AROMA", "5 points"],
@@ -157,7 +168,7 @@ export function HowToPlayModal({ open, onOpenChange }) {
                   </motion.span>
                 </motion.div>,
               ],
-            ].map(([word, points], index) => (
+            ] as [string, React.ReactNode][]).map(([word, points], index) => (
               <motion.div
                 key={word}
                 initial={{ opacity: 0, x: -20 }}
@@ -247,10 +258,11 @@ export function HowToPlayModal({ open, onOpenChange }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">{current.title}</DialogTitle>
-          <DialogDescription>{current.description}</DialogDescription>
-        </DialogHeader>
+      <DialogHeader>
+    <DialogTitle className="text-2xl">{current.title}</DialogTitle>
+    <DialogDescription>{current.description}</DialogDescription>
+  </DialogHeader>
+
 
         <div className="py-6">{current.animation}</div>
 
@@ -259,6 +271,7 @@ export function HowToPlayModal({ open, onOpenChange }) {
             onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
             disabled={currentStep === 0}
             variant="outline"
+             className=""
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back
@@ -266,6 +279,8 @@ export function HowToPlayModal({ open, onOpenChange }) {
           <Button
             onClick={() => setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))}
             disabled={currentStep === steps.length - 1}
+            variant="outline"
+             className=""
           >
             Next
             <ChevronRight className="ml-2 h-4 w-4" />
