@@ -69,4 +69,4 @@ export const mightBeValidWord = (word) => {
   if (/(.).*\1.*\1.*\1/.test(upperWord)) return false;
   
   return true;
-}; 
+};
