@@ -37,7 +37,7 @@ import { RedisService } from './guest/provider/redis.service';
 import { GuestUserController } from './guest/guest.controller';
 import { GuestUserService } from './guest/guest.service';
 import { GamesController } from './games/games.controller';
-import { SecurityConfig } from './config/security.config';
+import { SecurityConfig } from '../config/security.config';
 import { MetricsModule } from './metrics/metrics.module';
 import { logger } from './common/middleware/logger.middleware';
 import { SecurityMiddleware } from './common/middleware/security.middleware';

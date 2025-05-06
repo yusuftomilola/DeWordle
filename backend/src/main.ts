@@ -19,8 +19,8 @@ import {
 import { HttpExceptionFilter } from './common/filters/http-exception.filter'; // New filter
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { logger } from './common/middleware/logger.middleware';
-import { CustomValidationPipe } from './common/pipes/validation.pipe';
-import { SecurityConfig } from './config/security.config';
+import { CustomValidationPipe } from './common/pipes/validation.pipes';
+import { SecurityConfig } from '../config/security.config';
 
 dotenv.config();
 
@@ -28,7 +28,6 @@ async function bootstrap() {
   // Create NestJS application
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log'],
-    trustProxy: process.env.NODE_ENV === 'production', // Support load balancers
   });
 
   const configService = app.get(ConfigService);
