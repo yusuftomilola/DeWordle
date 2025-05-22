@@ -22,8 +22,6 @@ import { User } from '../users/entities/user.entity';
 import { MailModule } from '../mail/mail.module';
 import { Token } from './entities/token.entity';
 import { TokenService } from './providers/token.services';
-import { ThrottlerModule } from '@nestjs/throttler'; 
-import { SecurityConfig } from '../../config/security.config';
 
 @Module({
   imports: [
@@ -31,26 +29,12 @@ import { SecurityConfig } from '../../config/security.config';
     forwardRef(() => SubAdminModule),
     ConfigModule.forFeature(jwtConfig),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'yourSecretKey'),
-        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN', '1h') },
-      }),
-      inject: [ConfigService],
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'yourSecretKey',
+      signOptions: { expiresIn: '1h' },
     }),
     TypeOrmModule.forFeature([User, Token]),
     MailModule,
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule, SecurityConfig],
-      inject: [ConfigService, SecurityConfig],
-      useFactory: (configService: ConfigService, securityConfig: SecurityConfig) => ({
-        ttl: securityConfig.defaultRateTtl * 1000,
-        limit: securityConfig.defaultRateLimit,
-        ignoreUserAgents: [/googlebot/i],
-        throttlers: [], // Add an empty array or configure as needed
-      }),
-    }),
   ],
   controllers: [AuthController, GoogleAuthenticationController],
   providers: [
@@ -60,7 +44,7 @@ import { SecurityConfig } from '../../config/security.config';
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
-    // globalizing auth guards (commented out as in original)
+    // globalizing auth guards
     // {
     //   provide: APP_GUARD,
     //   useClass: JwtAuthGuard,

@@ -35,19 +35,19 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.createUserProvider.createUser(createUserDto);
-  
-    // Generate verification token
-    const verificationToken = await this.createToken(
-      user.id,
-      TokenType.VERIFICATION,
-    );
-  
+
+    // // Generate verification token
+    // const verificationToken = await this.createToken(
+    //   user.id,
+    //   TokenType.VERIFICATION,
+    // );
+
     // Send verification email
     await this.mailService.sendVerificationEmail(
       user.email,
-      verificationToken.token, // Pass the generated token here
+      // verificationToken.token,
     );
-  
+
     return {
       message:
         'Registration successful. Please check your email to verify your account.',
@@ -144,11 +144,8 @@ export class UsersService {
   private async createToken(
     userId: number,
     tokenType: TokenType,
-  ): Promise<{ token: string }> {
-    const token = Math.random().toString(36).substring(2); // Generate a random token
-    // Save the token to the database or any storage if needed
-    // Example: await this.tokenRepository.save({ userId, token, type: tokenType });
-  
-    return { token };
+  ): Promise<any> {
+    // Implementation would go here
+    return { token: 'generated-token' }; // Placeholder implementation
   }
 }
