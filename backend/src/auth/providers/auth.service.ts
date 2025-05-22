@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { SignInDto } from '../dto/create-auth.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
-import { RegisterDto } from '../dto/register.dto';
 import { SignInProvider } from './sign-in.provider';
 import { RefreshTokenProvider } from './refresh-token.provider';
 import { UsersService } from 'src/users/users.service';
@@ -23,13 +22,11 @@ import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entities/user.entity';
 import { Token } from 'src/auth/entities/token.entity';
 import { TokenType } from 'src/auth/enums/token-type.enum';
+import { EmailService } from 'src/mail/providers/email.service';
 import { MailService } from 'src/mail/providers/mail.service';
 
-const PASSWORD_REGEX =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
 @Injectable()
-@UseFilters(AuthExceptionFilter)
+@UseFilters(AuthExceptionFilter) // ✅ Apply AuthExceptionFilter
 export class AuthService {
   constructor(
     @Inject(forwardRef(() => UsersService))
@@ -45,67 +42,27 @@ export class AuthService {
     private tokensRepository: Repository<Token>,
     private configService: ConfigService,
     private mailService: MailService,
+    private readonly emailService: EmailService,
   ) {}
 
-  /**
-   * Register a new user.
-   */
-  public async register(registerDto: RegisterDto): Promise<{ message: string }> {
-    const { email, password, username } = registerDto;
-
-    // Check if the user already exists
-    const existingUser = await this.usersRepository.findOne({ where: { email } });
-    if (existingUser) {
-      throw new BadRequestException('User with this email already exists');
-    }
-
-    // Validate password strength
-    this.validatePassword(password);
-
-    // Hash the password
-    const hashedPassword = await this.hashPassword(password);
-
-    // Create a new user
-    const newUser = this.usersRepository.create({
-      email,
-      password: hashedPassword,
-      userName: username,
-      isVerified: false,
-    });
-
-    await this.usersRepository.save(newUser);
-
-    // Send a verification email
-    const verificationToken = await this.createToken(
-      newUser.id,
-      TokenType.VERIFICATION,
-    );
-    await this.mailService.sendVerificationEmail(
-      newUser.email,
-      verificationToken.token,
-    );
-
-    return { message: 'User registered successfully. Please verify your email.' };
-  }
-
-  /**
-   * Sign in a user.
-   */
   public async SignIn(signInDto: SignInDto) {
+    // try {
     return await this.signInProvider.SignIn(signInDto);
+    // } catch (error) {
+    //   throw new Error('Authentication failed'); // The filter will handle this
+    // }
   }
 
-  /**
-   * Refresh an access token.
-   */
   public async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    return await this.refreshTokenProvider.refreshToken(refreshTokenDto);
+    try {
+      return await this.refreshTokenProvider.refreshToken(refreshTokenDto);
+    } catch (error) {
+      throw new Error('Refresh token failed'); // The filter will handle this
+    }
   }
 
-  /**
-   * Verify a user's email using a token.
-   */
   async verifyEmail(token: string) {
+    // Find token
     const verificationToken = await this.tokensRepository.findOne({
       where: { token, type: TokenType.VERIFICATION },
       relations: ['user'],
@@ -115,18 +72,17 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired verification token');
     }
 
+    // Update user verification status
     const user = verificationToken.user;
     user.isVerified = true;
     await this.usersRepository.save(user);
 
+    // Remove token
     await this.tokensRepository.remove(verificationToken);
 
     return { message: 'Email verified successfully' };
   }
 
-  /**
-   * Resend a verification email to the user.
-   */
   async resendVerificationEmail(email: string) {
     const user = await this.usersRepository.findOne({ where: { email } });
     if (!user) {
@@ -137,52 +93,53 @@ export class AuthService {
       throw new BadRequestException('Email already verified');
     }
 
+    // Delete existing verification tokens
     await this.tokensRepository.delete({
       user: { id: user.id },
       type: TokenType.VERIFICATION,
     });
 
+    // Generate new token
     const verificationToken = await this.createToken(
       user.id,
       TokenType.VERIFICATION,
     );
 
+    // Send verification email
     await this.mailService.sendVerificationEmail(
       user.email,
-      verificationToken.token,
+      // verificationToken.token,
     );
 
     return { message: 'Verification email sent successfully' };
   }
 
-  /**
-   * Handle forgot password functionality.
-   */
   async forgotPassword(email: string) {
     const user = await this.usersRepository.findOne({ where: { email } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    // Delete existing reset tokens
     await this.tokensRepository.delete({
       user: { id: user.id },
       type: TokenType.PASSWORD_RESET,
     });
 
+    // Generate new token
     const resetToken = await this.createToken(
       user.id,
       TokenType.PASSWORD_RESET,
     );
 
+    // Send password reset email
     await this.mailService.sendPasswordResetEmail(user.email, resetToken.token);
 
     return { message: 'Password reset email sent successfully' };
   }
 
-  /**
-   * Reset a user's password using a token.
-   */
   async resetPassword(token: string, newPassword: string) {
+    // Find token
     const resetToken = await this.tokensRepository.findOne({
       where: { token, type: TokenType.PASSWORD_RESET },
       relations: ['user'],
@@ -192,39 +149,37 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired reset token');
     }
 
+    // Validate new password
     this.validatePassword(newPassword);
 
+    // Update user password
     const user = resetToken.user;
     user.password = await this.hashPassword(newPassword);
     await this.usersRepository.save(user);
 
+    // Remove token
     await this.tokensRepository.remove(resetToken);
 
     return { message: 'Password updated successfully' };
   }
 
-  /**
-   * Validate password strength.
-   */
   private validatePassword(password: string) {
-    if (!PASSWORD_REGEX.test(password)) {
+    // Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
       throw new BadRequestException(
         'Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character',
       );
     }
   }
 
-  /**
-   * Hash a password using bcrypt.
-   */
   private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt();
     return bcrypt.hash(password, salt);
   }
 
-  /**
-   * Create a token for a user.
-   */
   private async createToken(userId: number, type: TokenType): Promise<Token> {
     const tokenString = randomBytes(32).toString('hex');
 
@@ -233,7 +188,7 @@ export class AuthService {
       token: tokenString,
       type,
       expiresAt: new Date(
-        Date.now() + (type === TokenType.PASSWORD_RESET ? 3600000 : 86400000),
+        Date.now() + (type === TokenType.PASSWORD_RESET ? 3600000 : 86400000), // 1 hour for password reset, 24 hours for verification
       ),
     });
 

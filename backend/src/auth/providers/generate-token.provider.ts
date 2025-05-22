@@ -2,7 +2,7 @@
 import { Inject, Injectable, UseFilters } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
-import jwtConfig from '../../../config/jwt.config';
+import jwtConfig from 'config/jwt.config';
 import { User } from 'src/users/entities/user.entity';
 import { AuthExceptionFilter } from 'src/common/filters';
 
