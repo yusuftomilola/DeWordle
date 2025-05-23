@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import RankingProgress from "@/components/atoms/Spelling-bee/RankingProgess";
 import {  CircleHelp } from "lucide-react";
-import { HowToPlayModal } from "@/components/atoms/Spelling-bee/HowToPlayModal";
+// import { HowToPlayModal } from "@/components/atoms/Spelling-bee/HowToPlayModal";
 import { Progress } from "@/components/atoms/Spelling-bee/Progress";
 
 interface Props {
@@ -42,10 +42,10 @@ export default function ScoreSection({ guessedWords, score }: Props) {
           </button>
         </div>
       </div>
-      <HowToPlayModal
+      {/* <HowToPlayModal
         open={isHowToPlayOpen}
         onOpenChange={setIsHowToPlayOpen}
-      />
+      /> */}
     </div>
   );
 
