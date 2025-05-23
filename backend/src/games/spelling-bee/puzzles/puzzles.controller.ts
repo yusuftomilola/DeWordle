@@ -56,7 +56,8 @@ export class PuzzlesController {
     const puzzle = await this.puzzleService.findCurrent();
 
     if (!puzzle) {
-      throw new NotFoundException('Not current puzzle found!');
+      // throw new NotFoundException('Not current puzzle found!');
+      return [];
     }
 
     return puzzle;

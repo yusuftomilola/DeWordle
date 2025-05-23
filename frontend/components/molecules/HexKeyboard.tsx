@@ -70,7 +70,7 @@ export default function HexKeyboard({ centerLetter, outerLetters, onKeyTap, onKe
         <HexKey
           ref={buttonsRefs.current[centerLetter]}
           className={`${centerLetterColor} left-1/3 top-1/3`}
-          text={centerLetter.toUpperCase()}
+          text={centerLetter?.toUpperCase()}
           onClick={() => handleLetterTap(centerLetter)}
           keySize={keySize}
         />

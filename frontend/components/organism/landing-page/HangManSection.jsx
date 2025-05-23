@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import confetti from "canvas-confetti";
+// import confetti from "canvas-confetti";
 import Link from "next/link";
 
 export default function HangmanSection() {

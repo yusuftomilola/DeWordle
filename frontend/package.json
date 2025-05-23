@@ -19,6 +19,7 @@
     "@heroicons/react": "^2.2.0",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-dialog": "^1.1.5",
+    "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-tabs": "^1.1.2",
     "@tanstack/react-query": "^5.69.0",
@@ -114,7 +115,6 @@
     "framer-motion": "^12.9.4",
     "frontend": "file:",
     "gsap": "^3.12.7",
-
     "has-bigints": "^1.1.0",
     "has-flag": "^4.0.0",
     "has-property-descriptors": "^1.0.2",
@@ -181,11 +181,9 @@
     "lodash-es": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "loose-envify": "^1.4.0",
+    "lottie-react": "^2.4.1",
     "lower-case": "^2.0.2",
     "lru-cache": "^10.4.3",
-
-    "lottie-react": "^2.4.1",
-
     "lucide-react": "^0.473.0",
     "math-intrinsics": "^1.1.0",
     "merge2": "^1.4.1",
