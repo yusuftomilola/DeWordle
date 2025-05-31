@@ -19,6 +19,9 @@ export class Leaderboard {
   @JoinTable()
   user: User;
 
+  @Column('integer')
+  gameId: number;
+
   @Column('integer', { default: 0 })
   totalWins: number;
 
@@ -28,3 +31,4 @@ export class Leaderboard {
   @Column('float', { default: 0 })
   averageScore: number;
 }
+
