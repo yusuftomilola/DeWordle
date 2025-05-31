@@ -33,7 +33,6 @@ import { WordsModule } from './games/dewordle/words/words.module';
 import { GamesModule } from './games/games.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
 import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
-import { SpellingBeeController } from './games/spelling-bee/spelling-bee.controller';
 import { LetteredBoxModule } from './games/lettered-box/lettered-box.module';
 import { GamesController } from './games/games.controller';
 import { PuzzleModule } from './puzzle/puzzle.module';
