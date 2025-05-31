@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion} from "framer-motion";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type Step = {
   title: string;
@@ -21,6 +22,7 @@ type Step = {
 interface HowToPlayModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  
 }
 
 export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
@@ -35,17 +37,31 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
         <motion.div className="flex flex-col items-center">
           <div className="honeycomb-container scale-75 mb-4">
             <div className="honeycomb-row">
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">R</div>
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">U</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                R
+              </div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                U
+              </div>
             </div>
             <div className="honeycomb-row">
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">M</div>
-              <div className="honeycomb-cell bg-yellow-300 text-gray-800 text-2xl font-bold">O</div>
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">L</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                M
+              </div>
+              <div className="honeycomb-cell bg-yellow-300 text-gray-800 text-2xl font-bold">
+                O
+              </div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                L
+              </div>
             </div>
             <div className="honeycomb-row">
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">D</div>
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">A</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                D
+              </div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                A
+              </div>
             </div>
           </div>
           <motion.div
@@ -69,16 +85,23 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
     },
     {
       title: "Use the Center Letter",
-      description: "Every word must contain the center letter (highlighted in yellow).",
+      description:
+        "Every word must contain the center letter (highlighted in yellow).",
       animation: (
         <motion.div className="flex flex-col items-center">
           <div className="honeycomb-container scale-75 mb-4">
             <div className="honeycomb-row">
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">R</div>
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">U</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                R
+              </div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                U
+              </div>
             </div>
             <div className="honeycomb-row">
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">M</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                M
+              </div>
               <motion.div
                 animate={{
                   scale: [1, 1.2, 1],
@@ -92,11 +115,17 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
               >
                 O
               </motion.div>
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">L</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                L
+              </div>
             </div>
             <div className="honeycomb-row">
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">D</div>
-              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">A</div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                D
+              </div>
+              <div className="honeycomb-cell bg-gray-100 text-gray-800 text-2xl font-bold">
+                A
+              </div>
             </div>
           </div>
           <div className="flex space-x-4 items-center">
@@ -143,32 +172,34 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
       animation: (
         <motion.div className="flex flex-col items-center space-y-4">
           <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-            {([
-              ["ROOM", "1 point"],
-              ["MORAL", "5 points"],
-              ["AROMA", "5 points"],
+            {(
               [
-                "MODULAR",
-                <motion.div key="modular" className="flex items-center">
-                  <motion.span
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: [1, 0, 1] }}
-                    transition={{ delay: 1.5, duration: 1, repeat: 1 }}
-                    className="text-yellow-600"
-                  >
-                    7 points
-                  </motion.span>
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 2.5 }}
-                    className="ml-1 text-yellow-600"
-                  >
-                    + 7 bonus!
-                  </motion.span>
-                </motion.div>,
-              ],
-            ] as [string, React.ReactNode][]).map(([word, points], index) => (
+                ["ROOM", "1 point"],
+                ["MORAL", "5 points"],
+                ["AROMA", "5 points"],
+                [
+                  "MODULAR",
+                  <motion.div key="modular" className="flex items-center">
+                    <motion.span
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: [1, 0, 1] }}
+                      transition={{ delay: 1.5, duration: 1, repeat: 1 }}
+                      className="text-yellow-600"
+                    >
+                      7 points
+                    </motion.span>
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 2.5 }}
+                      className="ml-1 text-yellow-600"
+                    >
+                      + 7 bonus!
+                    </motion.span>
+                  </motion.div>,
+                ],
+              ] as [string, React.ReactNode][]
+            ).map(([word, points], index) => (
               <motion.div
                 key={word}
                 initial={{ opacity: 0, x: -20 }}
@@ -188,14 +219,17 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
             className="bg-yellow-100 p-3 rounded-lg text-center"
           >
             <span className="font-bold text-yellow-800">Pangram!</span>
-            <span className="text-yellow-800 block text-sm">A word that uses all 7 letters</span>
+            <span className="text-yellow-800 block text-sm">
+              A word that uses all 7 letters
+            </span>
           </motion.div>
         </motion.div>
       ),
     },
     {
       title: "Ranks",
-      description: "Earn points to increase your rank. Can you reach Queen Bee?",
+      description:
+        "Earn points to increase your rank. Can you reach Queen Bee?",
       animation: (
         <motion.div className="flex flex-col items-center space-y-6">
           <div className="flex items-center gap-3">
@@ -257,12 +291,12 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-      <DialogHeader>
-    <DialogTitle className="text-2xl">{current.title}</DialogTitle>
-    <DialogDescription>{current.description}</DialogDescription>
-  </DialogHeader>
-
+      <p>how to play modal content goes here.</p>
+      {/* <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-2xl">{current.title}</DialogTitle>
+          <DialogDescription>{current.description}</DialogDescription>
+        </DialogHeader>
 
         <div className="py-6">{current.animation}</div>
 
@@ -271,22 +305,24 @@ export function HowToPlayModal({ open, onOpenChange }: HowToPlayModalProps) {
             onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
             disabled={currentStep === 0}
             variant="outline"
-             className=""
+            className=""
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
           <Button
-            onClick={() => setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))}
+            onClick={() =>
+              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+            }
             disabled={currentStep === steps.length - 1}
             variant="outline"
-             className=""
+            className=""
           >
             Next
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
-      </DialogContent>
+      </DialogContent> */}
     </Dialog>
   );
 }
