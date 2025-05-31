@@ -33,6 +33,7 @@ import { WordsModule } from './games/dewordle/words/words.module';
 import { GamesModule } from './games/games.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
 import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
+import { SpellingBeeController } from './games/spelling-bee/spelling-bee.controller';
 
 @Module({
   imports: [
@@ -122,7 +123,7 @@ import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
     DictionaryModule,
     SpellingBeeModule,
   ],
-  controllers: [AppController, GuestUserController],
+  controllers: [AppController, GuestUserController, SpellingBeeController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
 })
 export class AppModule {}

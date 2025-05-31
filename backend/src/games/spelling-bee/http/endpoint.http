@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "word": "pearly",
   "puzzle": {
-    "allowedLetters": ["p","e", "a", "r", "l", "y"],
+    "allowedLetters": ["p","e", "r", "l", "y"],
     "centerLetter": "p",
     "submittedWords": []
   }
