@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsInt, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { Result } from 'src/games/dewordle/result/entities/result.entity';
 export class CreateLeaderboardDto {
   @ApiProperty({
@@ -42,6 +42,11 @@ export class CreateLeaderboardDto {
   })
   @IsNumber()
   readonly averageScore: number;
+
+  @IsInt()
+@IsNotEmpty()
+gameId: number;
+
 
   // @ApiProperty({
   //   description: 'An array of results associated with the user',

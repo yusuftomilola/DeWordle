@@ -155,4 +155,25 @@ export class LeaderboardController {
   remove(@Param('id') id: string) {
     return this.leaderboardService.remove(+id);
   }
+
+  @Get('/game/:gameId/user/:userId/score')
+@UseGuards(RolesGuard)
+@RoleDecorator(UserRole.Admin, UserRole.SubAdmin, UserRole.User)
+async getUserScoreAndRank(
+  @Param('gameId', ParseIntPipe) gameId: number,
+  @Param('userId', ParseIntPipe) userId: number,
+) {
+  return this.leaderboardService.getUserScoreAndRank(gameId, userId);
+}
+
+@Get('/game/:gameId/top')
+@UseGuards(RolesGuard)
+@RoleDecorator(UserRole.Admin, UserRole.SubAdmin, UserRole.User)
+async getTopLeaderboardForGame(
+  @Param('gameId', ParseIntPipe) gameId: number,
+  @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+) {
+  return this.leaderboardService.getTopLeaderboardForGame(gameId, limit);
+}
+
 }
