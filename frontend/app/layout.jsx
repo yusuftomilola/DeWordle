@@ -74,8 +74,7 @@ export default function RootLayout({ children }) {
         <body className="min-h-screen flex flex-col justify-between h-auto w-full antialiased">
           <QueryProvider>
             <AppProvider>
-              
-              <main className="flex-grow ">{children}</main>
+              <main className="flex flex-col flex-grow">{children}</main>
               <ToastContainer
                 position="top-right"
                 autoClose={5000}

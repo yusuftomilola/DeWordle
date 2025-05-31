@@ -14,8 +14,8 @@ import { Result } from './games/dewordle/result/entities/result.entity';
 import { User } from './users/entities/user.entity';
 import { SubAdmin } from './sub-admin/entities/sub-admin-entity';
 import { Admin } from './admin/entities/admin.entity';
-import envConfiguration from 'config/envConfiguration';
-import { validate } from '../config/env.validation';
+// import envConfiguration from 'config/envConfiguration';
+// import { validate } from '../config/env.validation';
 import { GuestUserModule } from './guest/guest.module';
 import { GuestFeaturesModule } from './guest-features/guest-features.module';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -34,6 +34,9 @@ import { GamesModule } from './games/games.module';
 import { DictionaryModule } from './dictionary/dictionary.module';
 import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
 import { SpellingBeeController } from './games/spelling-bee/spelling-bee.controller';
+import { LetteredBoxModule } from './games/lettered-box/lettered-box.module';
+import { GamesController } from './games/games.controller';
+import { PuzzleModule } from './puzzle/puzzle.module';
 
 @Module({
   imports: [
@@ -122,8 +125,10 @@ import { SpellingBeeController } from './games/spelling-bee/spelling-bee.control
     GamesModule,
     DictionaryModule,
     SpellingBeeModule,
+    LetteredBoxModule,
+    PuzzleModule,
   ],
-  controllers: [AppController, GuestUserController, SpellingBeeController],
+  controllers: [AppController, GuestUserController, GamesController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
 })
 export class AppModule {}

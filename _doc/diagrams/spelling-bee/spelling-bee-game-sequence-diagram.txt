@@ -1,0 +1,34 @@
+# Open with https://sequencediagram.org/
+title Spelling-Bee game 
+
+
+note over Browser: Init game
+activate Browser
+
+Browser->API:Get current puzzle\nGET /spelling-bee/puzzles/current
+activate API
+API<->DB: Get first puzzle ordred by date DESC
+Browser<-API: Puzzle
+deactivate API
+
+
+group #2f2e7b Connected #white [if connected user]
+Browser->API:Get UserGame\nGET /spelling-bee/puzzle/:id/user-game
+activate API
+API<->DB: Get UserGame from puzzleId and userId
+Browser<-API: UserGame
+deactivate API
+end
+
+
+note over Browser: Game can start
+
+space 1
+Browser->API: Submit puzzle word\nPOST: /spelling-bee/puzzles/:id/submit-word
+activate API
+API<->DB: Validate word
+group #2f2e7b Connected #white [if connected user]
+API<->DB: Save UserGame word and score
+end
+Browser<-API: PuzzleSubmissionResponse
+deactivate API

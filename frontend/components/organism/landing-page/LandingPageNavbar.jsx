@@ -14,7 +14,7 @@ import {
 import { AppContext } from "@/context/AppContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings } from "./Settings";
-
+// import ArgentInvisibleWalletButton from "./ArgentInvisibleWalletConnect";
 
 export default function LandingPageNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -95,6 +95,7 @@ export default function LandingPageNavbar() {
 
           {/* Desktop Auth Buttons/User */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* <ArgentInvisibleWalletButton /> */}
             {!isLoggedIn ? (
               <>
                 <Button
@@ -102,6 +103,7 @@ export default function LandingPageNavbar() {
                   className="border-[#29296e] text-[#29296e] hover:bg-[#29296e]/10 rounded-full px-6"
                   asChild
                 >
+                  {/* <Link href="/signin">Log In to china</Link> */}
                   <Link href="/signin">Log In</Link>
                 </Button>
                 <Button
@@ -190,8 +192,6 @@ export default function LandingPageNavbar() {
                           <BarChartIcon size={18} className="text-[#29296E]" />
                           <span>Stats</span>
                         </button>
-                       
-
 
                         <button
                           onClick={() => handleNavigation("/notifications")}

@@ -100,6 +100,7 @@ export class LeaderboardService {
 
       return leaderboardEntry;
     } catch (error) {
+       console.log(`Service: LeaderboardService: findOne - ${error.message}`, { error });
       throw new DatabaseErrorException('Failed to fetch leaderboard entry');
     }
   }
@@ -181,7 +182,58 @@ export class LeaderboardService {
 
       return { message: 'Leaderboard entry deleted successfully' };
     } catch (error) {
+         console.log(`Service: LeaderboardService: remove - ${error.message}`, { error });
       throw new DatabaseErrorException('Failed to delete leaderboard entry');
     }
   }
+
+
+  async getUserScoreAndRank(gameId: number, userId: number) {
+  const leaderboard = await this.leaderboardRepository.find({
+    where: { gameId },
+    order: { averageScore: 'DESC' },
+    relations: ['user'],
+  });
+
+  if (!leaderboard.length) {
+    throw new NotFoundException(`No leaderboard entries for game ${gameId}`);
+  }
+
+  const userIndex = leaderboard.findIndex((entry) => entry.user.id === userId);
+  if (userIndex === -1) {
+    throw new NotFoundException(
+      `User with ID ${userId} not found in leaderboard for game ${gameId}`,
+    );
+  }
+
+  return {
+    rank: userIndex + 1,
+    totalUsers: leaderboard.length,
+    score: leaderboard[userIndex].averageScore,
+    totalWins: leaderboard[userIndex].totalWins,
+    totalAttempts: leaderboard[userIndex].totalAttempts,
+  };
+}
+
+async getTopLeaderboardForGame(gameId: number, limit: number = 10) {
+  const topUsers = await this.leaderboardRepository.find({
+    where: { gameId },
+    order: { averageScore: 'DESC' },
+    take: limit,
+    relations: ['user'],
+  });
+
+  return topUsers.map((entry, index) => ({
+    rank: index + 1,
+    user: {
+      id: entry.user.id,
+      name: entry.user.userName,
+      email: entry.user.email,
+    },
+    averageScore: entry.averageScore,
+    totalWins: entry.totalWins,
+    totalAttempts: entry.totalAttempts,
+  }));
+}
+
 }
