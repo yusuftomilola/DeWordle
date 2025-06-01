@@ -10,15 +10,17 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 
-import { PuzzlesService } from './puzzles.service';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreatePuzzleDto } from './dto/create-puzzle.dto';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 import { AdminJwtAuthGuard } from 'src/admin/guards/admin-jwt-auth.guard';
-import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { CreatePuzzleDto } from './dto/create-puzzle.dto';
 import { SubmitWordDto } from './dto/submit-word.dto';
+import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { PuzzlesService } from './puzzles.service';
 
 @Controller('spelling-bee/puzzles')
 export class PuzzlesController {
@@ -105,5 +107,28 @@ export class PuzzlesController {
   @UseGuards(AdminJwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.puzzleService.remove(+id);
+  }
+
+  @Post('shuffle')
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Shuffle the current puzzle grid' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns shuffled grid',
+    schema: {
+      example: {
+        shuffledGrid: [
+          ['E', 'T', 'A', 'P'],
+          ['R', 'S', 'C', 'H'],
+        ],
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Session not found' })
+  async shuffle(@Req() req) {
+    const userId = req.user.id;
+    const shuffledGrid = await this.puzzleService.shuffleUserGrid(userId);
+    return { shuffledGrid };
   }
 }

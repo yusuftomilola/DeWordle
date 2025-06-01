@@ -8,10 +8,7 @@ import { WordValidatorService } from './providers/word-validator-service.service
 import { DictionaryService } from 'src/dictionary/dictionary.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Puzzle]),
-    TypeOrmModule.forFeature([UserGame]),
-  ],
+  imports: [TypeOrmModule.forFeature([Puzzle, UserGame])],
   providers: [PuzzlesService, WordValidatorService, DictionaryService],
   exports: [PuzzlesService],
   controllers: [PuzzlesController],
