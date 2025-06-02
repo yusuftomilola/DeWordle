@@ -67,6 +67,7 @@ export class CreateUsersProvider {
 
     await this.leaderboardService.createLeaderboard({
       userId: savedUser.id,
+      gameId: createUserDto.gameId, // Make sure createUserDto has gameId
       totalWins: 0,
       totalAttempts: 0,
       averageScore: 0,
