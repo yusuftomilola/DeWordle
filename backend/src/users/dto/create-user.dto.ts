@@ -50,6 +50,8 @@ export class CreateUserDto {
   )
   password: string;
 
+  gameId: number;
+
   // @IsOptional()
   // @ApiProperty({
   //   description: 'An array of results associated with the user',
