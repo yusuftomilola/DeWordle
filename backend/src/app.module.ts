@@ -36,6 +36,7 @@ import { SpellingBeeModule } from './games/spelling-bee/spelling-bee.module';
 import { LetteredBoxModule } from './games/lettered-box/lettered-box.module';
 import { GamesController } from './games/games.controller';
 import { PuzzleModule } from './puzzle/puzzle.module';
+import { StrandsModule } from './games/strands/strands.module';
 
 @Module({
   imports: [
@@ -126,6 +127,7 @@ import { PuzzleModule } from './puzzle/puzzle.module';
     SpellingBeeModule,
     LetteredBoxModule,
     PuzzleModule,
+    StrandsModule
   ],
   controllers: [AppController, GuestUserController, GamesController],
   providers: [AppService, GuestUserGuard, RedisService, GuestUserService],
