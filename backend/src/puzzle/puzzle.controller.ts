@@ -11,6 +11,8 @@ import {
   UseGuards,
   ParseUUIDPipe,
   ParseIntPipe,
+  Req,
+  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -26,6 +28,8 @@ import { PuzzleResponseDto } from './dto/puzzle-response.dto';
 import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
 import { Puzzle } from './entities/puzzle.entity';
 import { AdminJwtAuthGuard } from 'src/admin/guards/admin-jwt-auth.guard';
+import { ValidateWordDto, ValidateWordResponseDto } from './dto/validate-word.dto';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
 @ApiTags('puzzles')
 @Controller('puzzles')
@@ -195,4 +199,15 @@ export class PuzzleController {
   }> {
     return await this.puzzleService.validateSolution(id, body.foundWords);
   }
+
+  @Post('validate-word')
+  @UseGuards(JwtAuthGuard)
+  async validateWord(
+    @Body() validateWordDto: ValidateWordDto,
+    @Req() req: Request,
+  ): Promise<ValidateWordResponseDto> {
+    let userId = (req as any).user.id;
+    return this.puzzleService.validateWord(validateWordDto.word, userId);
+  }
 }
+

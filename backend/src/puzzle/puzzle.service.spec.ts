@@ -218,4 +218,150 @@ describe('PuzzleService', () => {
       expect(result.missingWords).toContain('ELEPHANT');
     });
   });
+
+  describe('validateWord', () => {
+    let service: PuzzleService;
+    let puzzleRepository: any;
+    let puzzleSessionRepository: any;
+    let dictionaryService: any;
+
+    const mockPuzzle = {
+      id: 'puzzle-id',
+      date: new Date(),
+      grid: [
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'],
+        ['Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X'],
+        ['Y', 'Z', 'A', 'B', 'C', 'D', 'E', 'F'],
+        ['G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'],
+        ['O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'],
+      ],
+      validWords: ['theme', 'spangram'],
+      spangram: 'spangram',
+    };
+
+    const baseSession = {
+      userId: 'user-id',
+      puzzleId: 'puzzle-id',
+      foundWords: [],
+      nonThemeWords: [],
+      earnedHints: 0,
+      updatedAt: new Date(),
+    };
+
+    beforeEach(() => {
+      puzzleRepository = {
+        findOne: jest.fn(),
+      };
+      puzzleSessionRepository = {
+        findOne: jest.fn(),
+        save: jest.fn(),
+      };
+      dictionaryService = {
+        getValidWords: jest.fn(),
+      };
+      service = new PuzzleService(
+        puzzleRepository as any,
+        puzzleSessionRepository as any,
+        dictionaryService as any,
+      );
+    });
+
+    it('should throw NotFoundException if no puzzle for today', async () => {
+      puzzleRepository.findOne.mockResolvedValue(null);
+      await expect(service.validateWord('word', 'user-id')).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if no session for user', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue(null);
+      await expect(service.validateWord('word', 'user-id')).rejects.toThrow(NotFoundException);
+    });
+
+    it('should return invalid if word already in foundWords', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({
+        ...baseSession,
+        foundWords: ['theme'],
+        nonThemeWords: [],
+      });
+      const result = await service.validateWord('theme', 'user-id');
+      expect(result.valid).toBe(false);
+      expect(result.type).toBe('invalid');
+      expect(result.word).toBe('theme');
+    });
+
+    it('should return invalid if word already in nonThemeWords', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({
+        ...baseSession,
+        foundWords: [],
+        nonThemeWords: ['otherword'],
+      });
+      const result = await service.validateWord('otherword', 'user-id');
+      expect(result.valid).toBe(false);
+      expect(result.type).toBe('invalid');
+      expect(result.word).toBe('otherword');
+    });
+
+    it('should return spangram if word matches spangram', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({ ...baseSession });
+      puzzleSessionRepository.save.mockImplementation(session => session);
+      const result = await service.validateWord('spangram', 'user-id');
+      expect(result.valid).toBe(true);
+      expect(result.type).toBe('spangram');
+      expect(result.word).toBe('spangram');
+      expect(result.updatedSession.foundWords).toContain('spangram');
+    });
+
+    it('should return theme if word is in validWords', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({ ...baseSession });
+      puzzleSessionRepository.save.mockImplementation(session => session);
+      const result = await service.validateWord('theme', 'user-id');
+      expect(result.valid).toBe(true);
+      expect(result.type).toBe('theme');
+      expect(result.word).toBe('theme');
+      expect(result.updatedSession.foundWords).toContain('theme');
+    });
+
+    it('should return non-theme if word is valid but not in validWords or spangram', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({ ...baseSession });
+      dictionaryService.getValidWords.mockResolvedValue(['nontheme']);
+      puzzleSessionRepository.save.mockImplementation(session => session);
+      const result = await service.validateWord('nontheme', 'user-id');
+      expect(result.valid).toBe(true);
+      expect(result.type).toBe('non-theme');
+      expect(result.word).toBe('nontheme');
+      expect(result.updatedSession.nonThemeWords).toContain('nontheme');
+    });
+
+    it('should increment earnedHints every 3 non-theme words', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({
+        ...baseSession,
+        nonThemeWords: ['a', 'b'],
+        earnedHints: 0,
+      });
+      dictionaryService.getValidWords.mockResolvedValue(['nontheme']);
+      puzzleSessionRepository.save.mockImplementation(session => session);
+      const result = await service.validateWord('nontheme', 'user-id');
+      expect(result.valid).toBe(true);
+      expect(result.type).toBe('non-theme');
+      expect(result.earnedHints).toBe(1);
+    });
+
+    it('should return invalid if word is not valid by any means', async () => {
+      puzzleRepository.findOne.mockResolvedValue(mockPuzzle);
+      puzzleSessionRepository.findOne.mockResolvedValue({ ...baseSession });
+      dictionaryService.getValidWords.mockResolvedValue([]);
+      puzzleSessionRepository.save.mockImplementation(session => session);
+      const result = await service.validateWord('invalidword', 'user-id');
+      expect(result.valid).toBe(false);
+      expect(result.type).toBe('invalid');
+      expect(result.word).toBe('invalidword');
+    });
+  });
 });
