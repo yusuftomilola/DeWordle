@@ -14,17 +14,28 @@ import {
   Body,
   ParseUUIDPipe,
   ParseIntPipe,
-} from "@nestjs/common"
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from "@nestjs/swagger"
-import { PuzzleService } from "./puzzle.service"
-import { CreatePuzzleDto } from "./dto/create-puzzle.dto"
-import { PuzzleResponseDto } from "./dto/puzzle-response.dto"
-import { UpdatePuzzleDto } from "./dto/update-puzzle.dto"
-import { Puzzle } from "./entities/puzzle.entity"
-import { AdminJwtAuthGuard } from "../admin/guards/admin-jwt-auth.guard"
+  Req,
+  Request,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { PuzzleService } from './puzzle.service';
+import { CreatePuzzleDto } from './dto/create-puzzle.dto';
+import { PuzzleResponseDto } from './dto/puzzle-response.dto';
+import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { Puzzle } from './entities/puzzle.entity';
+import { AdminJwtAuthGuard } from 'src/admin/guards/admin-jwt-auth.guard';
+import { ValidateWordDto, ValidateWordResponseDto } from './dto/validate-word.dto';
+import { JwtAuthGuard } from 'security/guards/jwt-auth.guard';
 
-@ApiTags("puzzles")
-@Controller("puzzles")
+@ApiTags('puzzles')
+@Controller('puzzles')
 export class PuzzleController {
   constructor(private readonly puzzleService: PuzzleService) {}
 
@@ -292,4 +303,15 @@ export class AdminPuzzleController {
       updatedAt: puzzle.updatedAt,
     };
   }
+
+  @Post('validate-word')
+  @UseGuards(JwtAuthGuard)
+  async validateWord(
+    @Body() validateWordDto: ValidateWordDto,
+    @Req() req: Request,
+  ): Promise<ValidateWordResponseDto> {
+    let userId = (req as any).user.id;
+    return this.puzzleService.validateWord(validateWordDto.word, userId);
+  }
 }
+

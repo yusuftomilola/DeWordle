@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from "@nestjs/common"
-import { Repository } from "typeorm"
-import { CreatePuzzleDto } from "./dto/create-puzzle.dto"
-import { UpdatePuzzleDto } from "./dto/update-puzzle.dto"
-import { Puzzle } from "./entities/puzzle.entity"
-import { InjectRepository } from "@nestjs/typeorm"
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreatePuzzleDto } from './dto/create-puzzle.dto';
+import { UpdatePuzzleDto } from './dto/update-puzzle.dto';
+import { Puzzle } from './entities/puzzle.entity';
+import { PuzzleSession } from './entities/puzzle-session.entity';
+import { DictionaryService } from '../dictionary/dictionary.service';
+import { ValidateWordResponseDto } from './dto/validate-word.dto';
 
 @Injectable()
 export class PuzzleService {
@@ -11,7 +14,10 @@ export class PuzzleService {
 
   constructor(
     @InjectRepository(Puzzle)
-    private readonly puzzleRepository: Repository<Puzzle>
+    private readonly puzzleRepository: Repository<Puzzle>,
+    @InjectRepository(PuzzleSession)
+    private puzzleSessionRepository: Repository<PuzzleSession>,
+    private dictionaryService: DictionaryService,
   ) {}
 
   /**
@@ -306,7 +312,7 @@ export class PuzzleService {
     invalidWords: string[]
     missingWords: string[]
     foundSpangram: boolean
-  }> {
+  } {
     const puzzle = await this.getPuzzleById(puzzleId)
 
     const validFoundWords = foundWords.filter((word) => puzzle.validWords.includes(word.toUpperCase()))
@@ -326,5 +332,88 @@ export class PuzzleService {
       missingWords,
       foundSpangram,
     }
+  }
+
+  async validateWord(word: string, userId: string): Promise<ValidateWordResponseDto> {
+    // Normalize the word
+    const normalizedWord = word.toLowerCase().trim();
+
+    // Get today's puzzle
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const puzzle = await this.puzzleRepository.findOne({
+      where: { date: today },
+    });
+
+    if (!puzzle) {
+      throw new NotFoundException('No puzzle found for today');
+    }
+
+    // Get user's session
+    let session = await this.puzzleSessionRepository.findOne({
+      where: { userId, puzzleId: puzzle.id },
+    });
+
+    if (!session) {
+      throw new NotFoundException('No active session found');
+    }
+
+    // Check if word was already submitted
+    if (
+      session.foundWords.includes(normalizedWord) ||
+      session.nonThemeWords.includes(normalizedWord)
+    ) {
+      return {
+        word: normalizedWord,
+        type: 'invalid',
+        valid: false,
+        earnedHints: session.earnedHints,
+        updatedSession: session,
+      };
+    }
+
+    let type: string;
+    let valid = false;
+    let earnedHints = session.earnedHints;
+
+    // Check word type
+    if (normalizedWord === puzzle.spangram.toLowerCase()) {
+      type = 'spangram';
+      valid = true;
+      session.foundWords.push(normalizedWord);
+    } else if (puzzle.validWords.map(w => w.toLowerCase()).includes(normalizedWord)) {
+      type = 'theme';
+      valid = true;
+      session.foundWords.push(normalizedWord);
+    } else if (
+      (await this.dictionaryService.getValidWords(
+        puzzle.grid.flat().map(l => l.toLowerCase()),
+        puzzle.grid[2][3].toLowerCase() // Example: assuming center letter is at grid[2][3]
+      )).includes(normalizedWord)
+    ) {
+      type = 'non-theme';
+      valid = true;
+      session.nonThemeWords.push(normalizedWord);
+      // Example: earn 1 hint for every 3 non-theme words
+      if (session.nonThemeWords.length % 3 === 0) {
+        earnedHints += 1;
+        session.earnedHints = earnedHints;
+      }
+    } else {
+      type = 'invalid';
+      valid = false;
+    }
+
+    // Update session
+    session.updatedAt = new Date();
+    session = await this.puzzleSessionRepository.save(session);
+
+    return {
+      word: normalizedWord,
+      type,
+      valid,
+      earnedHints,
+      updatedSession: session,
+    };
   }
 }
