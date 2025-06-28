@@ -4,6 +4,8 @@ import { TypeOrmModule } from "@nestjs/typeorm"
 import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
 import { TestEntity } from "./entities/test.entity"
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -35,6 +37,8 @@ import { TestEntity } from "./entities/test.entity"
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([TestEntity]),
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
