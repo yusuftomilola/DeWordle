@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { TestEntity } from './entities/test.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { GamesModule } from './games/games.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forFeature([TestEntity]),
     AuthModule,
     UserModule,
+    GamesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
