@@ -6,6 +6,9 @@ import { AppService } from './app.service';
 import { TestEntity } from './entities/test.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { GamesModule } from './games/games.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { GameSessionsModule } from './game-sessions/game-sessions.module';
 import { WordsModule } from './dewordle/words/words.module';
 // TODO: import { WordsModule } from './dewordle/words/words.module';
 
@@ -15,6 +18,8 @@ import { WordsModule } from './dewordle/words/words.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    EventEmitterModule.forRoot(),
+    GameSessionsModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -42,6 +47,7 @@ import { WordsModule } from './dewordle/words/words.module';
     TypeOrmModule.forFeature([TestEntity]),
     AuthModule,
     UserModule,
+    GamesModule,
     WordsModule,
     // TODO: WordsModule,
   ],
