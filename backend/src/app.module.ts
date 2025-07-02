@@ -6,6 +6,8 @@ import { AppService } from './app.service';
 import { TestEntity } from './entities/test.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { WordsModule } from './dewordle/words/words.module';
+// TODO: import { WordsModule } from './dewordle/words/words.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forFeature([TestEntity]),
     AuthModule,
     UserModule,
+    WordsModule,
+    // TODO: WordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
