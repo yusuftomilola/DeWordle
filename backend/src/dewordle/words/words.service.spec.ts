@@ -4,9 +4,14 @@ import {
   NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { DictionaryHelper } from '../../utils/dictionary.helper';
+
+// Mock the DictionaryHelper
+jest.mock('../../utils/dictionary.helper');
 
 describe('WordsService (Unit Tests)', () => {
   let service: WordsService;
+  let mockDictionaryHelper: jest.Mocked<DictionaryHelper>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,6 +19,7 @@ describe('WordsService (Unit Tests)', () => {
     }).compile();
 
     service = module.get<WordsService>(WordsService);
+    mockDictionaryHelper = (service as any).dictionaryHelper;
   });
 
   it('should be defined', () => {
@@ -35,25 +41,51 @@ describe('WordsService (Unit Tests)', () => {
       wordsServiceSpy.mockRestore();
     });
 
-    it('should return a random 5-letter word when words are available', async () => {
+    it('should return an enriched random 5-letter word when enrichment succeeds', async () => {
       const mockWords: Word[] = [
         { id: '1', word: 'apple', length: 5 },
         { id: '2', word: 'baker', length: 5 },
-        { id: '3', word: 'longword', length: 8 },
-        { id: '4', word: 'short', length: 5 },
       ];
       wordsServiceSpy.mockReturnValue(mockWords);
 
-      const results = new Set<string>();
-      for (let i = 0; i < 10; i++) {
-        const { word } = await service.getRandomWord();
-        expect(word).toBeDefined();
-        expect(word.length).toBe(5);
-        expect(['apple', 'baker', 'short']).toContain(word);
-        results.add(word);
-      }
-      expect(results.size).toBeGreaterThanOrEqual(1);
-      expect(results.size).toBeLessThanOrEqual(3);
+      const mockEnrichedWord = {
+        id: '1',
+        word: 'apple',
+        definition: 'A round fruit',
+        example: 'I ate an apple',
+        partOfSpeech: 'noun',
+        phonetics: '/ˈæpəl/',
+        isEnriched: true,
+      };
+
+      mockDictionaryHelper.enrichWordWithMetadata.mockResolvedValue(
+        mockEnrichedWord,
+      );
+
+      const result = await service.getRandomWord();
+
+      expect(result.isEnriched).toBe(true);
+      expect(result.word).toBeDefined();
+      expect(['apple', 'baker']).toContain(result.word);
+      expect(mockDictionaryHelper.enrichWordWithMetadata).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+      );
+    });
+
+    it('should return basic word when enrichment fails', async () => {
+      const mockWords: Word[] = [{ id: '1', word: 'apple', length: 5 }];
+      wordsServiceSpy.mockReturnValue(mockWords);
+
+      mockDictionaryHelper.enrichWordWithMetadata.mockRejectedValue(
+        new Error('API Error'),
+      );
+
+      const result = await service.getRandomWord();
+
+      expect(result.isEnriched).toBe(false);
+      expect(result.word).toBe('apple');
+      expect(result.id).toBe('1');
     });
 
     it('should throw NotFoundException if no 5-letter words are available', async () => {
@@ -82,7 +114,6 @@ describe('WordsService (Unit Tests)', () => {
       const mockWords: Word[] = [{ id: '1', word: 'testo', length: 5 }];
       wordsServiceSpy.mockReturnValue(mockWords);
 
-      const originalMathFloor = Math.floor;
       jest.spyOn(Math, 'floor').mockReturnValue(mockWords.length);
 
       await expect(service.getRandomWord()).rejects.toThrow(
