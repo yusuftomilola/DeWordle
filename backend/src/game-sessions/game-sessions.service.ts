@@ -6,6 +6,7 @@ import { Game } from 'src/games/entities/game.entity';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { User } from 'src/auth/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
 
 @Injectable()
 export class GameSessionsService {
@@ -15,6 +16,7 @@ export class GameSessionsService {
     @InjectRepository(Game)
     private gameRepo: Repository<Game>,
     private eventEmitter: EventEmitter2,
+    private leaderboardService: LeaderboardService,
   ) {}
 
   async create(createDto: CreateSessionDto, user: User | null) {
@@ -30,6 +32,12 @@ export class GameSessionsService {
     });
 
     const saved = await this.sessionRepo.save(session);
+
+    // Update leaderboard only for logged-in users
+    if (user) {
+      const win = false; // You may want to determine win logic based on session/score
+      await this.leaderboardService.upsertEntry(user, game, createDto.score, win);
+    }
 
     this.eventEmitter.emit('session.completed', saved);
     return saved;
