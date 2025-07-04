@@ -10,7 +10,6 @@ import { GamesModule } from './games/games.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GameSessionsModule } from './game-sessions/game-sessions.module';
 import { WordsModule } from './dewordle/words/words.module';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
 // TODO: import { WordsModule } from './dewordle/words/words.module';
 
 @Module({
@@ -51,7 +50,6 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
     GamesModule,
     WordsModule,
     // TODO: WordsModule,
-    LeaderboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

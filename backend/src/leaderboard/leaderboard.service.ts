@@ -7,7 +7,7 @@ import { Game } from '../games/entities/game.entity';
 
 @Injectable()
 export class LeaderboardService {
-  private readonly logger = new Logger(LeaderboardService.name);
+  // Logger removed for production cleanliness
   constructor(
     @InjectRepository(LeaderboardEntry)
     private leaderboardRepository: Repository<LeaderboardEntry>,
@@ -15,7 +15,6 @@ export class LeaderboardService {
 
   async upsertEntry(user: User, game: Game, score: number, win: boolean) {
     if (!user) {
-      this.logger.warn('Attempted to upsert leaderboard for guest session. Skipping.');
       return;
     }
     try {
@@ -29,7 +28,6 @@ export class LeaderboardService {
       }
       return await this.leaderboardRepository.save(entry);
     } catch (error) {
-      this.logger.error('Failed to upsert leaderboard entry', error.stack);
       throw new InternalServerErrorException('Could not update leaderboard');
     }
   }
@@ -45,28 +43,26 @@ export class LeaderboardService {
         relations: ['user'],
       });
     } catch (error) {
-      this.logger.error('Failed to fetch game leaderboard', error.stack);
       throw new InternalServerErrorException('Could not fetch game leaderboard');
     }
   }
 
   async getGlobalLeaderboard(skip = 0, take = 20) {
     try {
-      return await this.leaderboardRepository.createQueryBuilder('entry')
-        .leftJoinAndSelect('entry.user', 'user')
-        .select('entry.userId', 'userId')
+      const qb = this.leaderboardRepository.createQueryBuilder('entry')
+        .innerJoin('entry.user', 'user') // Only include entries with a user
+        .select('user.id', 'userId')
         .addSelect('SUM(entry.totalScore)', 'totalScore')
         .addSelect('SUM(entry.wins)', 'wins')
         .addSelect('SUM(entry.totalSessions)', 'totalSessions')
         .addSelect('MAX(entry.lastUpdated)', 'lastUpdated')
-        .groupBy('entry.userId')
-        .orderBy('totalScore', 'DESC')
-        .addOrderBy('lastUpdated', 'DESC')
+        .groupBy('user.id')
+        .orderBy('SUM(entry.totalScore)', 'DESC')
+        .addOrderBy('MAX(entry.lastUpdated)', 'DESC')
         .offset(Math.max(0, Number(skip)))
-        .limit(Math.max(1, Math.min(Number(take), 100)))
-        .getRawMany();
+        .limit(Math.max(1, Math.min(Number(take), 100)));
+      return await qb.getRawMany();
     } catch (error) {
-      this.logger.error('Failed to fetch global leaderboard', error.stack);
       throw new InternalServerErrorException('Could not fetch global leaderboard');
     }
   }

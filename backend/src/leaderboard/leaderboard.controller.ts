@@ -11,6 +11,14 @@ export class LeaderboardController {
     @InjectRepository(Game)
     private readonly gameRepository: Repository<Game>,
   ) {}
+  
+  @Get('global')
+  async getGlobalLeaderboard(
+    @Query('skip') skip = 0,
+    @Query('take') take = 20,
+  ) {
+    return this.leaderboardService.getGlobalLeaderboard(Number(skip), Number(take));
+  }
 
   @Get(':gameSlug')
   async getGameLeaderboard(
@@ -21,13 +29,5 @@ export class LeaderboardController {
     const game = await this.gameRepository.findOne({ where: { slug: gameSlug } });
     if (!game) return [];
     return this.leaderboardService.getGameLeaderboard(game, Number(skip), Number(take));
-  }
-
-  @Get('global')
-  async getGlobalLeaderboard(
-    @Query('skip') skip = 0,
-    @Query('take') take = 20,
-  ) {
-    return this.leaderboardService.getGlobalLeaderboard(Number(skip), Number(take));
   }
 }
