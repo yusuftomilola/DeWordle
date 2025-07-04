@@ -4,18 +4,19 @@ import {
   NotFoundException,
   Logger,
 } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { DictionaryHelper, EnrichedWord } from '../../utils/dictionary.helper';
 
 export interface Word {
   id: string;
   word: string;
   length: number;
 }
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class WordsService {
   private readonly logger = new Logger(WordsService.name);
-
+  private readonly dictionaryHelper = new DictionaryHelper();
   private words: Word[] = [];
 
   constructor() {
@@ -164,21 +165,21 @@ export class WordsService {
     ];
 
     this.words = fiveLetterWords.map((word) => ({
-      id: uuidv4(), // Generate a unique ID for each word
+      id: uuidv4(),
       word: word,
       length: word.length,
     }));
     this.logger.log(`Seeded ${this.words.length} 5-letter words.`);
   }
 
-  getRandomWord(): Promise<{ word: string }> {
+  async getRandomWord(): Promise<EnrichedWord> {
     this.logger.log('Attempting to retrieve a random 5-letter word.');
 
     // Filter for 5-letter words specifically
     const fiveLetterWords = this.words.filter((w) => w.length === 5);
 
     if (fiveLetterWords.length === 0) {
-      this.logger.warn('No 5-letter words found in the database.'); // Log for debugging
+      this.logger.warn('No 5-letter words found in the database.');
       throw new NotFoundException(
         'No 5-letter words available in the database.',
       );
@@ -188,18 +189,37 @@ export class WordsService {
     const randomIndex = Math.floor(Math.random() * fiveLetterWords.length);
     const randomWord = fiveLetterWords[randomIndex];
 
-    // Check if randomWord is actually found (should always be if length > 0)
+    // Check if randomWord is actually found
     if (!randomWord) {
       this.logger.error(
         'Failed to select a random word despite words being available.',
       );
-      // This case is unlikely with Math.random and array indexing, but good for robustness
       throw new InternalServerErrorException(
         'Failed to retrieve a random word.',
       );
     }
 
     this.logger.log(`Selected random word: ${randomWord.word}`);
-    return Promise.resolve({ word: randomWord.word });
+
+    // Enrich the word with dictionary metadata
+    try {
+      const enrichedWord = await this.dictionaryHelper.enrichWordWithMetadata(
+        randomWord.word,
+        randomWord.id,
+      );
+      return enrichedWord;
+    } catch (error) {
+      this.logger.error(
+        `Failed to enrich word '${randomWord.word}', returning basic word`,
+        error instanceof Error ? error.stack : 'No stack trace available',
+      );
+
+      // Return basic word if enrichment fails
+      return {
+        id: randomWord.id,
+        word: randomWord.word,
+        isEnriched: false,
+      };
+    }
   }
 }
