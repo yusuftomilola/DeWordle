@@ -1,5 +1,5 @@
-import { Controller, Get } from "@nestjs/common"
-import { AppService } from "./app.service"
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
@@ -7,26 +7,26 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello()
+    return this.appService.getHello();
   }
 
-  @Get("health")
+  @Get('health')
   getHealth() {
     return {
-      status: "OK",
+      status: 'OK',
       timestamp: new Date().toISOString(),
-      service: "NestJS API",
-      database: "Neon PostgreSQL",
-    }
+      service: 'NestJS API',
+      database: 'Neon PostgreSQL',
+    };
   }
 
-  @Get("test-db")
+  @Get('test-db')
   async testDatabase() {
-    return this.appService.testDatabaseConnection()
+    return this.appService.testDatabaseConnection();
   }
 
-  @Get("test-entities")
+  @Get('test-entities')
   async getTestEntities() {
-    return this.appService.getAllTestEntities()
+    return this.appService.getAllTestEntities();
   }
 }

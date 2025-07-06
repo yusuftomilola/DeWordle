@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -42,7 +46,9 @@ export class UserService {
     const allowedFields = ['username', 'avatarUrl'];
     for (const key of Object.keys(updateUserDto)) {
       if (!allowedFields.includes(key)) {
-        throw new BadRequestException(`Field '${key}' is immutable or not allowed to be updated.`);
+        throw new BadRequestException(
+          `Field '${key}' is immutable or not allowed to be updated.`,
+        );
       }
     }
     await this.userRepository.update(id, updateUserDto);
@@ -54,12 +60,17 @@ export class UserService {
   }
 
   // Profile management methods
-  async updateProfile(userId: number, updateProfileDto: UpdateProfileDto): Promise<User> {
+  async updateProfile(
+    userId: number,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<User> {
     try {
       const allowedFields = ['username', 'avatarUrl'];
       for (const key of Object.keys(updateProfileDto)) {
         if (!allowedFields.includes(key)) {
-          throw new BadRequestException(`Field '${key}' is immutable or not allowed to be updated.`);
+          throw new BadRequestException(
+            `Field '${key}' is immutable or not allowed to be updated.`,
+          );
         }
       }
 
@@ -69,13 +80,19 @@ export class UserService {
       }
 
       if ('username' in updateProfileDto) {
-        if (typeof updateProfileDto.username !== 'string' || !updateProfileDto.username.trim()) {
+        if (
+          typeof updateProfileDto.username !== 'string' ||
+          !updateProfileDto.username.trim()
+        ) {
           throw new BadRequestException('Username must be a non-empty string');
         }
         user.username = updateProfileDto.username;
       }
       if ('avatarUrl' in updateProfileDto) {
-        if (typeof updateProfileDto.avatarUrl !== 'string' || !updateProfileDto.avatarUrl.trim()) {
+        if (
+          typeof updateProfileDto.avatarUrl !== 'string' ||
+          !updateProfileDto.avatarUrl.trim()
+        ) {
           throw new BadRequestException('AvatarUrl must be a non-empty string');
         }
         user.avatarUrl = updateProfileDto.avatarUrl;
@@ -84,7 +101,9 @@ export class UserService {
       await this.userRepository.save(user);
       return user;
     } catch (err) {
-      throw new BadRequestException('Error updating user profile: ' + (err?.message || err));
+      throw new BadRequestException(
+        'Error updating user profile: ' + (err?.message || err),
+      );
     }
   }
 
