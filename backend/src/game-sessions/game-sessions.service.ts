@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameSession } from './entities/game-session.entity';
@@ -20,11 +20,18 @@ export class GameSessionsService {
   ) {}
 
   async create(createDto: CreateSessionDto, user: User | null) {
+    // Validate game exists
     const game = await this.gameRepo.findOne({
       where: { id: createDto.gameId },
     });
     if (!game) throw new NotFoundException('Game not found');
 
+    // Validate score for guest sessions (prevent abuse)
+    if (!user && createDto.score < 0) {
+      throw new BadRequestException('Invalid score for guest session');
+    }
+
+    // Create session with user or null for guest
     const session = this.sessionRepo.create({
       ...createDto,
       game,
@@ -33,13 +40,43 @@ export class GameSessionsService {
 
     const saved = await this.sessionRepo.save(session);
 
-    // Update leaderboard only for logged-in users
+    // Update leaderboard only for authenticated users
+    // Guest sessions are excluded from leaderboard and stats
     if (user) {
       const win = false; // You may want to determine win logic based on session/score
       await this.leaderboardService.upsertEntry(user, game, createDto.score, win);
     }
 
+    // Emit event for both authenticated and guest sessions
     this.eventEmitter.emit('session.completed', saved);
+    
     return saved;
+  }
+
+  /**
+   * Get sessions for a specific user or guest
+   * @param user - User entity for authenticated users, null for guests
+   * @param guestId - Guest identifier for anonymous sessions
+   */
+  async getUserSessions(user: User | null, guestId?: string) {
+    if (user) {
+      // Return authenticated user sessions
+      return await this.sessionRepo.find({
+        where: { user },
+        relations: ['game'],
+        order: { playedAt: 'DESC' },
+      });
+    } else if (guestId) {
+      // Return guest sessions by guestId in metadata using query builder
+      return await this.sessionRepo
+        .createQueryBuilder('session')
+        .leftJoinAndSelect('session.game', 'game')
+        .where('session.user IS NULL')
+        .andWhere("session.metadata->>'guestId' = :guestId", { guestId })
+        .orderBy('session.playedAt', 'DESC')
+        .getMany();
+    }
+    
+    return [];
   }
 }

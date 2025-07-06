@@ -1,4 +1,11 @@
-import { IsInt, IsOptional, IsJSON, IsNotEmpty } from 'class-validator';
+import { IsInt, IsOptional, IsJSON, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class GuestMetadataDto {
+  @IsOptional()
+  @IsString()
+  guestId?: string;
+}
 
 export class CreateSessionDto {
   @IsInt()
@@ -11,5 +18,8 @@ export class CreateSessionDto {
   durationSeconds: number;
 
   @IsOptional()
+  @IsJSON()
+  @ValidateNested()
+  @Type(() => GuestMetadataDto)
   metadata?: Record<string, any>;
 }
