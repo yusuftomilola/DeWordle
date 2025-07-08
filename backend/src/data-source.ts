@@ -3,8 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import { TestEntity } from './entities/test.entity';
 import { Word } from './entities/word.entity';
+import * as path from 'path';
 
-config();
+// Load .env.development for local development, fallback to .env
+const envPath =
+  process.env.NODE_ENV === 'production'
+    ? '.env'
+    : path.join(__dirname, '..', '.env.development');
+
+config({ path: envPath });
 
 const configService = new ConfigService();
 

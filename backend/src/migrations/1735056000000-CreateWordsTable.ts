@@ -1,10 +1,12 @@
-import { type MigrationInterface, type QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateTestEntity1703000000000 implements MigrationInterface {
+export class CreateWordsTable1735056000000 implements MigrationInterface {
+  name = 'CreateWordsTable1735056000000';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'test_entities',
+        name: 'words',
         columns: [
           {
             name: 'id',
@@ -14,17 +16,13 @@ export class CreateTestEntity1703000000000 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'name',
+            name: 'text',
             type: 'varchar',
-            length: '255',
+            length: '5',
+            isUnique: true,
           },
           {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
-          },
-          {
-            name: 'isActive',
+            name: 'isCommon',
             type: 'boolean',
             default: true,
           },
@@ -33,11 +31,15 @@ export class CreateTestEntity1703000000000 implements MigrationInterface {
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
+        ],
+        indices: [
           {
-            name: 'updatedAt',
-            type: 'timestamp',
-            default: 'CURRENT_TIMESTAMP',
-            onUpdate: 'CURRENT_TIMESTAMP',
+            name: 'IDX_words_text',
+            columnNames: ['text'],
+          },
+          {
+            name: 'IDX_words_is_common',
+            columnNames: ['isCommon'],
           },
         ],
       }),
@@ -46,6 +48,6 @@ export class CreateTestEntity1703000000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('test_entities');
+    await queryRunner.dropTable('words');
   }
 }

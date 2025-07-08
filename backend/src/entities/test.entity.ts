@@ -1,22 +1,28 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Entity("test_entities")
+@Entity('test_entities')
 export class TestEntity {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
-  @Column({ type: "varchar", length: 255 })
-  name: string
+  @Column({ type: 'varchar', length: 255 })
+  name: string;
 
-  @Column({ type: "text", nullable: true })
-  description: string
+  @Column({ type: 'text', nullable: true })
+  description: string;
 
-  @Column({ type: "boolean", default: true })
-  isActive: boolean
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 
   @CreateDateColumn()
-  createdAt: Date
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date
+  updatedAt: Date;
 }

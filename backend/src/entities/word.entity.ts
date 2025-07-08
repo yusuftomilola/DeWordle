@@ -12,19 +12,18 @@ export class Word {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 5 })
   @Index()
-  @Column({ length: 5 })
   word: string;
 
-  @Column()
-  definition: string;
+  @Column({ nullable: true })
+  definition?: string;
 
-  @Column()
-  example: string;
+  @Column({ nullable: true })
+  example?: string;
 
-  @Column()
-  partOfSpeech: string;
+  @Column({ nullable: true })
+  partOfSpeech?: string;
 
   @Column({ nullable: true })
   phonetics?: string;
