@@ -5,16 +5,21 @@ import {
   HttpStatus,
   Logger,
   NotFoundException,
+  Post,
 } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EnrichedWord } from '../../utils/dictionary.helper';
+import { WordScheduler } from './word.scheduler';
 
 @Controller('words')
 export class WordsController {
   private readonly logger = new Logger(WordsController.name);
 
-  constructor(private readonly wordsService: WordsService) {}
+  constructor(
+    private readonly wordsService: WordsService,
+    private readonly wordScheduler: WordScheduler,
+  ) {}
 
   @Get('test')
   test(): string {
@@ -65,4 +70,21 @@ export class WordsController {
       );
     }
   }
+
+  @Get('daily')
+  async getDailyWord() {
+    return this.wordsService.getTodaysWord();
+  }
+
+  @Post('daily/trigger')
+  async triggerManual() {
+    await this.wordScheduler.ensureTodayWord();
+    return { status: 'Triggered' };
+  }
+
+  @Get('daily/health')
+  async healthCheck() {
+    return this.wordsService.getHealthStatus();
+  }
+
 }

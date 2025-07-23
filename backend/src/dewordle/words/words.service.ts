@@ -5,7 +5,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import * as moment from 'moment-timezone';
 import { DictionaryHelper, EnrichedWord } from '../../utils/dictionary.helper';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Word as WordEntity } from 'src/entities/word.entity';
 
 export interface Word {
   id: string;
@@ -19,7 +23,10 @@ export class WordsService {
   private readonly dictionaryHelper = new DictionaryHelper();
   private words: Word[] = [];
 
-  constructor() {
+  constructor(
+    @InjectRepository(WordEntity)
+    private readonly wordRepo: Repository<WordEntity>,
+  ) {
     // Seed the words when the service is initialized
     this.seedWords();
   }
@@ -168,6 +175,9 @@ export class WordsService {
       id: uuidv4(),
       word: word,
       length: word.length,
+      isDaily: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }));
     this.logger.log(`Seeded ${this.words.length} 5-letter words.`);
   }
@@ -221,5 +231,33 @@ export class WordsService {
         isEnriched: false,
       };
     }
+  }
+
+  public async getTodaysWord() {
+    const timezone = process.env.DAILY_WORD_TIMEZONE || 'UTC';
+    const today = moment().tz(timezone).startOf('day').format('YYYY-MM-DD');
+    const todayDate = new Date(today);
+
+    const word = await this.wordRepo.findOneBy({ dailyDate: todayDate });
+    if (!word) {
+      throw new NotFoundException('Daily word not found');
+    }
+
+    return word;
+  }
+
+  public async getHealthStatus() {
+    const timezone = process.env.DAILY_WORD_TIMEZONE || 'UTC';
+    const today = moment().tz(timezone).startOf('day').format('YYYY-MM-DD');
+    const todayDate = new Date(today);
+    const word = await this.wordRepo.findOneBy({ dailyDate: todayDate });
+    const remaining = await this.wordRepo.countBy({ isDaily: false });
+
+    return {
+      status: word ? 'ok' : 'missing',
+      last_update: word?.updatedAt,
+      next_update: moment(today).add(1, 'day').toISOString(),
+      words_remaining: remaining,
+    };
   }
 }
