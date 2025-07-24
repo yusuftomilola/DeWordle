@@ -30,4 +30,7 @@ export class GameSession {
 
   @CreateDateColumn()
   playedAt: Date;
+
+  @Column({ length: 5 })
+  solution: string;
 }
