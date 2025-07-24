@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameSession } from './entities/game-session.entity';
@@ -44,12 +48,17 @@ export class GameSessionsService {
     // Guest sessions are excluded from leaderboard and stats
     if (user) {
       const win = false; // You may want to determine win logic based on session/score
-      await this.leaderboardService.upsertEntry(user, game, createDto.score, win);
+      await this.leaderboardService.upsertEntry(
+        user,
+        game,
+        createDto.score,
+        win,
+      );
     }
 
     // Emit event for both authenticated and guest sessions
     this.eventEmitter.emit('session.completed', saved);
-    
+
     return saved;
   }
 
@@ -76,7 +85,7 @@ export class GameSessionsService {
         .orderBy('session.playedAt', 'DESC')
         .getMany();
     }
-    
+
     return [];
   }
 }
