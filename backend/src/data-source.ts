@@ -3,6 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import { TestEntity } from './entities/test.entity';
 import { Word } from './entities/word.entity';
+import { GameSession } from './game-sessions/entities/game-session.entity';
+import { User } from './auth/entities/user.entity';
+import { Game } from './games/entities/game.entity';
 import * as path from 'path';
 
 // Load .env.development for local development, fallback to .env
@@ -28,7 +31,7 @@ export const AppDataSource = new DataSource({
           rejectUnauthorized: false,
         }
       : false,
-  entities: [TestEntity, Word],
+  entities: [TestEntity, Word, Game, User, GameSession],
   migrations: ['src/migrations/*{.ts,.js}'],
   synchronize: false,
   logging: true,
