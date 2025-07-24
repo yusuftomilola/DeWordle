@@ -31,6 +31,12 @@ export class GameSession {
   @CreateDateColumn()
   playedAt: Date;
 
-  @Column({ length: 5 })
+  @Column({ length: 5, select: false })
   solution: string;
+
+  toJSON() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { solution, ...rest } = this;
+    return rest;
+  }
 }
