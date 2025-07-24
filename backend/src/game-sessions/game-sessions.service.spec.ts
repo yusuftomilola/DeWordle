@@ -66,8 +66,8 @@ describe('GameSessionsService', () => {
 
   describe('create', () => {
     const mockGame = { id: 1, name: 'Test Game' };
-    const mockUser: Partial<User> = { 
-      id: 1, 
+    const mockUser: Partial<User> = {
+      id: 1,
       username: 'testuser',
       email: 'test@example.com',
       password: 'hashedpassword',
@@ -75,7 +75,7 @@ describe('GameSessionsService', () => {
       walletAddress: '0x742d35Cc6634C0532925a3b8D8Cc6f9b2F3d217',
       sessions: [],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
     const createDto: CreateSessionDto = {
       gameId: 1,
@@ -86,8 +86,17 @@ describe('GameSessionsService', () => {
 
     it('should create a session for authenticated user', async () => {
       mockGameRepo.findOne.mockResolvedValue(mockGame);
-      mockSessionRepo.create.mockReturnValue({ ...createDto, game: mockGame, user: mockUser });
-      mockSessionRepo.save.mockResolvedValue({ id: 1, ...createDto, game: mockGame, user: mockUser });
+      mockSessionRepo.create.mockReturnValue({
+        ...createDto,
+        game: mockGame,
+        user: mockUser,
+      });
+      mockSessionRepo.save.mockResolvedValue({
+        id: 1,
+        ...createDto,
+        game: mockGame,
+        user: mockUser,
+      });
 
       const result = await service.create(createDto, mockUser as User);
 
@@ -97,15 +106,32 @@ describe('GameSessionsService', () => {
         game: mockGame,
         user: mockUser,
       });
-      expect(mockLeaderboardService.upsertEntry).toHaveBeenCalledWith(mockUser, mockGame, 100, false);
-      expect(mockEventEmitter.emit).toHaveBeenCalledWith('session.completed', expect.any(Object));
-      expect(result).toEqual({ id: 1, ...createDto, game: mockGame, user: mockUser });
+      expect(mockLeaderboardService.upsertEntry).toHaveBeenCalledWith(
+        mockUser,
+        mockGame,
+        100,
+        false,
+      );
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'session.completed',
+        expect.any(Object),
+      );
+      expect(result).toEqual({
+        id: 1,
+        ...createDto,
+        game: mockGame,
+        user: mockUser,
+      });
     });
 
     it('should create a guest session without user', async () => {
       mockGameRepo.findOne.mockResolvedValue(mockGame);
       mockSessionRepo.create.mockReturnValue({ ...createDto, game: mockGame });
-      mockSessionRepo.save.mockResolvedValue({ id: 1, ...createDto, game: mockGame });
+      mockSessionRepo.save.mockResolvedValue({
+        id: 1,
+        ...createDto,
+        game: mockGame,
+      });
 
       const result = await service.create(createDto, null);
 
@@ -115,14 +141,19 @@ describe('GameSessionsService', () => {
         game: mockGame,
       });
       expect(mockLeaderboardService.upsertEntry).not.toHaveBeenCalled();
-      expect(mockEventEmitter.emit).toHaveBeenCalledWith('session.completed', expect.any(Object));
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'session.completed',
+        expect.any(Object),
+      );
       expect(result).toEqual({ id: 1, ...createDto, game: mockGame });
     });
 
     it('should throw NotFoundException when game not found', async () => {
       mockGameRepo.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto, mockUser as User)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto, mockUser as User)).rejects.toThrow(
+        NotFoundException,
+      );
       expect(mockGameRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
     });
 
@@ -130,25 +161,41 @@ describe('GameSessionsService', () => {
       const negativeScoreDto = { ...createDto, score: -10 };
       mockGameRepo.findOne.mockResolvedValue(mockGame);
 
-      await expect(service.create(negativeScoreDto, null)).rejects.toThrow(BadRequestException);
+      await expect(service.create(negativeScoreDto, null)).rejects.toThrow(
+        BadRequestException,
+      );
     });
 
     it('should allow negative score for authenticated users', async () => {
       const negativeScoreDto = { ...createDto, score: -10 };
       mockGameRepo.findOne.mockResolvedValue(mockGame);
-      mockSessionRepo.create.mockReturnValue({ ...negativeScoreDto, game: mockGame, user: mockUser });
-      mockSessionRepo.save.mockResolvedValue({ id: 1, ...negativeScoreDto, game: mockGame, user: mockUser });
+      mockSessionRepo.create.mockReturnValue({
+        ...negativeScoreDto,
+        game: mockGame,
+        user: mockUser,
+      });
+      mockSessionRepo.save.mockResolvedValue({
+        id: 1,
+        ...negativeScoreDto,
+        game: mockGame,
+        user: mockUser,
+      });
 
       const result = await service.create(negativeScoreDto, mockUser as User);
 
       expect(result).toBeDefined();
-      expect(mockLeaderboardService.upsertEntry).toHaveBeenCalledWith(mockUser, mockGame, -10, false);
+      expect(mockLeaderboardService.upsertEntry).toHaveBeenCalledWith(
+        mockUser,
+        mockGame,
+        -10,
+        false,
+      );
     });
   });
 
   describe('getUserSessions', () => {
-    const mockUser: Partial<User> = { 
-      id: 1, 
+    const mockUser: Partial<User> = {
+      id: 1,
       username: 'testuser',
       email: 'test@example.com',
       password: 'hashedpassword',
@@ -156,7 +203,7 @@ describe('GameSessionsService', () => {
       walletAddress: '0x742d35Cc6634C0532925a3b8D8Cc6f9b2F3d217',
       sessions: [],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     it('should return user sessions for authenticated user', async () => {
