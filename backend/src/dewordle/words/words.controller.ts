@@ -5,16 +5,21 @@ import {
   HttpStatus,
   Logger,
   NotFoundException,
+  Post,
 } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EnrichedWord } from '../../utils/dictionary.helper';
+import { WordScheduler } from './word.scheduler';
 
 @Controller('words')
 export class WordsController {
   private readonly logger = new Logger(WordsController.name);
 
-  constructor(private readonly wordsService: WordsService) {}
+  constructor(
+    private readonly wordsService: WordsService,
+    private readonly wordScheduler: WordScheduler,
+  ) {}
 
   @Get('test')
   test(): string {
@@ -65,4 +70,61 @@ export class WordsController {
       );
     }
   }
+
+  @Get('daily')
+  @ApiOperation({
+    summary: 'Get today\'s daily word',
+    description: 'Returns the current daily word if one has been generated.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Daily word retrieved successfully.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No daily word found for today.',
+  })
+  async getDailyWord() {
+    return this.wordsService.getTodaysWord();
+  }
+
+  @Post('daily/trigger')
+  @ApiOperation({
+    summary: 'Trigger manual daily word generation',
+    description:
+      'Manually triggers the daily word generation process. Useful for testing or fallback if Cron fails.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Manual trigger executed successfully.',
+    schema: {
+      example: { status: 'Triggered' },
+    },
+  })
+  async triggerManual() {
+    await this.wordScheduler.ensureTodayWord();
+    return { status: 'Triggered' };
+  }
+
+  @Get('daily/health')
+  @ApiOperation({
+    summary: 'Check daily word job health status',
+    description: 'Returns status indicating whether the daily word job has run today.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Health check information returned successfully.',
+    schema: {
+      example: {
+        success: true,
+        message: 'Daily word already exists for today',
+        date: '2025-07-23T00:00:00.000Z',
+        word: 'vigor',
+      },
+    },
+  })
+  async healthCheck() {
+    return this.wordsService.getHealthStatus();
+  }
+
 }

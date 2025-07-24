@@ -10,6 +10,7 @@ import { GamesModule } from './games/games.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { GameSessionsModule } from './game-sessions/game-sessions.module';
 import { WordsModule } from './dewordle/words/words.module';
+import { ScheduleModule } from '@nestjs/schedule';
 // TODO: import { WordsModule } from './dewordle/words/words.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { WordsModule } from './dewordle/words/words.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
     GameSessionsModule,
     TypeOrmModule.forRootAsync({
