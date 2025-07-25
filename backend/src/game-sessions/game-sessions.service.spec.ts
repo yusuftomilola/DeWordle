@@ -241,15 +241,30 @@ describe('GameSessionsService', () => {
 
     it('should return guest sessions by guestId', async () => {
       const mockSessions = [{ id: 1, score: 100, user: null }];
-      mockSessionRepo.find.mockResolvedValue(mockSessions);
+
+      const qb: any = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockSessions),
+      };
+
+      mockSessionRepo.createQueryBuilder = jest.fn().mockReturnValue(qb);
 
       const result = await service.getUserSessions(null, 'guest123');
 
-      expect(mockSessionRepo.find).toHaveBeenCalledWith({
-        where: { user: null, metadata: { guestId: 'guest123' } },
-        relations: ['game'],
-        order: { playedAt: 'DESC' },
-      });
+      expect(mockSessionRepo.createQueryBuilder).toHaveBeenCalledWith(
+        'session',
+      );
+      expect(qb.leftJoinAndSelect).toHaveBeenCalledWith('session.game', 'game');
+      expect(qb.where).toHaveBeenCalledWith('session.user IS NULL');
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        "session.metadata->>'guestId' = :guestId",
+        { guestId: 'guest123' },
+      );
+      expect(qb.orderBy).toHaveBeenCalledWith('session.playedAt', 'DESC');
+
       expect(result).toEqual(mockSessions);
     });
 
