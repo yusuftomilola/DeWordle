@@ -10,6 +10,7 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../auth/entities/user.entity';
 import { WordsService } from '../dewordle/words/words.service';
 import { EnrichedWord } from '../utils/dictionary.helper';
+import { mock } from 'node:test';
 
 describe('GameSessionsService', () => {
   let service: GameSessionsService;
@@ -210,6 +211,37 @@ describe('GameSessionsService', () => {
         false,
       );
     });
+
+    it('should generate and store a solution when creating a session', async () => {
+      mockGameRepo.findOne.mockResolvedValue(mockGame);
+      mockSessionRepo.create.mockReturnValue({
+        ...createDto,
+        game: mockGame,
+        user: mockUser,
+        solution: mockRandomWord.word,
+      });
+      mockSessionRepo.save.mockResolvedValue({
+        id: 1,
+        ...createDto,
+        game: mockGame,
+        user: mockUser,
+        solution: mockRandomWord.word,
+      });
+
+      const result = await service.create(createDto, mockUser as User);
+
+      expect(mockSessionRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          game: mockGame,
+          user: mockUser,
+          solution: mockRandomWord.word,
+        }),
+      );
+
+      expect(mockSessionRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ solution: mockRandomWord.word }),
+      );
+    });
   });
 
   describe('getUserSessions', () => {
@@ -272,6 +304,73 @@ describe('GameSessionsService', () => {
       const result = await service.getUserSessions(null);
 
       expect(result).toEqual([]);
+    });
+
+    describe('getUserSessions - solution never leaked', () => {
+      const mockUser = { id: 1 } as User;
+      const playedAt = new Date('2025-07-25T12:00:00Z');
+
+      let gs: GameSession;
+
+      beforeEach(() => {
+        gs = Object.assign(new GameSession(), {
+          id: 42,
+          score: 7,
+          durationSeconds: 15,
+          metadata: { foo: 'bar' },
+          playedAt,
+          game: { id: 99, name: 'Test Game' } as Game,
+          solution: 'HELLO',
+        });
+      });
+
+      it('authenticated: strips solution from .find() results', async () => {
+        mockSessionRepo.find.mockResolvedValue([gs]);
+
+        const sessions = await service.getUserSessions(mockUser, undefined);
+
+        const out = JSON.parse(JSON.stringify(sessions[0]));
+
+        expect(out).not.toHaveProperty('solution');
+
+        expect(out).toEqual(
+          expect.objectContaining({
+            id: 42,
+            score: 7,
+            durationSeconds: 15,
+            metadata: { foo: 'bar' },
+            playedAt: playedAt.toISOString(),
+            game: { id: 99, name: 'Test Game' },
+          }),
+        );
+      });
+
+      it('guest: strips solution from query-builder results', async () => {
+        const qb: any = {
+          leftJoinAndSelect: jest.fn().mockReturnThis(),
+          where: jest.fn().mockReturnThis(),
+          andWhere: jest.fn().mockReturnThis(),
+          orderBy: jest.fn().mockReturnThis(),
+          getMany: jest.fn().mockResolvedValue([gs]),
+        };
+        mockSessionRepo.createQueryBuilder = jest.fn().mockReturnValue(qb);
+
+        const sessions = await service.getUserSessions(null, 'guest-123');
+
+        const out = JSON.parse(JSON.stringify(sessions[0]));
+
+        expect(out).not.toHaveProperty('solution');
+        expect(out).toEqual(
+          expect.objectContaining({
+            id: 42,
+            score: 7,
+            durationSeconds: 15,
+            metadata: { foo: 'bar' },
+            playedAt: playedAt.toISOString(),
+            game: { id: 99, name: 'Test Game' },
+          }),
+        );
+      });
     });
   });
 });
