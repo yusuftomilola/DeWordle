@@ -6,11 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GameSession } from './entities/game-session.entity';
-import { Game } from 'src/games/entities/game.entity';
+import { Game } from '../games/entities/game.entity';
 import { CreateSessionDto } from './dto/create-session.dto';
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../auth/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
+import { WordsService } from '../dewordle/words/words.service';
 
 @Injectable()
 export class GameSessionsService {
@@ -21,6 +22,7 @@ export class GameSessionsService {
     private gameRepo: Repository<Game>,
     private eventEmitter: EventEmitter2,
     private leaderboardService: LeaderboardService,
+    private wordService: WordsService,
   ) {}
 
   async create(createDto: CreateSessionDto, user: User | null) {
@@ -35,11 +37,14 @@ export class GameSessionsService {
       throw new BadRequestException('Invalid score for guest session');
     }
 
+    const { word: solution } = await this.wordService.getRandomWord();
+
     // Create session with user or null for guest
     const session = this.sessionRepo.create({
       ...createDto,
       game,
       ...(user ? { user } : {}),
+      solution,
     });
 
     const saved = await this.sessionRepo.save(session);
