@@ -8,6 +8,8 @@ import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../auth/entities/user.entity';
+import { WordsService } from '../dewordle/words/words.service';
+import { EnrichedWord } from '../utils/dictionary.helper';
 
 describe('GameSessionsService', () => {
   let service: GameSessionsService;
@@ -15,6 +17,13 @@ describe('GameSessionsService', () => {
   let mockGameRepo: any;
   let mockEventEmitter: any;
   let mockLeaderboardService: any;
+  let mockWordsService: any;
+
+  const mockRandomWord: EnrichedWord = {
+    id: 'id',
+    word: 'apple',
+    isEnriched: false,
+  };
 
   beforeEach(async () => {
     mockSessionRepo = {
@@ -35,6 +44,10 @@ describe('GameSessionsService', () => {
       upsertEntry: jest.fn(),
     };
 
+    mockWordsService = {
+      getRandomWord: jest.fn().mockResolvedValue(mockRandomWord),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GameSessionsService,
@@ -53,6 +66,10 @@ describe('GameSessionsService', () => {
         {
           provide: LeaderboardService,
           useValue: mockLeaderboardService,
+        },
+        {
+          provide: WordsService,
+          useValue: mockWordsService,
         },
       ],
     }).compile();
