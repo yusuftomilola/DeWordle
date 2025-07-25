@@ -122,6 +122,7 @@ describe('GameSessionsService', () => {
         ...createDto,
         game: mockGame,
         user: mockUser,
+        solution: mockRandomWord.word,
       });
       expect(mockLeaderboardService.upsertEntry).toHaveBeenCalledWith(
         mockUser,
@@ -156,6 +157,7 @@ describe('GameSessionsService', () => {
       expect(mockSessionRepo.create).toHaveBeenCalledWith({
         ...createDto,
         game: mockGame,
+        solution: mockRandomWord.word,
       });
       expect(mockLeaderboardService.upsertEntry).not.toHaveBeenCalled();
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
