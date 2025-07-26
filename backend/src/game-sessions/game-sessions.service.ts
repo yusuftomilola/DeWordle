@@ -14,6 +14,7 @@ import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { WordsService } from '../dewordle/words/words.service';
 import { CreateGuessDto } from './dto/create-guess.dto';
 import { evaluateGuess } from 'src/dewordle/wordle.engine';
+import { GuessHistory } from './entities/guess-history.entity';
 
 @Injectable()
 export class GameSessionsService {
@@ -25,6 +26,8 @@ export class GameSessionsService {
     private eventEmitter: EventEmitter2,
     private leaderboardService: LeaderboardService,
     private wordService: WordsService,
+    @InjectRepository(GuessHistory)
+    private readonly guessHistoryRepo: Repository<GuessHistory>,
   ) {}
 
   async create(createDto: CreateSessionDto, user: User | null) {
@@ -115,9 +118,13 @@ export class GameSessionsService {
     const session = await (user
       ? this.sessionRepo.findOne({
           where: { id: sessionId, user },
+          relations: ['history'],
+          select: ['id', 'solution'],
         })
       : this.sessionRepo
           .createQueryBuilder('session')
+          .addSelect('session.solution')
+          .leftJoinAndSelect('session.history', 'guess_history')
           .where('session.id = :sessionId', { sessionId })
           .andWhere('session.user IS NULL')
           .andWhere("session.metadata->>'guestId' = :guestId", { guestId })
