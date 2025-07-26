@@ -132,10 +132,24 @@ export class GameSessionsService {
 
     if (!session) throw new NotFoundException('Session not found');
 
-    const sessionGuess = evaluateGuess(guess, session.solution);
+    const result = evaluateGuess(guess, session.solution);
+
+    const attemptNumber = session.history.length + 1;
+
+    const newGuess = this.guessHistoryRepo.create({
+      session,
+      guess,
+      result,
+      attemptNumber,
+    });
+
+    session.history.push(newGuess);
 
     await this.sessionRepo.save(session);
 
-    return session;
+    return {
+      evaluation: result,
+      attemptNumber,
+    };
   }
 }
