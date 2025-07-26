@@ -12,6 +12,7 @@ import { User } from '../auth/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { WordsService } from '../dewordle/words/words.service';
+import { CreateGuessDto } from './dto/create-guess.dto';
 
 @Injectable()
 export class GameSessionsService {
@@ -92,5 +93,25 @@ export class GameSessionsService {
     }
 
     return [];
+  }
+
+  /**
+   * Attempt a guess for a specific session
+   * @param sessionId   - Session ID
+   * @param guess       - User's guess
+   * @param user        - User entity for authenticated users, null for guests
+   */
+  async guess(
+    sessionId: GameSession['id'],
+    guess: CreateGuessDto['guess'],
+    user: User | null,
+  ) {
+    // Validate Session Exists
+    const session = await this.sessionRepo.findOne({
+      where: { id: sessionId, user },
+    });
+    if (!session) throw new NotFoundException('Session not found');
+
+    return session;
   }
 }
