@@ -4,9 +4,11 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Game } from '../../games/entities/game.entity';
 import { User } from '../../auth/entities/user.entity';
+import { GuessHistory } from './guess-history.entity';
 
 @Entity()
 export class GameSession {
@@ -33,6 +35,12 @@ export class GameSession {
 
   @Column({ length: 5, select: false })
   solution: string;
+
+  @OneToMany(() => GuessHistory, (guess) => guess.session, {
+    cascade: ['insert'],
+    eager: false,
+  })
+  history: GuessHistory[];
 
   toJSON() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
