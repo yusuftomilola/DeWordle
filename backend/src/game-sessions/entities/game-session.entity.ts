@@ -9,7 +9,7 @@ import {
 import { Game } from '../../games/entities/game.entity';
 import { User } from '../../auth/entities/user.entity';
 import { GuessHistory } from './guess-history.entity';
-import { GameSessionStatus } from '../game-session.constants';
+import { GameSessionStatus } from '../game-sessions.constants';
 
 @Entity()
 export class GameSession {

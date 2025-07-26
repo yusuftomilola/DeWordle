@@ -15,7 +15,7 @@ import { WordsService } from '../dewordle/words/words.service';
 import { CreateGuessDto } from './dto/create-guess.dto';
 import { evaluateGuess, LetterEvaluation } from '../dewordle/wordle.engine';
 import { GuessHistory } from './entities/guess-history.entity';
-import { GameSessionStatus, MAX_ATTEMPTS } from './game-session.constants';
+import { GameSessionStatus, MAX_ATTEMPTS } from './game-sessions.constants';
 
 @Injectable()
 export class GameSessionsService {
