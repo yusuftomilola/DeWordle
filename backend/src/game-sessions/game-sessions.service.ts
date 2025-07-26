@@ -105,11 +105,23 @@ export class GameSessionsService {
     sessionId: GameSession['id'],
     guess: CreateGuessDto['guess'],
     user: User | null,
+    guestId?: string,
   ) {
+    if (!user && !guestId) {
+      throw new BadRequestException('GuestId is required for guest sessions');
+    }
     // Validate Session Exists
-    const session = await this.sessionRepo.findOne({
-      where: { id: sessionId, user },
-    });
+    const session = await (user
+      ? this.sessionRepo.findOne({
+          where: { id: sessionId, user },
+        })
+      : this.sessionRepo
+          .createQueryBuilder('session')
+          .where('session.id = :sessionId', { sessionId })
+          .andWhere('session.user IS NULL')
+          .andWhere("session.metadata->>'guestId' = :guestId", { guestId })
+          .getOne());
+
     if (!session) throw new NotFoundException('Session not found');
 
     return session;
