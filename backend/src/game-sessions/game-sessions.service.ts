@@ -13,7 +13,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { WordsService } from '../dewordle/words/words.service';
 import { CreateGuessDto } from './dto/create-guess.dto';
-import { evaluateGuess, LetterEvaluation } from 'src/dewordle/wordle.engine';
+import { evaluateGuess, LetterEvaluation } from '../dewordle/wordle.engine';
 import { GuessHistory } from './entities/guess-history.entity';
 import { GameSessionStatus, MAX_ATTEMPTS } from './game-session.constants';
 
