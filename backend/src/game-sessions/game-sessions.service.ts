@@ -13,6 +13,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { WordsService } from '../dewordle/words/words.service';
 import { CreateGuessDto } from './dto/create-guess.dto';
+import { evaluateGuess } from 'src/dewordle/wordle.engine';
 
 @Injectable()
 export class GameSessionsService {
@@ -123,6 +124,10 @@ export class GameSessionsService {
           .getOne());
 
     if (!session) throw new NotFoundException('Session not found');
+
+    const sessionGuess = evaluateGuess(guess, session.solution);
+
+    await this.sessionRepo.save(session);
 
     return session;
   }
