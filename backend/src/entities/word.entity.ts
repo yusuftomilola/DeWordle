@@ -1,3 +1,4 @@
+import { WordDifficulty } from '../dewordle/enums/wordDifficulty.enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -12,7 +13,7 @@ export class Word {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, length: 5 })
+  @Column({ unique: true, length: 10 })
   @Index()
   word: string;
 
@@ -33,6 +34,13 @@ export class Word {
 
   @Column({ type: 'date', nullable: true })
   dailyDate?: Date;
+
+  @Column({
+    type: 'enum',
+    enum: WordDifficulty,
+    nullable: true,
+  })
+  difficulty: WordDifficulty;
 
   @CreateDateColumn()
   createdAt: Date;
