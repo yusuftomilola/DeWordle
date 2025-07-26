@@ -17,7 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: '.env.development',
     }),
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),

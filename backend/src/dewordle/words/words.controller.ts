@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -11,6 +12,8 @@ import { WordsService } from './words.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { EnrichedWord } from '../../utils/dictionary.helper';
 import { WordScheduler } from './word.scheduler';
+import { CreateWordDto } from './dto/create-word.dto';
+import { WordResponseDto } from './dto/word-response.dto';
 
 @Controller('words')
 export class WordsController {
@@ -73,7 +76,7 @@ export class WordsController {
 
   @Get('daily')
   @ApiOperation({
-    summary: 'Get today\'s daily word',
+    summary: "Get today's daily word",
     description: 'Returns the current daily word if one has been generated.',
   })
   @ApiResponse({
@@ -109,7 +112,8 @@ export class WordsController {
   @Get('daily/health')
   @ApiOperation({
     summary: 'Check daily word job health status',
-    description: 'Returns status indicating whether the daily word job has run today.',
+    description:
+      'Returns status indicating whether the daily word job has run today.',
   })
   @ApiResponse({
     status: 200,
@@ -127,4 +131,10 @@ export class WordsController {
     return this.wordsService.getHealthStatus();
   }
 
+  @Post()
+  @ApiOperation({ summary: 'Create a new word with difficulty' })
+  @ApiResponse({ status: 201, type: WordResponseDto })
+  create(@Body() dto: CreateWordDto) {
+    return this.wordsService.createWord(dto);
+  }
 }
