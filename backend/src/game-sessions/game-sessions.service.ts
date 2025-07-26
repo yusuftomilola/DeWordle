@@ -13,8 +13,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { WordsService } from '../dewordle/words/words.service';
 import { CreateGuessDto } from './dto/create-guess.dto';
-import { evaluateGuess } from 'src/dewordle/wordle.engine';
+import { evaluateGuess, LetterEvaluation } from 'src/dewordle/wordle.engine';
 import { GuessHistory } from './entities/guess-history.entity';
+import { GameSessionStatus, MAX_ATTEMPTS } from './game-session.constants';
 
 @Injectable()
 export class GameSessionsService {
@@ -143,13 +144,44 @@ export class GameSessionsService {
       attemptNumber,
     });
 
+    const status = this.sessionStatus(result, attemptNumber, MAX_ATTEMPTS);
+
     session.history.push(newGuess);
 
-    await this.sessionRepo.save(session);
+    await this.sessionRepo.save({ ...session, status });
 
     return {
       evaluation: result,
       attemptNumber,
+      status,
     };
+  }
+
+  /**
+   * Determine the status of a specific session, bases on latest guess and attempts number
+   * @param evaluation  - Evaluation of the latest guess
+   * @param attemptNumber - Number of attempts
+   * @param maxAttempts - Maximum number of attempts
+   */
+
+  private sessionStatus(
+    evaluation: LetterEvaluation[],
+    attemptNumber: number,
+    maxAttempts: number,
+  ) {
+    // even if the solution is correct, the game is lost if the player has made too many attempts
+    if (attemptNumber > maxAttempts) {
+      return GameSessionStatus.LOST;
+    }
+
+    if (evaluation.every((e) => e.status === 'correct')) {
+      return GameSessionStatus.WON;
+    }
+
+    if (attemptNumber === maxAttempts) {
+      return GameSessionStatus.LOST;
+    }
+
+    return GameSessionStatus.IN_PROGRESS;
   }
 }

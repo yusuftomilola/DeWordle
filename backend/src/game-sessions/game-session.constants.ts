@@ -3,3 +3,5 @@ export enum GameSessionStatus {
   WON = 'WON',
   LOST = 'LOST',
 }
+
+export const MAX_ATTEMPTS = 6;
