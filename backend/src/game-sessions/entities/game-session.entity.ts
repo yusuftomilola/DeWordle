@@ -9,6 +9,7 @@ import {
 import { Game } from '../../games/entities/game.entity';
 import { User } from '../../auth/entities/user.entity';
 import { GuessHistory } from './guess-history.entity';
+import { GameSessionStatus } from '../game-session.constants';
 
 @Entity()
 export class GameSession {
@@ -41,6 +42,13 @@ export class GameSession {
     eager: false,
   })
   history: GuessHistory[];
+
+  @Column({
+    type: 'enum',
+    enum: GameSessionStatus,
+    default: GameSessionStatus.IN_PROGRESS,
+  })
+  status: GameSessionStatus;
 
   toJSON() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
