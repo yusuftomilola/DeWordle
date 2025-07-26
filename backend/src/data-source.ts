@@ -7,6 +7,7 @@ import { GameSession } from './game-sessions/entities/game-session.entity';
 import { User } from './auth/entities/user.entity';
 import { Game } from './games/entities/game.entity';
 import * as path from 'path';
+import { GuessHistory } from './game-sessions/entities/guess-history.entity';
 
 // Load .env.development for local development, fallback to .env
 const envPath =
@@ -31,7 +32,7 @@ export const AppDataSource = new DataSource({
           rejectUnauthorized: false,
         }
       : false,
-  entities: [TestEntity, Word, Game, User, GameSession],
+  entities: [TestEntity, Word, Game, User, GameSession, GuessHistory],
   migrations: ['src/migrations/*{.ts,.js}'],
   synchronize: false,
   logging: true,
