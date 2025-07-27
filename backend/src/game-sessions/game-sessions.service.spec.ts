@@ -357,11 +357,11 @@ describe('GameSessionsService', () => {
 
         const sessions = await service.getUserSessions(mockUser, undefined);
 
-        const out = JSON.parse(JSON.stringify(sessions[0]));
+        const result = JSON.parse(JSON.stringify(sessions[0]));
 
-        expect(out).not.toHaveProperty('solution');
+        expect(result).not.toHaveProperty('solution');
 
-        expect(out).toEqual(
+        expect(result).toEqual(
           expect.objectContaining({
             id: 42,
             score: 7,
@@ -385,10 +385,10 @@ describe('GameSessionsService', () => {
 
         const sessions = await service.getUserSessions(null, 'guest-123');
 
-        const out = JSON.parse(JSON.stringify(sessions[0]));
+        const result = JSON.parse(JSON.stringify(sessions[0]));
 
-        expect(out).not.toHaveProperty('solution');
-        expect(out).toEqual(
+        expect(result).not.toHaveProperty('solution');
+        expect(result).toEqual(
           expect.objectContaining({
             id: 42,
             score: 7,
@@ -514,7 +514,7 @@ describe('GameSessionsService', () => {
 
         (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
 
-        const out = await service.guess(1, 'XYZWV', mockUser);
+        const result = await service.guess(1, 'XYZWV', mockUser);
 
         expect(evaluateGuess).toHaveBeenCalledWith('XYZWV', dummySolution);
         expect(mockGuessHistoryRepo.create).toHaveBeenCalledWith({
@@ -527,7 +527,7 @@ describe('GameSessionsService', () => {
           ...session,
           status: GameSessionStatus.IN_PROGRESS,
         });
-        expect(out).toEqual({
+        expect(result).toEqual({
           evaluation,
           attemptNumber: 1,
           status: GameSessionStatus.IN_PROGRESS,
@@ -547,9 +547,9 @@ describe('GameSessionsService', () => {
 
         (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
 
-        const out = await service.guess(1, dummySolution, mockUser);
-        expect(out.status).toBe(GameSessionStatus.WON);
-        expect(out.attemptNumber).toBe(2);
+        const result = await service.guess(1, dummySolution, mockUser);
+        expect(result.status).toBe(GameSessionStatus.WON);
+        expect(result.attemptNumber).toBe(2);
       });
 
       it('returns LOST on last allowed attempt if still wrong', async () => {
@@ -565,9 +565,9 @@ describe('GameSessionsService', () => {
 
         (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
 
-        const out = await service.guess(1, 'XXXXX', mockUser);
-        expect(out.attemptNumber).toBe(MAX_ATTEMPTS);
-        expect(out.status).toBe(GameSessionStatus.LOST);
+        const result = await service.guess(1, 'XXXXX', mockUser);
+        expect(result.attemptNumber).toBe(MAX_ATTEMPTS);
+        expect(result.status).toBe(GameSessionStatus.LOST);
       });
 
       it('returns LOST when exceeding max attempts even if correct', async () => {
@@ -587,9 +587,9 @@ describe('GameSessionsService', () => {
 
         (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
 
-        const out = await service.guess(1, dummySolution, mockUser);
-        expect(out.attemptNumber).toBe(MAX_ATTEMPTS + 1);
-        expect(out.status).toBe(GameSessionStatus.LOST);
+        const result = await service.guess(1, dummySolution, mockUser);
+        expect(result.attemptNumber).toBe(MAX_ATTEMPTS + 1);
+        expect(result.status).toBe(GameSessionStatus.LOST);
       });
 
       describe('game session is not in progress', () => {
@@ -653,7 +653,7 @@ describe('GameSessionsService', () => {
 
         (mockSessionRepo.createQueryBuilder as jest.Mock).mockReturnValue(qb);
 
-        const out = await service.guess(2, 'HELLO', null, 'guest987');
+        const result = await service.guess(2, 'HELLO', null, 'guest987');
 
         expect(qb.where).toHaveBeenCalledWith('session.id = :sessionId', {
           sessionId: 2,
@@ -662,7 +662,7 @@ describe('GameSessionsService', () => {
           "session.metadata->>'guestId' = :guestId",
           { guestId: 'guest987' },
         );
-        expect(out).toEqual({
+        expect(result).toEqual({
           evaluation: evaluation,
           attemptNumber: 1,
           status: GameSessionStatus.IN_PROGRESS,
