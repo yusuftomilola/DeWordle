@@ -447,7 +447,7 @@ describe('GameSessionsService', () => {
         );
 
         expect(mockSessionRepo.findOne).toHaveBeenCalledWith({
-          where: { id: 1, user: mockUser },
+          where: { id: 1, user: { id: mockUser.id } },
           relations: ['history'],
           select: ['id', 'solution'],
         });
