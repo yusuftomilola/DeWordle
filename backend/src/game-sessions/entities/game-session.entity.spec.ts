@@ -1,3 +1,4 @@
+import { getMetadataArgsStorage } from 'typeorm';
 import { GameSession } from './game-session.entity';
 
 describe('GameSession entity serialization', () => {
@@ -20,5 +21,15 @@ describe('GameSession entity serialization', () => {
 
     expect(serialised).toHaveProperty('id', 42);
     expect(serialised).toHaveProperty('score', 10);
+  });
+});
+
+describe('GameSession entity relations', () => {
+  it('should register a OneToMany relation to GuessHistory', () => {
+    const relations = getMetadataArgsStorage().relations.filter(
+      (r) => r.target === GameSession && r.propertyName === 'history',
+    );
+    expect(relations).toHaveLength(1);
+    expect(relations[0].relationType).toBe('one-to-many');
   });
 });
