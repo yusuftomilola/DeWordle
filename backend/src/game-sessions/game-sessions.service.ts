@@ -118,7 +118,7 @@ export class GameSessionsService {
     // Validate Session Exists
     const session = await (user
       ? this.sessionRepo.findOne({
-          where: { id: sessionId, user },
+          where: { id: sessionId, user: { id: user.id } },
           relations: ['history'],
           select: ['id', 'solution'],
         })
