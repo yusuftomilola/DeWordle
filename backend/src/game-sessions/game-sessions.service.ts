@@ -133,7 +133,17 @@ export class GameSessionsService {
 
     if (!session) throw new NotFoundException('Session not found');
 
-    const result = evaluateGuess(guess, session.solution);
+    let result: LetterEvaluation[];
+
+    try {
+      result = evaluateGuess(guess, session.solution);
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? `Invalid guess: ${error.message}`
+          : 'Invalid guess';
+      throw new BadRequestException(message);
+    }
 
     const attemptNumber = session.history.length + 1;
 
