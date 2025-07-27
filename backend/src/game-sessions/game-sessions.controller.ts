@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Req, UseGuards, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard.guard';
 import { Request } from 'express';
@@ -23,7 +31,7 @@ export class GameSessionsController {
   /**
    * Create a game session for guest users
    * Sessions are saved anonymously and excluded from leaderboard/stats
-   * 
+   *
    * @param dto - Session data including optional guestId in metadata
    * @returns Created session without user association
    */
