@@ -10,7 +10,22 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../auth/entities/user.entity';
 import { WordsService } from '../dewordle/words/words.service';
 import { EnrichedWord } from '../utils/dictionary.helper';
-import { mock } from 'node:test';
+import { Repository } from 'typeorm';
+import { GuessHistory } from './entities/guess-history.entity';
+import { evaluateGuess, LetterEvaluation } from '../dewordle/wordle.engine';
+import { GameSessionStatus } from './game-sessions.constants';
+
+jest.mock('../dewordle/wordle.engine', () => {
+  const actual = jest.requireActual<typeof import('../dewordle/wordle.engine')>(
+    '../dewordle/wordle.engine',
+  );
+  return {
+    ...actual,
+    evaluateGuess: jest.fn() as jest.MockedFunction<
+      typeof actual.evaluateGuess
+    >,
+  };
+});
 
 describe('GameSessionsService', () => {
   let service: GameSessionsService;
@@ -19,6 +34,7 @@ describe('GameSessionsService', () => {
   let mockEventEmitter: any;
   let mockLeaderboardService: any;
   let mockWordsService: any;
+  let mockGuessHistoryRepo: Partial<Repository<GuessHistory>>;
 
   const mockRandomWord: EnrichedWord = {
     id: 'id',
@@ -27,10 +43,14 @@ describe('GameSessionsService', () => {
   };
 
   beforeEach(async () => {
+    jest.resetAllMocks();
+
     mockSessionRepo = {
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
+      findOne: jest.fn(),
+      createQueryBuilder: jest.fn(),
     };
 
     mockGameRepo = {
@@ -49,6 +69,10 @@ describe('GameSessionsService', () => {
       getRandomWord: jest.fn().mockResolvedValue(mockRandomWord),
     };
 
+    mockGuessHistoryRepo = {
+      create: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GameSessionsService,
@@ -59,6 +83,10 @@ describe('GameSessionsService', () => {
         {
           provide: getRepositoryToken(Game),
           useValue: mockGameRepo,
+        },
+        {
+          provide: getRepositoryToken(GuessHistory),
+          useValue: mockGuessHistoryRepo,
         },
         {
           provide: EventEmitter2,
@@ -370,6 +398,247 @@ describe('GameSessionsService', () => {
             game: { id: 99, name: 'Test Game' },
           }),
         );
+      });
+    });
+  });
+  describe('guess()', () => {
+    const mockUser = {
+      id: 42,
+      username: 'username',
+      email: 'email@email.com',
+      password: 'password',
+      role: 'user',
+      sessions: [],
+      walletAddress: 'walletAddress',
+      avatarUrl: 'avatarUrl',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      toJSON() {
+        const { toJSON, ...rest } = this;
+        return rest;
+      },
+    } satisfies User;
+
+    const mockGame = {
+      id: 1,
+      name: 'Test Game',
+      slug: 'test-game',
+      description: 'Test Game Description',
+      sessions: [],
+      is_active: true,
+      type: 'wordle',
+      created_at: new Date(),
+    } satisfies Game;
+    const MAX_ATTEMPTS = 6;
+    const dummySolution = 'APPLE';
+
+    describe('failure scenarios', () => {
+      it('throws BadRequestException if no user and no guestId', async () => {
+        await expect(service.guess(1, 'GUESS', null)).rejects.toThrow(
+          BadRequestException,
+        );
+      });
+
+      it('throws NotFoundException when session not found for user', async () => {
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(null);
+
+        await expect(service.guess(1, 'GUESS', mockUser)).rejects.toThrow(
+          NotFoundException,
+        );
+
+        expect(mockSessionRepo.findOne).toHaveBeenCalledWith({
+          where: { id: 1, user: mockUser },
+          relations: ['history'],
+          select: ['id', 'solution'],
+        });
+      });
+
+      it('throws NotFoundException when session not found for guest', async () => {
+        const qb: any = {
+          addSelect: jest.fn().mockReturnThis(),
+          leftJoinAndSelect: jest.fn().mockReturnThis(),
+          where: jest.fn().mockReturnThis(),
+          andWhere: jest.fn().mockReturnThis(),
+          getOne: jest.fn().mockResolvedValue(null),
+        };
+        (mockSessionRepo.createQueryBuilder as jest.Mock).mockReturnValue(qb);
+
+        await expect(
+          service.guess(1, 'GUESS', null, 'guestXYZ'),
+        ).rejects.toThrow(NotFoundException);
+
+        expect(qb.where).toHaveBeenCalledWith('session.id = :sessionId', {
+          sessionId: 1,
+        });
+        expect(qb.andWhere).toHaveBeenCalledWith(
+          "session.metadata->>'guestId' = :guestId",
+          { guestId: 'guestXYZ' },
+        );
+      });
+    });
+
+    function mockEvaluate(result: LetterEvaluation[]) {
+      (evaluateGuess as jest.Mock).mockReturnValue(result);
+    }
+
+    describe('when a session is found (user)', () => {
+      let baseSession: GameSession;
+
+      beforeEach(() => {
+        baseSession = Object.assign(new GameSession(), {
+          id: 1,
+          solution: dummySolution,
+          history: [],
+          user: mockUser,
+          game: mockGame,
+          score: 0,
+          durationSeconds: 0,
+          metadata: {},
+          playedAt: new Date(),
+          status: GameSessionStatus.IN_PROGRESS,
+        });
+      });
+
+      it('returns IN_PROGRESS on wrong guess before max attempts', async () => {
+        const evaluation: LetterEvaluation[] = [
+          { letter: 'X', status: 'absent' },
+          { letter: 'Y', status: 'absent' },
+          { letter: 'Z', status: 'absent' },
+          { letter: 'W', status: 'absent' },
+          { letter: 'V', status: 'absent' },
+        ];
+
+        mockEvaluate(evaluation);
+
+        const session = baseSession;
+
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+        const out = await service.guess(1, 'XYZWV', mockUser);
+
+        expect(evaluateGuess).toHaveBeenCalledWith('XYZWV', dummySolution);
+        expect(mockGuessHistoryRepo.create).toHaveBeenCalledWith({
+          session,
+          guess: 'XYZWV',
+          result: evaluation,
+          attemptNumber: 1,
+        });
+        expect(mockSessionRepo.save).toHaveBeenCalledWith({
+          ...session,
+          status: GameSessionStatus.IN_PROGRESS,
+        });
+        expect(out).toEqual({
+          evaluation,
+          attemptNumber: 1,
+          status: GameSessionStatus.IN_PROGRESS,
+        });
+      });
+
+      it('returns WON when guess is completely correct', async () => {
+        const allCorrect = dummySolution
+          .split('')
+          .map((l) => ({ letter: l, status: 'correct' as const }));
+        mockEvaluate(allCorrect);
+
+        const session: GameSession = Object.assign(new GameSession(), {
+          ...baseSession,
+          history: Array.from({ length: 1 }, () => new GuessHistory()),
+        });
+
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+        const out = await service.guess(1, dummySolution, mockUser);
+        expect(out.status).toBe(GameSessionStatus.WON);
+        expect(out.attemptNumber).toBe(2);
+      });
+
+      it('returns LOST on last allowed attempt if still wrong', async () => {
+        mockEvaluate([{ letter: 'A', status: 'absent' as const }]);
+
+        const session: GameSession = Object.assign(new GameSession(), {
+          ...baseSession,
+          history: Array.from(
+            { length: MAX_ATTEMPTS - 1 },
+            () => new GuessHistory(),
+          ),
+        });
+
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+        const out = await service.guess(1, 'XXXXX', mockUser);
+        expect(out.attemptNumber).toBe(MAX_ATTEMPTS);
+        expect(out.status).toBe(GameSessionStatus.LOST);
+      });
+
+      it('returns LOST when exceeding max attempts even if correct', async () => {
+        const allCorrect = dummySolution
+          .split('')
+          .map((l) => ({ letter: l, status: 'correct' as const }));
+
+        mockEvaluate(allCorrect);
+
+        const session: GameSession = Object.assign(new GameSession(), {
+          ...baseSession,
+          history: Array.from(
+            { length: MAX_ATTEMPTS },
+            () => new GuessHistory(),
+          ),
+        });
+
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+        const out = await service.guess(1, dummySolution, mockUser);
+        expect(out.attemptNumber).toBe(MAX_ATTEMPTS + 1);
+        expect(out.status).toBe(GameSessionStatus.LOST);
+      });
+
+      it('rejects a non-5-letter guess', async () => {
+        (evaluateGuess as jest.Mock).mockImplementationOnce(() => {
+          throw new Error();
+        });
+
+        const session = baseSession;
+
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+        await expect(service.guess(1, '', mockUser)).rejects.toThrow(
+          BadRequestException,
+        );
+      });
+
+      it('allows guest path and returns IN_PROGRESS', async () => {
+        const evaluation: LetterEvaluation[] = [
+          { letter: 'A', status: 'absent' as const },
+        ];
+
+        mockEvaluate(evaluation);
+
+        const session = baseSession;
+
+        const qb: any = {
+          addSelect: jest.fn().mockReturnThis(),
+          leftJoinAndSelect: jest.fn().mockReturnThis(),
+          where: jest.fn().mockReturnThis(),
+          andWhere: jest.fn().mockReturnThis(),
+          getOne: jest.fn().mockResolvedValue(session),
+        };
+
+        (mockSessionRepo.createQueryBuilder as jest.Mock).mockReturnValue(qb);
+
+        const out = await service.guess(2, 'HELLO', null, 'guest987');
+
+        expect(qb.where).toHaveBeenCalledWith('session.id = :sessionId', {
+          sessionId: 2,
+        });
+        expect(qb.andWhere).toHaveBeenCalledWith(
+          "session.metadata->>'guestId' = :guestId",
+          { guestId: 'guest987' },
+        );
+        expect(out).toEqual({
+          evaluation: evaluation,
+          attemptNumber: 1,
+          status: GameSessionStatus.IN_PROGRESS,
+        });
       });
     });
   });
