@@ -592,6 +592,34 @@ describe('GameSessionsService', () => {
         expect(out.status).toBe(GameSessionStatus.LOST);
       });
 
+      describe('game session is not in progress', () => {
+        it('throws BadRequestException if game session status is won', async () => {
+          const session: GameSession = Object.assign(new GameSession(), {
+            ...baseSession,
+            status: GameSessionStatus.WON,
+          });
+
+          (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+          await expect(
+            service.guess(1, dummySolution, mockUser),
+          ).rejects.toThrow(BadRequestException);
+        });
+
+        it('throws BadRequestException if game session status is lost', async () => {
+          const session: GameSession = Object.assign(new GameSession(), {
+            ...baseSession,
+            status: GameSessionStatus.LOST,
+          });
+
+          (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+          await expect(
+            service.guess(1, dummySolution, mockUser),
+          ).rejects.toThrow(BadRequestException);
+        });
+      });
+
       it('rejects a non-5-letter guess', async () => {
         (evaluateGuess as jest.Mock).mockImplementationOnce(() => {
           throw new Error();
