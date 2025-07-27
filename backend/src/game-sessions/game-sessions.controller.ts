@@ -77,4 +77,13 @@ export class GameSessionsController {
 
     return await this.sessionService.guess(sessionId, guess, user);
   }
+
+  @Post(':id/guest-guess')
+  async submitGuessAsGuest(
+    @Param('id') sessionId: GameSession['id'],
+    @Body() { guess }: CreateGuessDto,
+    @Query('guestId') guestId: string,
+  ) {
+    return this.sessionService.guess(sessionId, guess, null, guestId);
+  }
 }
