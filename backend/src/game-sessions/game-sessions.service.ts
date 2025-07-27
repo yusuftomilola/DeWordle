@@ -133,6 +133,9 @@ export class GameSessionsService {
 
     if (!session) throw new NotFoundException('Session not found');
 
+    if (session.status !== GameSessionStatus.IN_PROGRESS)
+      throw new BadRequestException('Session is not in progress');
+
     let result: LetterEvaluation[];
 
     try {
