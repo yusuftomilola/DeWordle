@@ -12,6 +12,7 @@ import { User } from '../auth/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { WordsService } from '../dewordle/words/words.service';
+import { WordValidationService } from '../dewordle/words/word-validation.service';
 import { CreateGuessDto } from './dto/create-guess.dto';
 import { evaluateGuess, LetterEvaluation } from '../dewordle/wordle.engine';
 import { GuessHistory } from './entities/guess-history.entity';
@@ -27,6 +28,7 @@ export class GameSessionsService {
     private eventEmitter: EventEmitter2,
     private leaderboardService: LeaderboardService,
     private wordService: WordsService,
+    private wordValidationService: WordValidationService,
     @InjectRepository(GuessHistory)
     private readonly guessHistoryRepo: Repository<GuessHistory>,
   ) {}
@@ -135,6 +137,12 @@ export class GameSessionsService {
 
     if (session.status !== GameSessionStatus.IN_PROGRESS)
       throw new BadRequestException('Session is not in progress');
+
+    // Validate the guess is a valid word
+    const isValidWord = await this.wordValidationService.isValidWord(guess);
+    if (!isValidWord) {
+      throw new BadRequestException('Not in word list');
+    }
 
     let result: LetterEvaluation[];
 
