@@ -9,6 +9,7 @@ import { CreateSessionDto } from './dto/create-session.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../auth/entities/user.entity';
 import { WordsService } from '../dewordle/words/words.service';
+import { WordValidationService } from '../dewordle/words/word-validation.service';
 import { EnrichedWord } from '../utils/dictionary.helper';
 import { Repository } from 'typeorm';
 import { GuessHistory } from './entities/guess-history.entity';
@@ -34,6 +35,7 @@ describe('GameSessionsService', () => {
   let mockEventEmitter: any;
   let mockLeaderboardService: any;
   let mockWordsService: any;
+  let mockWordValidationService: any;
   let mockGuessHistoryRepo: Partial<Repository<GuessHistory>>;
 
   const mockRandomWord: EnrichedWord = {
@@ -69,6 +71,11 @@ describe('GameSessionsService', () => {
       getRandomWord: jest.fn().mockResolvedValue(mockRandomWord),
     };
 
+    mockWordValidationService = {
+      isValidWord: jest.fn(),
+      validateWords: jest.fn(),
+    };
+
     mockGuessHistoryRepo = {
       create: jest.fn(),
     };
@@ -99,6 +106,10 @@ describe('GameSessionsService', () => {
         {
           provide: WordsService,
           useValue: mockWordsService,
+        },
+        {
+          provide: WordValidationService,
+          useValue: mockWordValidationService,
         },
       ],
     }).compile();
@@ -509,6 +520,9 @@ describe('GameSessionsService', () => {
         ];
 
         mockEvaluate(evaluation);
+        (
+          mockWordValidationService as jest.Mocked<WordValidationService>
+        ).isValidWord.mockResolvedValue(true);
 
         const session = baseSession;
 
@@ -516,6 +530,10 @@ describe('GameSessionsService', () => {
 
         const result = await service.guess(1, 'XYZWV', mockUser);
 
+        expect(
+          (mockWordValidationService as jest.Mocked<WordValidationService>)
+            .isValidWord,
+        ).toHaveBeenCalledWith('XYZWV');
         expect(evaluateGuess).toHaveBeenCalledWith('XYZWV', dummySolution);
         expect(mockGuessHistoryRepo.create).toHaveBeenCalledWith({
           session,
@@ -539,6 +557,9 @@ describe('GameSessionsService', () => {
           .split('')
           .map((l) => ({ letter: l, status: 'correct' as const }));
         mockEvaluate(allCorrect);
+        (
+          mockWordValidationService as jest.Mocked<WordValidationService>
+        ).isValidWord.mockResolvedValue(true);
 
         const session: GameSession = Object.assign(new GameSession(), {
           ...baseSession,
@@ -554,6 +575,9 @@ describe('GameSessionsService', () => {
 
       it('returns LOST on last allowed attempt if still wrong', async () => {
         mockEvaluate([{ letter: 'A', status: 'absent' as const }]);
+        (
+          mockWordValidationService as jest.Mocked<WordValidationService>
+        ).isValidWord.mockResolvedValue(true);
 
         const session: GameSession = Object.assign(new GameSession(), {
           ...baseSession,
@@ -576,6 +600,9 @@ describe('GameSessionsService', () => {
           .map((l) => ({ letter: l, status: 'correct' as const }));
 
         mockEvaluate(allCorrect);
+        (
+          mockWordValidationService as jest.Mocked<WordValidationService>
+        ).isValidWord.mockResolvedValue(true);
 
         const session: GameSession = Object.assign(new GameSession(), {
           ...baseSession,
@@ -634,12 +661,40 @@ describe('GameSessionsService', () => {
         );
       });
 
+      it('rejects an invalid word with "Not in word list" message', async () => {
+        const session = baseSession;
+        (
+          mockWordValidationService as jest.Mocked<WordValidationService>
+        ).isValidWord.mockResolvedValue(false);
+
+        (mockSessionRepo.findOne as jest.Mock).mockResolvedValue(session);
+
+        await expect(service.guess(1, 'ZZZZZ', mockUser)).rejects.toThrow(
+          BadRequestException,
+        );
+
+        try {
+          await service.guess(1, 'ZZZZZ', mockUser);
+        } catch (error) {
+          expect(error.message).toBe('Not in word list');
+        }
+
+        expect(
+          (mockWordValidationService as jest.Mocked<WordValidationService>)
+            .isValidWord,
+        ).toHaveBeenCalledWith('ZZZZZ');
+        expect(evaluateGuess).not.toHaveBeenCalled();
+      });
+
       it('allows guest path and returns IN_PROGRESS', async () => {
         const evaluation: LetterEvaluation[] = [
           { letter: 'A', status: 'absent' as const },
         ];
 
         mockEvaluate(evaluation);
+        (
+          mockWordValidationService as jest.Mocked<WordValidationService>
+        ).isValidWord.mockResolvedValue(true);
 
         const session = baseSession;
 
