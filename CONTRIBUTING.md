@@ -54,6 +54,13 @@ The `/onchain/` directory contains outdated legacy code and is no longer maintai
 - Include tests where behavior changes - all PRs must pass CI
 - Follow the PR template and complete the checklist
 
+## Reference
+
+- New to the terminology? See the [Glossary](./docs/GLOSSARY.md).
+- Changing a contract? See the
+  [contract benchmarks](./docs/contract-benchmarks.md) and the
+  [audit checklist](./docs/audit-preparation.md).
+
 ## Wave Readiness
 Use `docs/WAVE_MIGRATION_ISSUE_CANDIDATES.md` and `docs/SOROBAN_GITHUB_STRATEGY.md` for issue slicing and labels.
 
