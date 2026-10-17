@@ -23,7 +23,7 @@ export class LeaderboardService {
     }
     try {
       let entry = await this.leaderboardRepository.findOne({
-        where: { user, game },
+        where: { user: { id: user.id }, game: { id: game.id } },
       });
       if (!entry) {
         entry = this.leaderboardRepository.create({
@@ -48,11 +48,11 @@ export class LeaderboardService {
     if (!game) throw new NotFoundException('Game not found');
     try {
       return await this.leaderboardRepository.find({
-        where: { game },
+        where: { game: { id: game.id } },
         order: { totalScore: 'DESC', lastUpdated: 'DESC' },
         skip: Math.max(0, Number(skip)),
         take: Math.max(1, Math.min(Number(take), 100)), // limit page size
-        relations: ['user'],
+        relations: { user: true },
       });
     } catch {
       throw new InternalServerErrorException(

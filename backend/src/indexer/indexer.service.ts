@@ -12,6 +12,7 @@ import {
 } from './processors/rpc-response.validator';
 import { randomUUID } from 'crypto';
 import { INDEXER_STREAM_CORE_GAME } from './indexer.constants';
+import type { MalformedEventSink } from './malformed-event-sink';
 import { ReplayAlertService } from './queue/replay-alert.service';
 import { EventDedupService } from './dedup/event-dedup.service';
 import { sanitizeErrorMessage } from '../common/redaction';
@@ -69,6 +70,31 @@ export class IndexerService {
     private readonly replayAlertService: ReplayAlertService,
     private readonly eventDedupService: EventDedupService,
   ) {}
+
+  private malformedEventSink?: MalformedEventSink;
+
+  /** Route events that fail validation to a sink (for example the dead-letter queue). */
+  setMalformedEventSink(sink: MalformedEventSink | undefined): void {
+    this.malformedEventSink = sink;
+  }
+
+  private async sendToMalformedSink(
+    raw: unknown,
+    index: number,
+    stage: 'structure' | 'validation',
+    reason: string,
+  ): Promise<void> {
+    if (!this.malformedEventSink) return;
+    try {
+      await this.malformedEventSink.record({ raw, index, stage, reason });
+    } catch (err) {
+      // A failing sink must never stop the poll cycle.
+      this.logger.error({
+        msg: 'indexer.malformed_sink.error',
+        error: sanitizeErrorMessage(err),
+      });
+    }
+  }
 
   async ingest(event: IngestedEventDto, context?: IndexerLogContext) {
     const t0 = Date.now();
@@ -243,7 +269,8 @@ export class IndexerService {
       cursor.lastLedger,
     );
 
-    const structurallyValidEvents = rawEvents.filter((raw, idx) => {
+    const structurallyValidEvents: Record<string, unknown>[] = [];
+    for (const [idx, raw] of rawEvents.entries()) {
       const diagnostic = diagnoseMalformedEvent(raw, idx);
       if (diagnostic) {
         this.logger.warn({
@@ -251,15 +278,32 @@ export class IndexerService {
           correlationId: cycleContext.correlationId,
           ...diagnostic,
         });
-        return false;
+        await this.sendToMalformedSink(
+          raw,
+          idx,
+          'structure',
+          JSON.stringify(diagnostic),
+        );
+        continue;
       }
-      return true;
-    });
+      structurallyValidEvents.push(raw);
+    }
 
-    const normalized = structurallyValidEvents
-      .map((raw) => this.eventNormalizer.normalize(network, raw))
-      .filter((e) => this.eventNormalizer.isValid(e))
-      .sort(compareEventsByCursor);
+    const normalized: IngestedEventDto[] = [];
+    for (const [idx, raw] of structurallyValidEvents.entries()) {
+      const event = this.eventNormalizer.normalize(network, raw);
+      if (!this.eventNormalizer.isValid(event)) {
+        await this.sendToMalformedSink(
+          raw,
+          idx,
+          'validation',
+          `event failed validation (topic=${event.topic})`,
+        );
+        continue;
+      }
+      normalized.push(event);
+    }
+    normalized.sort(compareEventsByCursor);
 
     let ingested = 0;
     for (const event of normalized) {
