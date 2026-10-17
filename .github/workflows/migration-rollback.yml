@@ -42,7 +42,8 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        # --legacy-peer-deps: backend's lockfile has a known peer-dependency conflict.
+        run: npm ci --include=dev --workspaces=false --legacy-peer-deps
         working-directory: backend
 
       - name: Run migration rollback tests
