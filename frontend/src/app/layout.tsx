@@ -6,6 +6,7 @@ import { AuthProvider } from "../../context/AuthContext";
 import Header from "@/components/header";
 import { StellarWalletProvider } from "@/providers/stellar-wallet-provider";
 import { SettingsProvider } from "@/providers/settings-provider";
+import { AchievementCelebration } from "@/components/AchievementCelebration";
 import { ZoomRoot } from "@/components/ZoomRoot";
 import { NO_FLASH_SCRIPT } from "@/lib/theme";
 import { OnboardingProvider } from "@/providers/onboarding-provider";
@@ -82,6 +83,7 @@ export default function RootLayout({
             <SettingsProvider>
               <AuthProvider>
                 <Header />
+                <AchievementCelebration />
                 <main
                   id="main-content"
                   tabIndex={-1}
