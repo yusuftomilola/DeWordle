@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
+import { clampZoom } from "@/lib/zoom";
 
 export interface VisualSettings {
   theme: "light" | "dark" | "system";
   highContrast: boolean;
   fontSize: "small" | "medium" | "large";
+  /** Page zoom percentage, 100–200 in steps of 25. */
+  zoom: number;
 }
 
 const DEFAULT_SETTINGS: VisualSettings = {
   theme: "system",
   highContrast: false,
   fontSize: "medium",
+  zoom: 100,
 };
 
 const STORAGE_KEY = "dewordle_visual_settings";
@@ -18,7 +22,10 @@ export function useVisualSettings() {
   const [settings, setSettings] = useState<VisualSettings>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) return { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+      if (stored) {
+        const parsed = { ...DEFAULT_SETTINGS, ...JSON.parse(stored) };
+        return { ...parsed, zoom: clampZoom(parsed.zoom) };
+      }
     } catch {
       // localStorage unavailable
     }
