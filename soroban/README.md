@@ -26,5 +26,29 @@ make test
 make build-wasm
 ```
 
+## Reproducible WASM Builds
+Contract WASM is expected to build bit-for-bit identically for the same source,
+`Cargo.lock`, and toolchain. The pinned toolchain version is set in
+`.github/workflows/wasm-checksum.yml` (`RUST_VERSION`) and mirrors the known-good
+version from `toolchain-matrix.yml`.
+
+The `WASM Checksum Verifier` workflow builds every contract, records the build
+environment (Rust, Cargo, and Soroban SDK versions plus the commit SHA), and
+uploads two artifacts: `wasm-checksums.txt` and `wasm-build-env.txt`.
+
+To verify a local build against the CI-produced checksums:
+
+```bash
+cd soroban
+make build-wasm
+# Download wasm-checksums.txt from the "WASM Checksum Verifier" run, then:
+./scripts/verify_wasm_checksums.sh wasm-checksums.txt
+```
+
+The script recomputes the SHA-256 of each local artifact and fails if any
+checksum differs or an expected contract is missing. A mismatch means the local
+toolchain, `Cargo.lock`, or source differs from the audited build. Always review
+`wasm-build-env.txt` alongside the checksums before deploying.
+
 ## Contract Registry
 Contract IDs per network are managed in `config/contracts.<network>.json`.
