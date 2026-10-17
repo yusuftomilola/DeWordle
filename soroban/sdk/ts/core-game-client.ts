@@ -1,4 +1,4 @@
-import { Keypair, nativeToScVal, scValToNative, xdr } from "@stellar/stellar-sdk";
+import { Account, Address, Keypair, nativeToScVal, scValToNative, xdr } from "@stellar/stellar-sdk";
 import { Server } from "@stellar/stellar-sdk/rpc";
 import type {
   DayConfig,
@@ -11,6 +11,17 @@ import type { ContractRegistry, SorobanNetworkConfig } from "./network";
 import { resolveContractId } from "./registry";
 import { CompatibilityGuard, type CompatibilityOptions } from "./contract-compat";
 import { buildContractTx, simulateAndAssemble } from "./tx-builder";
+
+/**
+ * Read-only simulations need a source account, but a contract address is not
+ * an account and the RPC rejects it. Any well-formed account works because
+ * simulation neither signs nor charges it.
+ */
+const READ_ONLY_SOURCE_KEY = Keypair.fromRawEd25519Seed(Buffer.alloc(32)).publicKey();
+
+const u32 = (value: number) => nativeToScVal(value, { type: "u32" });
+const address = (value: string) => new Address(value).toScVal();
+const bytes32 = (hex: string) => nativeToScVal(Buffer.from(hex, "hex"), { type: "bytes" });
 
 export interface CoreGameClientOptions {
   contractId: string;
@@ -64,7 +75,7 @@ export class CoreGameClient {
       network: this.options.network,
       contractId: this.options.contractId,
       method: "create_session",
-      args: [nativeToScVal(sourcePublicKey), nativeToScVal(dayId), nativeToScVal(nonce)],
+      args: [address(sourcePublicKey), u32(dayId), u32(nonce)],
     });
 
     return simulateAndAssemble({ server: this.server, tx });
@@ -84,11 +95,11 @@ export class CoreGameClient {
       contractId: this.options.contractId,
       method: "submit_guess",
       args: [
-        nativeToScVal(input.player),
-        nativeToScVal(input.sessionId),
-        nativeToScVal(input.guessCommitment),
-        nativeToScVal(input.outcomeCode),
-        nativeToScVal(input.isCorrect),
+        address(input.player),
+        bytes32(input.sessionId),
+        bytes32(input.guessCommitment),
+        u32(input.outcomeCode),
+        nativeToScVal(input.isCorrect, { type: "bool" }),
       ],
     });
 
@@ -102,14 +113,14 @@ export class CoreGameClient {
   async getDayConfig(dayId: number): Promise<DayConfig | null> {
     await this.compat.ensure();
     try {
-      const account = await this.server.getAccount(this.options.contractId);
+      const account = new Account(READ_ONLY_SOURCE_KEY, "0");
       const tx = await buildContractTx({
         server: this.server,
         source: account,
         network: this.options.network,
         contractId: this.options.contractId,
         method: "get_day_config",
-        args: [nativeToScVal(dayId, { type: "u32" })],
+        args: [u32(dayId)],
       });
       const { simulated } = await simulateAndAssemble({ server: this.server, tx });
       const result = (simulated as { result?: { retval: xdr.ScVal } }).result?.retval;
@@ -127,14 +138,14 @@ export class CoreGameClient {
   async getSession(sessionId: string): Promise<Session | null> {
     await this.compat.ensure();
     try {
-      const account = await this.server.getAccount(this.options.contractId);
+      const account = new Account(READ_ONLY_SOURCE_KEY, "0");
       const tx = await buildContractTx({
         server: this.server,
         source: account,
         network: this.options.network,
         contractId: this.options.contractId,
         method: "get_session",
-        args: [nativeToScVal(Buffer.from(sessionId, "hex"), { type: "bytes" })],
+        args: [bytes32(sessionId)],
       });
       const { simulated } = await simulateAndAssemble({ server: this.server, tx });
       const result = (simulated as { result?: { retval: xdr.ScVal } }).result?.retval;

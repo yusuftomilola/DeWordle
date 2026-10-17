@@ -41,7 +41,7 @@ export class AdminRegistryClient {
       network: this.network,
       contractId: this.contractId,
       method: "get_contract",
-      args: [nativeToScVal(key)],
+      args: [nativeToScVal(key, { type: "symbol" })],
     });
 
     return simulateAndAssemble({ server: this.server, tx });
