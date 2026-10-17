@@ -47,7 +47,7 @@ export class UserService {
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
     // Strict validation: only allow username and avatarUrl
-    const allowedFields = ['username', 'avatarUrl'];
+    const allowedFields = ['username', 'avatarUrl', 'digestOptIn'];
     for (const key of Object.keys(updateUserDto)) {
       if (!allowedFields.includes(key)) {
         throw new BadRequestException(
@@ -100,6 +100,13 @@ export class UserService {
           throw new BadRequestException('AvatarUrl must be a non-empty string');
         }
         user.avatarUrl = updateProfileDto.avatarUrl;
+      }
+
+      if ('digestOptIn' in updateProfileDto) {
+        if (typeof updateProfileDto.digestOptIn !== 'boolean') {
+          throw new BadRequestException('digestOptIn must be a boolean');
+        }
+        user.digestOptIn = updateProfileDto.digestOptIn;
       }
 
       await this.userRepository.save(user);

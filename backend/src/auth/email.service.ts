@@ -17,7 +17,8 @@ export class EmailService {
     });
   }
 
-  async sendMail(to: string, subject: string, html: string) {
+  /** Resolves true when the message was accepted, false if sending failed. */
+  async sendMail(to: string, subject: string, html: string): Promise<boolean> {
     try {
       const info = await this.transporter.sendMail({
         from: process.env.SMTP_FROM || 'no-reply@dewordle.com',
@@ -29,8 +30,10 @@ export class EmailService {
       if (nodemailer.getTestMessageUrl(info)) {
         this.logger.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
       }
+      return true;
     } catch (error) {
       this.logger.error('Failed to send email', error.stack);
+      return false;
     }
   }
 }

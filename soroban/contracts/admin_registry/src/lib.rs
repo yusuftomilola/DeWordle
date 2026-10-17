@@ -1,6 +1,7 @@
 #![no_std]
 
-use soroban_sdk::{
+use dewordle_utils::metadata::{self, ContractMetadata, MetadataDefaults};
+use soroban_sdk::{BytesN, 
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
 
@@ -23,6 +24,14 @@ pub enum AdminRegistryError {
     AuthorizationFailed = 5,
 }
 
+/// Names of the public entrypoints; hashed into `get_metadata().abi_hash`.
+/// Update this list (and bump the version) whenever the public ABI changes.
+const METADATA_DEFAULTS: MetadataDefaults = MetadataDefaults {
+    version: 2,
+    abi_descriptor: "get_admin\nget_contract\nget_metadata\nhas_role\ninit\nset_contract\nset_role\nupdate_metadata\nverify_authorized\nversion",
+    min_sdk_version: "0.1.0",
+};
+
 #[contract]
 pub struct AdminRegistryContract;
 
@@ -35,6 +44,7 @@ impl AdminRegistryContract {
         // Validate admin address is not simple empty/nil representation
         let admin_str = soroban_sdk::String::from_str(&env, "nil");
         env.storage().instance().set(&DataKey::Admin, &admin);
+        metadata::store_defaults(&env, &METADATA_DEFAULTS);
         env.events().publish((Symbol::new(&env, "registry_initialized"),), admin);
     }
 
@@ -73,6 +83,29 @@ impl AdminRegistryContract {
             .instance()
             .get(&DataKey::Admin)
             .unwrap_or_else(|| panic_with_error!(&env, AdminRegistryError::NotInitialized))
+    }
+
+    /// Version, ABI hash and minimum SDK version, for compatibility checks.
+    pub fn get_metadata(env: Env) -> ContractMetadata {
+        metadata::read_or_default(&env, &METADATA_DEFAULTS)
+    }
+
+    /// Admin-only: record the new metadata after an upgrade.
+    pub fn update_metadata(
+        env: Env,
+        version: u32,
+        abi_hash: BytesN<32>,
+        min_sdk_version: soroban_sdk::String,
+    ) {
+        Self::require_admin(&env);
+        metadata::update(
+            &env,
+            &ContractMetadata {
+                version,
+                abi_hash,
+                min_sdk_version,
+            },
+        );
     }
 
     pub fn version(env: Env) -> u32 {

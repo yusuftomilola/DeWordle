@@ -2,7 +2,8 @@
 
 pub mod fixtures;
 
-use soroban_sdk::{
+use dewordle_utils::metadata::{self, ContractMetadata, MetadataDefaults};
+use soroban_sdk::{BytesN, 
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
 
@@ -45,6 +46,14 @@ pub enum AchievementsError {
     AlreadyClaimed = 6,
 }
 
+/// Names of the public entrypoints; hashed into `get_metadata().abi_hash`.
+/// Update this list (and bump the version) whenever the public ABI changes.
+const METADATA_DEFAULTS: MetadataDefaults = MetadataDefaults {
+    version: 2,
+    abi_descriptor: "define\nget_definition\nget_metadata\nget_spec_metadata\nget_unlocked\ninit\nunlock\nupdate_metadata\nversion",
+    min_sdk_version: "0.1.0",
+};
+
 #[contract]
 pub struct AchievementsContract;
 
@@ -56,6 +65,7 @@ impl AchievementsContract {
         }
 
         env.storage().instance().set(&DataKey::Admin, &admin);
+        metadata::store_defaults(&env, &METADATA_DEFAULTS);
         env.events().publish((Symbol::new(&env, "achievements_initialized"),), admin);
     }
 
@@ -127,6 +137,29 @@ impl AchievementsContract {
 
     pub fn get_unlocked(env: Env, player: Address, id: Symbol) -> Option<AchievementUnlock> {
         env.storage().persistent().get(&DataKey::Unlocked(player, id))
+    }
+
+    /// Version, ABI hash and minimum SDK version, for compatibility checks.
+    pub fn get_metadata(env: Env) -> ContractMetadata {
+        metadata::read_or_default(&env, &METADATA_DEFAULTS)
+    }
+
+    /// Admin-only: record the new metadata after an upgrade.
+    pub fn update_metadata(
+        env: Env,
+        version: u32,
+        abi_hash: BytesN<32>,
+        min_sdk_version: soroban_sdk::String,
+    ) {
+        Self::require_admin(&env);
+        metadata::update(
+            &env,
+            &ContractMetadata {
+                version,
+                abi_hash,
+                min_sdk_version,
+            },
+        );
     }
 
     pub fn version(env: Env) -> u32 {

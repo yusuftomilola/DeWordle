@@ -3,7 +3,8 @@
 pub mod fixtures;
 pub mod utils;
 
-use soroban_sdk::{
+use dewordle_utils::metadata::{self, ContractMetadata, MetadataDefaults};
+use soroban_sdk::{BytesN, 
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
 
@@ -49,6 +50,14 @@ pub enum RewardsError {
     InvalidNonce = 4,
 }
 
+/// Names of the public entrypoints; hashed into `get_metadata().abi_hash`.
+/// Update this list (and bump the version) whenever the public ABI changes.
+const METADATA_DEFAULTS: MetadataDefaults = MetadataDefaults {
+    version: 2,
+    abi_descriptor: "accrue\nbalance_of\nclaim\nclaimed_total\nget_emission\nget_metadata\nget_multiplier\nget_player_stats\ninit\nrecord_win\nset_emission\nset_rank\nupdate_metadata\nverify_signature\nversion",
+    min_sdk_version: "0.1.0",
+};
+
 #[contract]
 pub struct RewardsContract;
 
@@ -75,6 +84,7 @@ impl RewardsContract {
             panic_with_error!(&env, RewardsError::AlreadyInitialized);
         }
         env.storage().instance().set(&DataKey::Admin, &admin);
+        metadata::store_defaults(&env, &METADATA_DEFAULTS);
         env.events().publish((Symbol::new(&env, "rewards_initialized"),), admin);
     }
 
@@ -213,6 +223,29 @@ impl RewardsContract {
             tokens_earned: balance + claimed,
             rank,
         }
+    }
+
+    /// Version, ABI hash and minimum SDK version, for compatibility checks.
+    pub fn get_metadata(env: Env) -> ContractMetadata {
+        metadata::read_or_default(&env, &METADATA_DEFAULTS)
+    }
+
+    /// Admin-only: record the new metadata after an upgrade.
+    pub fn update_metadata(
+        env: Env,
+        version: u32,
+        abi_hash: BytesN<32>,
+        min_sdk_version: soroban_sdk::String,
+    ) {
+        Self::require_admin(&env);
+        metadata::update(
+            &env,
+            &ContractMetadata {
+                version,
+                abi_hash,
+                min_sdk_version,
+            },
+        );
     }
 
     pub fn version(env: Env) -> u32 {

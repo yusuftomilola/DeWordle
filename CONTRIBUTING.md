@@ -54,6 +54,9 @@ The `/onchain/` directory contains outdated legacy code and is no longer maintai
 - Include tests where behavior changes - all PRs must pass CI
 - Follow the PR template and complete the checklist
 
+## Releases
+Versioning rules, pre-release naming and the release checklist are in [docs/RELEASING.md](./docs/RELEASING.md).
+
 ## Wave Readiness
 Use `docs/WAVE_MIGRATION_ISSUE_CANDIDATES.md` and `docs/SOROBAN_GITHUB_STRATEGY.md` for issue slicing and labels.
 

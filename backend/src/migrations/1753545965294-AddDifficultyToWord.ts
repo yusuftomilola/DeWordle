@@ -10,9 +10,9 @@ export class AddDifficultyToWord1753545965294 implements MigrationInterface {
     await queryRunner.query(
       'ALTER TABLE "words" DROP CONSTRAINT "UQ_38a98e41b6be0f379166dc2b58d"',
     );
-    await queryRunner.query('ALTER TABLE "words" DROP COLUMN "word"');
+    // ALTER instead of DROP/ADD COLUMN so existing words are kept.
     await queryRunner.query(
-      'ALTER TABLE "words" ADD "word" character varying(10) NOT NULL',
+      'ALTER TABLE "words" ALTER COLUMN "word" TYPE character varying(10)',
     );
     await queryRunner.query(
       'ALTER TABLE "words" ADD CONSTRAINT "UQ_38a98e41b6be0f379166dc2b58d" UNIQUE ("word")',
@@ -29,9 +29,8 @@ export class AddDifficultyToWord1753545965294 implements MigrationInterface {
     await queryRunner.query(
       'ALTER TABLE "words" DROP CONSTRAINT "UQ_38a98e41b6be0f379166dc2b58d"',
     );
-    await queryRunner.query('ALTER TABLE "words" DROP COLUMN "word"');
     await queryRunner.query(
-      'ALTER TABLE "words" ADD "word" character varying(5) NOT NULL',
+      'ALTER TABLE "words" ALTER COLUMN "word" TYPE character varying(5)',
     );
     await queryRunner.query(
       'ALTER TABLE "words" ADD CONSTRAINT "UQ_38a98e41b6be0f379166dc2b58d" UNIQUE ("word")',

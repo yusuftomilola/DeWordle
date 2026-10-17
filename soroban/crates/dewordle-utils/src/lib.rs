@@ -2,6 +2,8 @@
 
 use soroban_sdk::Env;
 
+pub mod metadata;
+
 pub const SECONDS_PER_DAY: u64 = 86_400;
 
 pub fn current_day_id(env: &Env) -> u32 {

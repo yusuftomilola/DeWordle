@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, MaxLength, MinLength, Matches, IsUrl } from 'class-validator';
+import { IsBoolean, IsString, IsOptional, MaxLength, MinLength, Matches, IsUrl } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
 
@@ -33,4 +33,12 @@ export class UpdateProfileDto {
   })
   @MaxLength(500)
   avatarUrl?: string;
+
+  @ApiPropertyOptional({
+    description: 'Receive the weekly statistics digest email',
+    example: true,
+  })
+  @IsOptional()
+  @IsBoolean()
+  digestOptIn?: boolean;
 }
