@@ -4,7 +4,7 @@ pub mod fixtures;
 
 use dewordle_auth::{require_admin, set_admin};
 use dewordle_types::{DayConfig, GuessResult, PlayerStreak, Session, SessionStatus};
-use dewordle_utils::current_day_id;
+use dewordle_utils::{current_day_id, ReentrancyGuard};
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, BytesN, Env,
     Symbol,
@@ -231,6 +231,8 @@ impl CoreGameContract {
     pub fn finalize_session(env: Env, player: Address, session_id: BytesN<32>) -> Session {
         Self::require_not_paused(&env);
         player.require_auth();
+        // Settlement path (where rewards/achievements get triggered): no nested entry.
+        let _guard = ReentrancyGuard::enter(&env);
         let mut session = Self::get_session_internal(&env, &session_id);
 
         if session.player != player {
