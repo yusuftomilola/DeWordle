@@ -1,0 +1,19 @@
+[package]
+name = "integration-tests"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Cross-contract integration tests (core_game, rewards, achievements, admin_registry)"
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
+core-game = { path = "../contracts/core_game" }
+rewards = { path = "../contracts/rewards" }
+achievements = { path = "../contracts/achievements" }
+admin-registry = { path = "../contracts/admin_registry" }
+dewordle-types = { path = "../crates/dewordle-types" }
+
+[[test]]
+name = "cross_contract_harness"
+path = "integration/cross_contract_harness.rs"
