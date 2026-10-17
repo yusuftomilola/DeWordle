@@ -13,11 +13,13 @@ import {
 type GameSettings = {
   colorBlindMode: boolean;
   soundEffects: boolean;
+  showDifficultyBadge: boolean;
 };
 
 type SettingsContextValue = GameSettings & {
   setColorBlindMode: (enabled: boolean) => void;
   setSoundEffects: (enabled: boolean) => void;
+  setShowDifficultyBadge: (enabled: boolean) => void;
 };
 
 const STORAGE_KEY = "dewordle-settings";
@@ -25,6 +27,7 @@ const STORAGE_KEY = "dewordle-settings";
 const defaults: GameSettings = {
   colorBlindMode: false,
   soundEffects: false,
+  showDifficultyBadge: true,
 };
 
 function loadSettings(): GameSettings {
@@ -73,13 +76,22 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const setShowDifficultyBadge = useCallback((enabled: boolean) => {
+    setSettings((prev) => {
+      const next = { ...prev, showDifficultyBadge: enabled };
+      persistSettings(next);
+      return next;
+    });
+  }, []);
+
   const value = useMemo(
     () => ({
       ...settings,
       setColorBlindMode,
       setSoundEffects,
+      setShowDifficultyBadge,
     }),
-    [settings, setColorBlindMode, setSoundEffects],
+    [settings, setColorBlindMode, setSoundEffects, setShowDifficultyBadge],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

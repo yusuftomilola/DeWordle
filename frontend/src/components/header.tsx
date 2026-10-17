@@ -16,6 +16,7 @@ import { useAuth } from '../../context/AuthContext';
 import { LoginForm } from './LoginModal';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { MobileMenu } from './MobileMenu';
+import { HeaderSyncStatus } from './HeaderSyncStatus';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -93,6 +94,7 @@ export default function Header() {
         )}
         {isAuthenticated && (
           <div className="hidden md:flex gap-4 items-center">
+            <HeaderSyncStatus enabled={isAuthenticated} />
             <button
               type="button"
               aria-label="Start onboarding tutorial"

@@ -4,7 +4,14 @@ import { useState } from "react";
 import { useSettings } from "@/providers/settings-provider";
 
 export function SettingsPanel() {
-  const { colorBlindMode, setColorBlindMode, soundEffects, setSoundEffects } = useSettings();
+  const {
+    colorBlindMode,
+    setColorBlindMode,
+    soundEffects,
+    setSoundEffects,
+    showDifficultyBadge,
+    setShowDifficultyBadge,
+  } = useSettings();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleResetData = () => {
@@ -65,6 +72,31 @@ export function SettingsPanel() {
           <span
             className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
               soundEffects ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <label
+          htmlFor="difficulty-toggle"
+          className="cursor-pointer select-none text-sm font-medium text-gray-300"
+        >
+          Show difficulty badge
+        </label>
+        <button
+          id="difficulty-toggle"
+          role="switch"
+          aria-checked={showDifficultyBadge}
+          aria-label="Toggle difficulty badge"
+          onClick={() => setShowDifficultyBadge(!showDifficultyBadge)}
+          className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/60 ${
+            showDifficultyBadge ? "bg-[#4b5fff]" : "bg-dark-500"
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              showDifficultyBadge ? "translate-x-6" : "translate-x-1"
             }`}
           />
         </button>
