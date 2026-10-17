@@ -6,6 +6,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { PasswordReset } from './entities/password-reset.entity';
 import { EmailService } from './email.service';
 import { RefreshTokenService } from './refresh-token.service';
+import { AccountLockoutService } from './account-lockout.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -19,6 +20,7 @@ describe('AuthService', () => {
         { provide: getRepositoryToken(PasswordReset), useValue: {} },
         { provide: EmailService, useValue: {} },
         { provide: RefreshTokenService, useValue: {} },
+        { provide: AccountLockoutService, useValue: {} },
       ],
     }).compile();
 

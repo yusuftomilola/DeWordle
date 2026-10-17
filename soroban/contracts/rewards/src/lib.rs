@@ -4,6 +4,7 @@ pub mod fixtures;
 pub mod payout_throttle;
 pub mod utils;
 
+use dewordle_utils::ReentrancyGuard;
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
@@ -128,6 +129,8 @@ impl RewardsContract {
 
     pub fn claim(env: Env, player: Address) -> u64 {
         player.require_auth();
+        // Payout path: block nested entry while balances are being moved.
+        let _guard = ReentrancyGuard::enter(&env);
 
         let balance = Self::balance_of(env.clone(), player.clone());
         env.storage()
