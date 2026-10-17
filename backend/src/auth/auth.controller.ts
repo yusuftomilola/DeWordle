@@ -28,6 +28,9 @@ import { JwtAuthGuard } from './guards/jwt-guard.guard';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { UnlockAccountDto } from './dto/unlock-account.dto';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorators';
 import { AUTH_THROTTLE } from '../common/guards/throttle.config';
 
 @ApiTags('Authentication')
@@ -361,5 +364,26 @@ export class AuthController {
     @Request() req: ExpressRequest & { user: { id: number; email: string } },
   ) {
     return this.authService.getSessions(req.user.email);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Post('admin/unlock')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Unlock an account (admin)',
+    description:
+      'Clears a brute-force lockout, the failure streak and lockout escalation history.',
+  })
+  async unlockAccount(
+    @Body() dto: UnlockAccountDto,
+    @Request() req: ExpressRequest & { user: { email: string } },
+  ) {
+    const wasLocked = await this.authService.unlockAccount(
+      dto.email,
+      req.user.email,
+    );
+    return { email: dto.email, wasLocked };
   }
 }

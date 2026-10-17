@@ -17,6 +17,9 @@ import { LoginForm } from './LoginModal';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { MobileMenu } from './MobileMenu';
 import { HeaderSyncStatus } from './HeaderSyncStatus';
+import { ThemeToggle } from './ThemeToggle';
+import { PlayerProfileCard } from './PlayerProfileCard';
+import { useWalletContext } from '@/providers/stellar-wallet-provider';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -29,6 +32,7 @@ export default function Header() {
   const pathname = usePathname();
   const { isAuthenticated, user } = useAuth();
   const { restart: restartOnboarding } = useOnboarding();
+  const { address: walletAddress } = useWalletContext();
   const isActive = (href: string) => pathname === href;
   const avatar = useMemo(() => {
     return createAvatar(adventurer, {
@@ -103,15 +107,30 @@ export default function Header() {
             >
               <HelpCircle aria-hidden="true" />
             </button>
-            <div className="border p-1 rounded-full">
-              <Image
-                src={avatar}
-                alt={`${user?.username ?? 'User'} avatar`}
-                width={30}
-                height={30}
-                className="rounded-full"
-              />
-            </div>
+            <ThemeToggle />
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Open player profile"
+                  className="border p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-white/60"
+                >
+                  <Image
+                    src={avatar}
+                    alt={`${user?.username ?? 'User'} avatar`}
+                    width={30}
+                    height={30}
+                    className="rounded-full"
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PlayerProfileCard
+                  address={walletAddress ?? user?.username ?? 'guest'}
+                  stats={{ gamesPlayed: 0, wins: 0, currentStreak: 0, bestStreak: 0 }}
+                />
+              </PopoverContent>
+            </Popover>
             <button
               type="button"
               aria-label="View notifications"

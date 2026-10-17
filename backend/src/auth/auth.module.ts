@@ -13,10 +13,23 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { AuthSession } from './entities/auth-session.entity';
 import { EmailService } from './email.service';
 import { RefreshTokenService } from './refresh-token.service';
+import { AccountLockoutService } from './account-lockout.service';
+import {
+  LOGIN_ATTEMPT_STORE,
+  createLoginAttemptStore,
+} from './login-attempt.store';
+import { AuditLog } from '../common/audit/audit-log.entity';
+import { AuditService } from '../common/audit/audit.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, PasswordReset, RefreshToken, AuthSession]),
+    TypeOrmModule.forFeature([
+      User,
+      PasswordReset,
+      RefreshToken,
+      AuthSession,
+      AuditLog,
+    ]),
     UserModule,
     PassportModule,
     JwtModule.registerAsync({
@@ -36,7 +49,17 @@ import { RefreshTokenService } from './refresh-token.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, EmailService, RefreshTokenService],
+  providers: [AuthService, JwtStrategy, EmailService,
+    RefreshTokenService,
+    AuditService,
+    AccountLockoutService,
+    {
+      provide: LOGIN_ATTEMPT_STORE,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) =>
+        createLoginAttemptStore(config.get<string>('REDIS_URL')),
+    },
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

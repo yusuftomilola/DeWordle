@@ -1,8 +1,10 @@
 #![no_std]
 
 pub mod fixtures;
+pub mod payout_throttle;
 pub mod utils;
 
+use dewordle_utils::ReentrancyGuard;
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
@@ -47,6 +49,8 @@ pub enum RewardsError {
     NotInitialized = 2,
     Unauthorized = 3,
     InvalidNonce = 4,
+    /// A balance or lifetime total would exceed `u64::MAX`.
+    Overflow = 5,
 }
 
 #[contract]
@@ -105,9 +109,14 @@ impl RewardsContract {
         }
 
         let balance = Self::balance_of(env.clone(), player.clone());
+        // Reject instead of wrapping or trapping: the error code tells the
+        // caller the balance cap was hit.
+        let new_balance = balance
+            .checked_add(points)
+            .unwrap_or_else(|| panic_with_error!(&env, RewardsError::Overflow));
         env.storage()
             .persistent()
-            .set(&DataKey::Balance(player.clone()), &(balance + points));
+            .set(&DataKey::Balance(player.clone()), &new_balance);
         env.storage()
             .persistent()
             .set(&DataKey::Nonce(player.clone(), nonce), &true);
@@ -120,6 +129,8 @@ impl RewardsContract {
 
     pub fn claim(env: Env, player: Address) -> u64 {
         player.require_auth();
+        // Payout path: block nested entry while balances are being moved.
+        let _guard = ReentrancyGuard::enter(&env);
 
         let balance = Self::balance_of(env.clone(), player.clone());
         env.storage()
@@ -127,9 +138,12 @@ impl RewardsContract {
             .set(&DataKey::Balance(player.clone()), &0u64);
 
         let claimed = Self::claimed_total(env.clone(), player.clone());
+        let new_claimed = claimed
+            .checked_add(balance)
+            .unwrap_or_else(|| panic_with_error!(&env, RewardsError::Overflow));
         env.storage()
             .persistent()
-            .set(&DataKey::Claimed(player.clone()), &(claimed + balance));
+            .set(&DataKey::Claimed(player.clone()), &new_claimed);
 
         env.events()
             .publish((Symbol::new(&env, "claimed"), player), balance);
@@ -210,7 +224,8 @@ impl RewardsContract {
 
         PlayerStats {
             games_won,
-            tokens_earned: balance + claimed,
+            // A view must never trap, so saturate at the type's maximum.
+            tokens_earned: balance.saturating_add(claimed),
             rank,
         }
     }
