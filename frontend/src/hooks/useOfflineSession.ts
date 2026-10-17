@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import type { DictionaryStore } from "@/lib/word-dictionary-cache";
+
 const DEFAULT_STORAGE_KEY = "dewordle_offline_session";
 const DEFAULT_API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
@@ -34,6 +36,8 @@ export interface UseOfflineSessionOptions {
   guestId?: string;
   syncEndpoint?: string;
   syncHeaders?: Record<string, string>;
+  /** Cached word list used to validate guesses while offline. */
+  dictionary?: DictionaryStore;
   buildSyncResult: (session: OfflineSessionRecord) => OfflineSyncResult;
   onSyncError?: (session: OfflineSessionRecord, error: unknown) => void;
 }
@@ -43,6 +47,8 @@ export interface UseOfflineSessionReturn {
   session: OfflineSessionRecord | null;
   pendingSyncCount: number;
   submitGuess: (guess: string) => void;
+  /** Offline-safe check against the cached dictionary; true when none is configured. */
+  validateGuess: (guess: string) => Promise<boolean>;
   completeSession: (outcome: "win" | "loss") => void;
   resetSession: () => void;
   flushPendingSyncs: () => Promise<void>;
@@ -97,6 +103,7 @@ export function useOfflineSession(
     guestId,
     syncEndpoint,
     syncHeaders,
+    dictionary,
     buildSyncResult,
     onSyncError,
   } = options;
@@ -194,6 +201,18 @@ export function useOfflineSession(
     if (isOnlineRef.current) void flushPendingSyncs();
   }, [session, pendingKey, guestId, flushPendingSyncs]);
 
+  const validateGuess = useCallback(
+    async (guess: string): Promise<boolean> => {
+      if (!dictionary) return true;
+      try {
+        return await dictionary.has(guess);
+      } catch {
+        return true;
+      }
+    },
+    [dictionary],
+  );
+
   const submitGuess = useCallback((guess: string) => {
     setSession((prev) => {
       const base = prev ?? createSession();
@@ -224,6 +243,7 @@ export function useOfflineSession(
     session,
     pendingSyncCount,
     submitGuess,
+    validateGuess,
     completeSession,
     resetSession,
     flushPendingSyncs,

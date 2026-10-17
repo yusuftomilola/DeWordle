@@ -1,0 +1,126 @@
+name: Stale PR Review SLA Notifier
+
+# Notifies reviewers on pull requests that have been open past the review SLA
+# without receiving a review. Runs daily and can be triggered manually with a
+# custom SLA for testing.
+
+on:
+  schedule:
+    # Daily at 09:00 UTC.
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+    inputs:
+      sla_hours:
+        description: "Review SLA in hours"
+        required: false
+        default: "48"
+      dry_run:
+        description: "Report candidates without posting comments"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  notify:
+    name: Notify stale PRs
+    runs-on: ubuntu-latest
+    env:
+      SLA_HOURS: ${{ github.event.inputs.sla_hours || '48' }}
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+    steps:
+      - name: Comment on PRs exceeding the review SLA
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const marker = '<!-- stale-pr-sla-notifier -->';
+            const slaHours = Number.parseInt(process.env.SLA_HOURS || '48', 10);
+            if (!Number.isFinite(slaHours) || slaHours <= 0) {
+              core.setFailed(`Invalid SLA_HOURS: ${process.env.SLA_HOURS}`);
+              return;
+            }
+            const dryRun = String(process.env.DRY_RUN).toLowerCase() === 'true';
+            const cutoff = Date.now() - slaHours * 60 * 60 * 1000;
+            const { owner, repo } = context.repo;
+
+            const { data: pulls } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: 'open',
+              per_page: 100,
+              sort: 'created',
+              direction: 'asc',
+            });
+
+            let notified = 0;
+            let candidates = 0;
+
+            for (const pr of pulls) {
+              if (pr.draft) continue;
+              if (new Date(pr.created_at).getTime() > cutoff) continue;
+
+              const { data: reviews } = await github.rest.pulls.listReviews({
+                owner,
+                repo,
+                pull_number: pr.number,
+              });
+              const hasReview = reviews.some(
+                (r) => r.state && r.state !== 'DISMISSED',
+              );
+              if (hasReview) continue;
+
+              candidates += 1;
+
+              const { data: comments } = await github.rest.issues.listComments({
+                owner,
+                repo,
+                issue_number: pr.number,
+                per_page: 100,
+              });
+              if (comments.some((c) => (c.body || '').includes(marker))) {
+                continue;
+              }
+
+              const reviewers = (pr.requested_reviewers || []).map(
+                (r) => `@${r.login}`,
+              );
+              const mention = reviewers.length
+                ? `${reviewers.join(' ')} could you please take a look?`
+                : 'No reviewer is assigned yet. Maintainers, please assign one.';
+
+              const ageHours = Math.floor(
+                (Date.now() - new Date(pr.created_at).getTime()) / (60 * 60 * 1000),
+              );
+              const body = [
+                marker,
+                `This pull request has been open for **${ageHours} hours** without a review, which exceeds the ${slaHours}-hour review SLA.`,
+                mention,
+                `cc @${pr.user.login}`,
+              ].join('\n\n');
+
+              if (dryRun) {
+                core.info(`[dry-run] would notify PR #${pr.number} (${reviewers.join(', ') || 'no reviewers'})`);
+                continue;
+              }
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: pr.number,
+                body,
+              });
+              notified += 1;
+              core.info(`Notified PR #${pr.number}`);
+            }
+
+            core.info(
+              `Scanned ${pulls.length} open PR(s); ${candidates} past SLA; ${notified} notified.`,
+            );
+            await core.summary
+              .addHeading('Stale PR Review SLA')
+              .addRaw(`SLA: ${slaHours}h | Open PRs: ${pulls.length} | Past SLA: ${candidates} | Notified: ${notified}`)
+              .write();

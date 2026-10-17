@@ -1,0 +1,25 @@
+# Path-to-label mappings for the "PR Labeler" workflow.
+# See https://github.com/actions/labeler for the pattern syntax.
+#
+# A pull request receives every label whose glob matches at least one changed
+# file, so a PR that spans areas gets multiple labels.
+
+area:frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'frontend/**'
+
+area:backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'backend/**'
+
+area:soroban:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'soroban/**'
+
+area:docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**'

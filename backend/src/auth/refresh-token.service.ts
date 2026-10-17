@@ -1,12 +1,15 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan } from 'typeorm';
+import { Repository, MoreThan, IsNull } from 'typeorm';
 import * as crypto from 'crypto';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { AuthSession } from './entities/auth-session.entity';
+import { AuditService } from '../common/audit/audit.service';
 
 const MAX_SESSIONS_PER_WALLET = 3;
 const REFRESH_TOKEN_EXPIRY_DAYS = 7;
+/** Maximum number of rotations allowed within one token family. */
+export const MAX_REFRESH_FAMILY_DEPTH = 100;
 
 @Injectable()
 export class RefreshTokenService {
@@ -15,6 +18,7 @@ export class RefreshTokenService {
     private readonly refreshTokenRepo: Repository<RefreshToken>,
     @InjectRepository(AuthSession)
     private readonly authSessionRepo: Repository<AuthSession>,
+    private readonly auditService: AuditService,
   ) {}
 
   async generateRefreshToken(
@@ -22,6 +26,31 @@ export class RefreshTokenService {
     userId: number,
     userAgent?: string,
     ipAddress?: string,
+  ): Promise<{ token: string; expiresAt: Date }> {
+    const issued = await this.issueToken(this.refreshTokenRepo, {
+      walletAddress,
+      userId,
+      userAgent,
+      ipAddress,
+      familyId: crypto.randomUUID(),
+      depth: 0,
+    });
+
+    await this.enforceConcurrentSessionLimit(walletAddress);
+
+    return issued;
+  }
+
+  private async issueToken(
+    repo: Repository<RefreshToken>,
+    params: {
+      walletAddress: string;
+      userId: number;
+      userAgent?: string;
+      ipAddress?: string;
+      familyId: string;
+      depth: number;
+    },
   ): Promise<{ token: string; expiresAt: Date }> {
     const rawToken = crypto.randomBytes(40).toString('hex');
     const tokenHash = crypto
@@ -32,18 +61,18 @@ export class RefreshTokenService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_EXPIRY_DAYS);
 
-    const refreshToken = this.refreshTokenRepo.create({
-      tokenHash,
-      walletAddress,
-      expiresAt,
-      userAgent,
-      ipAddress,
-      user: { id: userId } as any,
-    });
-
-    await this.refreshTokenRepo.save(refreshToken);
-
-    await this.enforceConcurrentSessionLimit(walletAddress);
+    await repo.save(
+      repo.create({
+        tokenHash,
+        walletAddress: params.walletAddress,
+        expiresAt,
+        userAgent: params.userAgent,
+        ipAddress: params.ipAddress,
+        familyId: params.familyId,
+        depth: params.depth,
+        user: { id: params.userId } as any,
+      }),
+    );
 
     return { token: rawToken, expiresAt };
   }
@@ -57,7 +86,7 @@ export class RefreshTokenService {
         expiresAt: MoreThan(new Date()),
         revokedAt: null,
       },
-      relations: ['user'],
+      relations: { user: true },
     });
 
     if (!refreshToken) {
@@ -67,6 +96,12 @@ export class RefreshTokenService {
     return refreshToken;
   }
 
+  /**
+   * Exchanges a refresh token for a new one in a single transaction: the old
+   * token is marked used and its successor (same family, depth + 1) is issued
+   * together or not at all. Presenting an already-used token is treated as a
+   * replay and revokes every token for the wallet.
+   */
   async rotateRefreshToken(
     oldToken: string,
     walletAddress: string,
@@ -79,23 +114,74 @@ export class RefreshTokenService {
       .update(oldToken)
       .digest('hex');
 
-    const existingToken = await this.refreshTokenRepo.findOne({
-      where: { tokenHash },
-    });
+    const outcome = await this.refreshTokenRepo.manager.transaction(
+      async (manager) => {
+        const repo = manager.getRepository(RefreshToken);
+        const existing = await repo.findOne({ where: { tokenHash } });
 
-    if (!existingToken || existingToken.revokedAt) {
-      throw new UnauthorizedException('Token already revoked or invalid');
+        if (!existing) return { kind: 'invalid' as const };
+        if (existing.usedAt) return { kind: 'replay' as const, existing };
+        if (existing.revokedAt || existing.expiresAt <= new Date()) {
+          return { kind: 'invalid' as const };
+        }
+        if (existing.depth >= MAX_REFRESH_FAMILY_DEPTH) {
+          await repo.update(
+            { familyId: existing.familyId, revokedAt: IsNull() },
+            { revokedAt: new Date() },
+          );
+          return { kind: 'depth' as const };
+        }
+
+        // Atomic claim: only one concurrent request can flip usedAt.
+        const claim = await repo.update(
+          { id: existing.id, usedAt: IsNull(), revokedAt: IsNull() },
+          { usedAt: new Date() },
+        );
+        if (!claim.affected) return { kind: 'replay' as const, existing };
+
+        const issued = await this.issueToken(repo, {
+          walletAddress,
+          userId,
+          userAgent,
+          ipAddress,
+          familyId: existing.familyId,
+          depth: existing.depth + 1,
+        });
+        return { kind: 'ok' as const, issued };
+      },
+    );
+
+    if (outcome.kind === 'ok') {
+      await this.enforceConcurrentSessionLimit(walletAddress);
+      return outcome.issued;
     }
 
-    existingToken.revokedAt = new Date();
-    await this.refreshTokenRepo.save(existingToken);
+    if (outcome.kind === 'replay') {
+      // Outside the transaction so the revocation is not rolled back.
+      await this.revokeAllRefreshTokens(outcome.existing.walletAddress);
+      this.auditService.log('AUTH_REFRESH_REPLAY_DETECTED', {
+        walletAddress: outcome.existing.walletAddress,
+        ipAddress,
+        userAgent,
+        metadata: {
+          userId,
+          familyId: outcome.existing.familyId,
+          tokenId: outcome.existing.id,
+          depth: outcome.existing.depth,
+        },
+      });
+      throw new UnauthorizedException(
+        'Refresh token reuse detected; all sessions revoked',
+      );
+    }
 
-    return this.generateRefreshToken(
-      walletAddress,
-      userId,
-      userAgent,
-      ipAddress,
-    );
+    if (outcome.kind === 'depth') {
+      throw new UnauthorizedException(
+        'Refresh token family depth exceeded; please sign in again',
+      );
+    }
+
+    throw new UnauthorizedException('Token already revoked or invalid');
   }
 
   async revokeRefreshToken(token: string): Promise<void> {
