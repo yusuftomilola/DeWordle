@@ -1,4 +1,4 @@
-import { nativeToScVal } from "@stellar/stellar-sdk";
+import { Address } from "@stellar/stellar-sdk";
 import { Server } from "@stellar/stellar-sdk/rpc";
 import type { ContractRegistry, SorobanNetworkConfig } from "./network";
 import { resolveContractId } from "./registry";
@@ -26,7 +26,7 @@ export class RewardsClient {
       network: this.network,
       contractId: this.contractId,
       method: "claim",
-      args: [nativeToScVal(sourcePublicKey)],
+      args: [new Address(sourcePublicKey).toScVal()],
     });
 
     return simulateAndAssemble({ server: this.server, tx });
