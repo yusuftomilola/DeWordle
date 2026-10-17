@@ -6,6 +6,8 @@ import { AuthProvider } from "../../context/AuthContext";
 import Header from "@/components/header";
 import { StellarWalletProvider } from "@/providers/stellar-wallet-provider";
 import { SettingsProvider } from "@/providers/settings-provider";
+import { ZoomRoot } from "@/components/ZoomRoot";
+import { NO_FLASH_SCRIPT } from "@/lib/theme";
 import { OnboardingProvider } from "@/providers/onboarding-provider";
 
 const geistSans = Geist({
@@ -62,7 +64,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+      </head>
       <body
         className={`${geistSans.variable} ${inter.variable} ${robotoMono.variable} ${jakartaSans.variable} ${clashDisplay.variable} antialiased hide-scrollbar`}
       >
@@ -82,7 +87,7 @@ export default function RootLayout({
                   tabIndex={-1}
                   className="flex flex-col relative w-full bg-primary-950 min-h-screen h-full overflow-x-hidden hide-scrollbar focus:outline-none"
                 >
-                  {children}
+                  <ZoomRoot>{children}</ZoomRoot>
                 </main>
               </AuthProvider>
             </SettingsProvider>
