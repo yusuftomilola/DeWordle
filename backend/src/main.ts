@@ -1,5 +1,9 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import {
+  ClassSerializerInterceptor,
+  Logger,
+  ValidationPipe,
+} from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 import { AppModule } from './app.module';
@@ -80,7 +84,11 @@ async function bootstrap() {
       }),
     );
 
-    app.useGlobalInterceptors(new RateLimitHeadersInterceptor());
+    // Honours @Exclude() on entity fields for anything that still gets serialised.
+    app.useGlobalInterceptors(
+      new ClassSerializerInterceptor(app.get(Reflector)),
+      new RateLimitHeadersInterceptor(),
+    );
 
     app.setGlobalPrefix('api/v1');
 

@@ -29,6 +29,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AUTH_THROTTLE } from '../common/guards/throttle.config';
+import { toAuthSessionDto } from '../common/dto/response-mappers';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -360,6 +361,7 @@ export class AuthController {
   async getSessions(
     @Request() req: ExpressRequest & { user: { id: number; email: string } },
   ) {
-    return this.authService.getSessions(req.user.email);
+    const sessions = await this.authService.getSessions(req.user.email);
+    return sessions.map(toAuthSessionDto);
   }
 }

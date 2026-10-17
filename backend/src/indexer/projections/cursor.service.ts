@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IndexerCursorEntity } from '../entities/indexer-cursor.entity';
+import { SessionProjectionEntity } from '../entities/session-projection.entity';
 
 @Injectable()
 export class CursorService {
@@ -80,7 +81,11 @@ export class CursorService {
 
   /** Deletes all session projection records. */
   async resetProjections(): Promise<void> {
-    await this.cursorRepo.manager.query('DELETE FROM session_projections');
+    await this.cursorRepo.manager
+      .createQueryBuilder()
+      .delete()
+      .from(SessionProjectionEntity)
+      .execute();
   }
 
   private isMonotonicallyGreater(

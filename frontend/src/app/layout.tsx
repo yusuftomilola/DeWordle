@@ -7,6 +7,7 @@ import Header from "@/components/header";
 import { StellarWalletProvider } from "@/providers/stellar-wallet-provider";
 import { SettingsProvider } from "@/providers/settings-provider";
 import { OnboardingProvider } from "@/providers/onboarding-provider";
+import { buildCsp, cspOptionsFromEnv } from "@/lib/csp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,6 +64,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Same policy as the middleware header; see src/lib/csp.ts */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content={buildCsp({ ...cspOptionsFromEnv(process.env), forMeta: true })}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${inter.variable} ${robotoMono.variable} ${jakartaSans.variable} ${clashDisplay.variable} antialiased hide-scrollbar`}
       >

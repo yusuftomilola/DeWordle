@@ -3,6 +3,7 @@
 pub mod fixtures;
 pub mod utils;
 
+use dewordle_auth::require_owner_or_admin;
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
@@ -119,7 +120,19 @@ impl RewardsContract {
     }
 
     pub fn claim(env: Env, player: Address) -> u64 {
-        player.require_auth();
+        Self::claim_for(env, player.clone(), player)
+    }
+
+    /// Claims `player`'s balance. `caller` must be the player or the admin
+    /// (explicit override, which emits an `admin_claim` event); anyone else
+    /// panics with `AuthError::NotOwnerOrAdmin`.
+    pub fn claim_for(env: Env, caller: Address, player: Address) -> u64 {
+        let admin: Address = env
+            .storage()
+            .instance()
+            .get(&DataKey::Admin)
+            .unwrap_or_else(|| panic_with_error!(&env, RewardsError::NotInitialized));
+        let by_admin = require_owner_or_admin(&env, &player, &caller, &admin);
 
         let balance = Self::balance_of(env.clone(), player.clone());
         env.storage()
@@ -131,6 +144,12 @@ impl RewardsContract {
             .persistent()
             .set(&DataKey::Claimed(player.clone()), &(claimed + balance));
 
+        if by_admin {
+            env.events().publish(
+                (Symbol::new(&env, "admin_claim"), player.clone()),
+                (caller, balance),
+            );
+        }
         env.events()
             .publish((Symbol::new(&env, "claimed"), player), balance);
         balance

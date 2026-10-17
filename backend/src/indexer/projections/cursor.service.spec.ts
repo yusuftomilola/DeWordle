@@ -1,4 +1,5 @@
 import { CursorService } from './cursor.service';
+import { SessionProjectionEntity } from '../entities/session-projection.entity';
 import { IndexerCursorEntity } from '../entities/indexer-cursor.entity';
 
 const makeCursorEntity = (
@@ -226,23 +227,32 @@ describe('CursorService.reset (recovery CLI flow tests)', () => {
   });
 });
 
+/** Fake EntityManager whose delete query builder resolves to `execute`. */
+function deleteBuilder(execute: jest.Mock) {
+  const from = jest.fn().mockReturnValue({ execute });
+  const del = jest.fn().mockReturnValue({ from });
+  return {
+    manager: { createQueryBuilder: jest.fn().mockReturnValue({ delete: del }) },
+    from,
+  };
+}
+
 describe('CursorService.resetProjections (projection recovery CLI flow tests)', () => {
   it('successfully clears all projection data (successful recovery path)', async () => {
     const mockQuery = jest.fn().mockResolvedValue(undefined);
+    const builder = deleteBuilder(mockQuery);
     const cursor = makeCursorEntity(100, 'tx_abc123', 5);
     const repo = {
       findOne: jest.fn().mockResolvedValue(cursor),
       create: jest.fn((d) => Object.assign(new IndexerCursorEntity(), d)),
       save: jest.fn().mockResolvedValue(cursor),
-      manager: {
-        query: mockQuery,
-      },
+      manager: builder.manager,
     };
     const svc = new CursorService(repo as any);
 
     await svc.resetProjections();
 
-    expect(mockQuery).toHaveBeenCalledWith('DELETE FROM session_projections');
+    expect(builder.from).toHaveBeenCalledWith(SessionProjectionEntity);
     expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 
@@ -255,9 +265,7 @@ describe('CursorService.resetProjections (projection recovery CLI flow tests)', 
       findOne: jest.fn().mockResolvedValue(cursor),
       create: jest.fn((d) => Object.assign(new IndexerCursorEntity(), d)),
       save: jest.fn().mockResolvedValue(cursor),
-      manager: {
-        query: mockQuery,
-      },
+      manager: deleteBuilder(mockQuery).manager,
     };
     const svc = new CursorService(repo as any);
 
@@ -273,15 +281,13 @@ describe('CursorService.resetProjections (projection recovery CLI flow tests)', 
       findOne: jest.fn().mockResolvedValue(cursor),
       create: jest.fn((d) => Object.assign(new IndexerCursorEntity(), d)),
       save: jest.fn().mockResolvedValue(cursor),
-      manager: {
-        query: deleteQuery,
-      },
+      manager: deleteBuilder(deleteQuery).manager,
     };
     const svc = new CursorService(repo as any);
 
     // First reset projections
     await svc.resetProjections();
-    expect(deleteQuery).toHaveBeenCalledWith('DELETE FROM session_projections');
+    expect(deleteQuery).toHaveBeenCalledTimes(1);
 
     // Then reset cursor
     await svc.reset('testnet', 'core_game');

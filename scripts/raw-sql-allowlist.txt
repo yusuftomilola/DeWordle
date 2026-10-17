@@ -1,0 +1,6 @@
+# Reviewed raw-SQL occurrences: "<path>|<trimmed source line>".
+# Every entry must also be described in docs/SQL_INJECTION_AUDIT.md.
+
+# Not SQL: AuditTrailService.query() is an application method that builds a
+# TypeORM QueryBuilder with bound parameters.
+backend/src/indexer/audit-trail.controller.ts|return this.auditService.query({

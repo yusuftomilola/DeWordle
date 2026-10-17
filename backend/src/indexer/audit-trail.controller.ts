@@ -1,4 +1,11 @@
-import { Controller, Get, Query, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Query,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiOperation,
@@ -7,6 +14,7 @@ import {
 } from '@nestjs/swagger';
 import { AuditTrailService } from './audit-trail.service';
 import { AuditTrailEntity, AuditAction } from './entities/audit-trail.entity';
+import { toAuditTrailDto } from '../common/dto/response-mappers';
 
 @ApiTags('Audit Trail')
 @Controller('audit')
@@ -60,6 +68,8 @@ export class AuditController {
     type: AuditTrailEntity,
   })
   async getAuditLogById(@Param('id', ParseIntPipe) id: number) {
-    return this.auditService.findById(id);
+    const entry = await this.auditService.findById(id);
+    if (!entry) throw new NotFoundException(`Audit log ${id} not found`);
+    return toAuditTrailDto(entry);
   }
 }

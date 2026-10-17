@@ -1,0 +1,30 @@
+name: SQL Injection Audit
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "backend/**"
+      - "scripts/check-raw-sql*"
+      - "scripts/raw-sql-allowlist.txt"
+      - ".github/workflows/sql-injection-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "scripts/check-raw-sql*"
+      - "scripts/raw-sql-allowlist.txt"
+
+jobs:
+  raw-sql-check:
+    name: Flag new raw SQL for review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Self-test the checker
+        run: scripts/check-raw-sql.test.sh
+
+      - name: Check for unreviewed raw SQL
+        run: scripts/check-raw-sql.sh

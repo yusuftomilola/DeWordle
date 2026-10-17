@@ -28,15 +28,24 @@ async function bootstrap() {
   const streamKey = 'core_game_events';
 
   if (mode === 'cursor' || mode === 'all') {
-    await dataSource.query(
-      `DELETE FROM indexer_cursors WHERE network = $1 AND "streamKey" = $2`,
-      [network, streamKey],
-    );
+    await dataSource
+      .createQueryBuilder()
+      .delete()
+      .from('indexer_cursors')
+      .where('network = :network AND "streamKey" = :streamKey', {
+        network,
+        streamKey,
+      })
+      .execute();
     console.log(`Cursor reset for ${network}/${streamKey}`);
   }
 
   if (mode === 'projection' || mode === 'all') {
-    await dataSource.query(`DELETE FROM session_projections`);
+    await dataSource
+      .createQueryBuilder()
+      .delete()
+      .from('session_projections')
+      .execute();
     console.log('Projection data cleared');
   }
 

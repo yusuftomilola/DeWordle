@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -21,6 +22,8 @@ export interface ErrorResponseBody {
  */
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -60,11 +63,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             ? JSON.stringify(rawError)
             : message;
     } else {
+      // Unhandled error: the raw message can contain SQL, file paths or other
+      // internals, so clients only see it outside production.
       message =
-        exception instanceof Error
+        process.env.NODE_ENV !== 'production' && exception instanceof Error
           ? exception.message
           : 'Internal server error';
       error = message;
+    }
+
+    if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      // The stack goes to the server log only, never into the response body.
+      this.logger.error(
+        exception instanceof Error ? exception.message : String(exception),
+        exception instanceof Error ? exception.stack : undefined,
+      );
     }
 
     const body: ErrorResponseBody = {
