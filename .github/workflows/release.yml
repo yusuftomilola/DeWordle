@@ -45,6 +45,8 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          # Tags like v1.2.0-rc.1 are published as pre-releases.
+          prerelease: ${{ contains(github.ref_name, '-') }}
           files: |
             soroban/target/wasm32-unknown-unknown/release/*.wasm
             soroban/target/wasm32-unknown-unknown/release/*.sha256

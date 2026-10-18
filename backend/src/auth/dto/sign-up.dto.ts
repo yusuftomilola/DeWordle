@@ -1,6 +1,8 @@
 import {
   IsEmail,
+  IsNotEmpty,
   IsString,
+  MaxLength,
   MinLength,
   IsEthereumAddress,
 } from 'class-validator';
@@ -21,6 +23,9 @@ export class SignupDto {
     example: 'johndoe',
     format: 'text',
   })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(50)
   username: string;
 
   @ApiProperty({

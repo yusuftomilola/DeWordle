@@ -20,6 +20,7 @@ This directory contains Architecture Decision Records (ADRs) for the DeWordle pr
 | [0008](./0008-contract-storage-model.md) | Contract Storage Model | Proposed | 2024-08 |
 | [0009](./0009-soroban-event-indexing.md) | Soroban Contract Event Indexing Model | Proposed | 2024-08 |
 | [ADR-001](./ADR-001-event-sdk.md) | Event SDK | Proposed | 2024-08 |
+| [001](./001-soroban-migration.md) | Soroban Migration Strategy | Accepted | 2024-10 |
 
 ## Status Tags
 
@@ -34,6 +35,7 @@ This directory contains Architecture Decision Records (ADRs) for the DeWordle pr
 | 2024-01 | 0001 | Accepted | [Stellar Migration](../STELLAR_MIGRATION.md) |
 | 2024-07 | 0002 | Accepted | [Backend Foundation](../BACKEND_INDEXER_FOUNDATION.md) |
 | 2024-07 | 0003 | Accepted | [Frontend Wallet Foundation](../FRONTEND_WALLET_FOUNDATION.md) |
+| 2024-10 | 001 | Accepted | [Stellar Migration](../STELLAR_MIGRATION.md) |
 
 ## Writing ADRs
 

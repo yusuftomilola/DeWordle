@@ -6,6 +6,9 @@ import { AuthProvider } from "../../context/AuthContext";
 import Header from "@/components/header";
 import { StellarWalletProvider } from "@/providers/stellar-wallet-provider";
 import { SettingsProvider } from "@/providers/settings-provider";
+import { AchievementCelebration } from "@/components/AchievementCelebration";
+import { ZoomRoot } from "@/components/ZoomRoot";
+import { NO_FLASH_SCRIPT } from "@/lib/theme";
 import { OnboardingProvider } from "@/providers/onboarding-provider";
 import { buildCsp, cspOptionsFromEnv } from "@/lib/csp";
 
@@ -63,8 +66,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
         {/* Same policy as the middleware header; see src/lib/csp.ts */}
         <meta
           httpEquiv="Content-Security-Policy"
@@ -85,12 +89,13 @@ export default function RootLayout({
             <SettingsProvider>
               <AuthProvider>
                 <Header />
+                <AchievementCelebration />
                 <main
                   id="main-content"
                   tabIndex={-1}
                   className="flex flex-col relative w-full bg-primary-950 min-h-screen h-full overflow-x-hidden hide-scrollbar focus:outline-none"
                 >
-                  {children}
+                  <ZoomRoot>{children}</ZoomRoot>
                 </main>
               </AuthProvider>
             </SettingsProvider>

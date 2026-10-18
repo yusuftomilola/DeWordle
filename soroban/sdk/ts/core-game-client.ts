@@ -1,4 +1,4 @@
-import { Keypair, nativeToScVal, scValToNative, xdr } from "@stellar/stellar-sdk";
+import { Account, Address, Keypair, nativeToScVal, scValToNative, xdr } from "@stellar/stellar-sdk";
 import { Server } from "@stellar/stellar-sdk/rpc";
 import type {
   DayConfig,
@@ -9,24 +9,51 @@ import type {
 } from "./types";
 import type { ContractRegistry, SorobanNetworkConfig } from "./network";
 import { resolveContractId } from "./registry";
+import { CompatibilityGuard, type CompatibilityOptions } from "./contract-compat";
 import { buildContractTx, simulateAndAssemble } from "./tx-builder";
+
+/**
+ * Read-only simulations need a source account, but a contract address is not
+ * an account and the RPC rejects it. Any well-formed account works because
+ * simulation neither signs nor charges it.
+ */
+const READ_ONLY_SOURCE_KEY = Keypair.fromRawEd25519Seed(Buffer.alloc(32)).publicKey();
+
+const u32 = (value: number) => nativeToScVal(value, { type: "u32" });
+const address = (value: string) => new Address(value).toScVal();
+const bytes32 = (hex: string) => nativeToScVal(Buffer.from(hex, "hex"), { type: "bytes" });
 
 export interface CoreGameClientOptions {
   contractId: string;
   network: SorobanNetworkConfig;
+  /** SDK/contract compatibility check settings. */
+  compatibility?: CompatibilityOptions;
 }
 
 export class CoreGameClient {
   private readonly server: Server;
+  private readonly compat: CompatibilityGuard;
 
   constructor(private readonly options: CoreGameClientOptions) {
     this.server = new Server(options.network.rpcUrl);
+    this.compat = new CompatibilityGuard({
+      contractName: "core_game",
+      contractId: options.contractId,
+      server: this.server,
+      network: options.network,
+      options: options.compatibility,
+    });
   }
 
-  static fromRegistry(network: SorobanNetworkConfig, registry: ContractRegistry) {
+  static fromRegistry(
+    network: SorobanNetworkConfig,
+    registry: ContractRegistry,
+    compatibility?: CompatibilityOptions,
+  ) {
     return new CoreGameClient({
       contractId: resolveContractId(registry, "core_game"),
       network,
+      compatibility,
     });
   }
 
@@ -39,6 +66,7 @@ export class CoreGameClient {
     dayId: number,
     nonce: number,
   ): Promise<TxBuildResult> {
+    await this.compat.ensure();
     const account = await this.server.getAccount(sourcePublicKey);
 
     const tx = await buildContractTx({
@@ -47,7 +75,7 @@ export class CoreGameClient {
       network: this.options.network,
       contractId: this.options.contractId,
       method: "create_session",
-      args: [nativeToScVal(sourcePublicKey), nativeToScVal(dayId), nativeToScVal(nonce)],
+      args: [address(sourcePublicKey), u32(dayId), u32(nonce)],
     });
 
     return simulateAndAssemble({ server: this.server, tx });
@@ -57,6 +85,7 @@ export class CoreGameClient {
     sourcePublicKey: string,
     input: SubmitGuessInput,
   ): Promise<TxBuildResult> {
+    await this.compat.ensure();
     const account = await this.server.getAccount(sourcePublicKey);
 
     const tx = await buildContractTx({
@@ -66,11 +95,11 @@ export class CoreGameClient {
       contractId: this.options.contractId,
       method: "submit_guess",
       args: [
-        nativeToScVal(input.player),
-        nativeToScVal(input.sessionId),
-        nativeToScVal(input.guessCommitment),
-        nativeToScVal(input.outcomeCode),
-        nativeToScVal(input.isCorrect),
+        address(input.player),
+        bytes32(input.sessionId),
+        bytes32(input.guessCommitment),
+        u32(input.outcomeCode),
+        nativeToScVal(input.isCorrect, { type: "bool" }),
       ],
     });
 
@@ -82,15 +111,16 @@ export class CoreGameClient {
    * Returns null if the day is not found or the response cannot be parsed.
    */
   async getDayConfig(dayId: number): Promise<DayConfig | null> {
+    await this.compat.ensure();
     try {
-      const account = await this.server.getAccount(this.options.contractId);
+      const account = new Account(READ_ONLY_SOURCE_KEY, "0");
       const tx = await buildContractTx({
         server: this.server,
         source: account,
         network: this.options.network,
         contractId: this.options.contractId,
         method: "get_day_config",
-        args: [nativeToScVal(dayId, { type: "u32" })],
+        args: [u32(dayId)],
       });
       const { simulated } = await simulateAndAssemble({ server: this.server, tx });
       const result = (simulated as { result?: { retval: xdr.ScVal } }).result?.retval;
@@ -106,15 +136,16 @@ export class CoreGameClient {
    * Returns null if not found or unparseable.
    */
   async getSession(sessionId: string): Promise<Session | null> {
+    await this.compat.ensure();
     try {
-      const account = await this.server.getAccount(this.options.contractId);
+      const account = new Account(READ_ONLY_SOURCE_KEY, "0");
       const tx = await buildContractTx({
         server: this.server,
         source: account,
         network: this.options.network,
         contractId: this.options.contractId,
         method: "get_session",
-        args: [nativeToScVal(Buffer.from(sessionId, "hex"), { type: "bytes" })],
+        args: [bytes32(sessionId)],
       });
       const { simulated } = await simulateAndAssemble({ server: this.server, tx });
       const result = (simulated as { result?: { retval: xdr.ScVal } }).result?.retval;

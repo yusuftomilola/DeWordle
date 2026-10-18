@@ -1,10 +1,13 @@
 #![no_std]
 
 pub mod fixtures;
+pub mod payout_throttle;
 pub mod utils;
 
 use dewordle_auth::require_owner_or_admin;
-use soroban_sdk::{
+use dewordle_utils::metadata::{self, ContractMetadata, MetadataDefaults};
+use dewordle_utils::ReentrancyGuard;
+use soroban_sdk::{BytesN,
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
 };
 
@@ -48,7 +51,17 @@ pub enum RewardsError {
     NotInitialized = 2,
     Unauthorized = 3,
     InvalidNonce = 4,
+    /// A balance or lifetime total would exceed `u64::MAX`.
+    Overflow = 5,
 }
+
+/// Names of the public entrypoints; hashed into `get_metadata().abi_hash`.
+/// Update this list (and bump the version) whenever the public ABI changes.
+const METADATA_DEFAULTS: MetadataDefaults = MetadataDefaults {
+    version: 2,
+    abi_descriptor: "accrue\nbalance_of\nclaim\nclaimed_total\nget_emission\nget_metadata\nget_multiplier\nget_player_stats\ninit\nrecord_win\nset_emission\nset_rank\nupdate_metadata\nverify_signature\nversion",
+    min_sdk_version: "0.1.0",
+};
 
 #[contract]
 pub struct RewardsContract;
@@ -76,6 +89,7 @@ impl RewardsContract {
             panic_with_error!(&env, RewardsError::AlreadyInitialized);
         }
         env.storage().instance().set(&DataKey::Admin, &admin);
+        metadata::store_defaults(&env, &METADATA_DEFAULTS);
         env.events().publish((Symbol::new(&env, "rewards_initialized"),), admin);
     }
 
@@ -106,9 +120,14 @@ impl RewardsContract {
         }
 
         let balance = Self::balance_of(env.clone(), player.clone());
+        // Reject instead of wrapping or trapping: the error code tells the
+        // caller the balance cap was hit.
+        let new_balance = balance
+            .checked_add(points)
+            .unwrap_or_else(|| panic_with_error!(&env, RewardsError::Overflow));
         env.storage()
             .persistent()
-            .set(&DataKey::Balance(player.clone()), &(balance + points));
+            .set(&DataKey::Balance(player.clone()), &new_balance);
         env.storage()
             .persistent()
             .set(&DataKey::Nonce(player.clone(), nonce), &true);
@@ -133,6 +152,8 @@ impl RewardsContract {
             .get(&DataKey::Admin)
             .unwrap_or_else(|| panic_with_error!(&env, RewardsError::NotInitialized));
         let by_admin = require_owner_or_admin(&env, &player, &caller, &admin);
+        // Payout path: block nested entry while balances are being moved.
+        let _guard = ReentrancyGuard::enter(&env);
 
         let balance = Self::balance_of(env.clone(), player.clone());
         env.storage()
@@ -140,9 +161,12 @@ impl RewardsContract {
             .set(&DataKey::Balance(player.clone()), &0u64);
 
         let claimed = Self::claimed_total(env.clone(), player.clone());
+        let new_claimed = claimed
+            .checked_add(balance)
+            .unwrap_or_else(|| panic_with_error!(&env, RewardsError::Overflow));
         env.storage()
             .persistent()
-            .set(&DataKey::Claimed(player.clone()), &(claimed + balance));
+            .set(&DataKey::Claimed(player.clone()), &new_claimed);
 
         if by_admin {
             env.events().publish(
@@ -229,9 +253,33 @@ impl RewardsContract {
 
         PlayerStats {
             games_won,
-            tokens_earned: balance + claimed,
+            // A view must never trap, so saturate at the type's maximum.
+            tokens_earned: balance.saturating_add(claimed),
             rank,
         }
+    }
+
+    /// Version, ABI hash and minimum SDK version, for compatibility checks.
+    pub fn get_metadata(env: Env) -> ContractMetadata {
+        metadata::read_or_default(&env, &METADATA_DEFAULTS)
+    }
+
+    /// Admin-only: record the new metadata after an upgrade.
+    pub fn update_metadata(
+        env: Env,
+        version: u32,
+        abi_hash: BytesN<32>,
+        min_sdk_version: soroban_sdk::String,
+    ) {
+        Self::require_admin(&env);
+        metadata::update(
+            &env,
+            &ContractMetadata {
+                version,
+                abi_hash,
+                min_sdk_version,
+            },
+        );
     }
 
     pub fn version(env: Env) -> u32 {

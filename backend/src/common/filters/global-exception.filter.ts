@@ -14,6 +14,8 @@ export interface ErrorResponseBody {
   error: string;
   timestamp: string;
   path: string;
+  /** Field-level validation details (422 responses). */
+  errors?: unknown[];
 }
 
 /**
@@ -87,6 +89,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
       path: request.url,
     };
+
+    if (
+      exceptionResponse &&
+      typeof exceptionResponse === 'object' &&
+      'errors' in exceptionResponse &&
+      Array.isArray(exceptionResponse.errors)
+    ) {
+      body.errors = exceptionResponse.errors;
+    }
 
     response.status(statusCode).json(body);
   }

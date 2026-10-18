@@ -5,7 +5,7 @@ on:
     inputs:
       vus:
         description: "Virtual users"
-        default: "50"
+        default: "100"
         required: false
       duration:
         description: "Test duration (e.g. 2m)"
@@ -29,11 +29,13 @@ jobs:
       - name: Run k6 load test
         uses: grafana/run-k6-action@v1
         with:
-          path: scripts/load-tests/game-api.js
+          path: scripts/load-tests/peak-gameplay.js
         env:
-          K6_VUS: ${{ github.event.inputs.vus || '50' }}
+          K6_VUS: ${{ github.event.inputs.vus || '100' }}
           K6_DURATION: ${{ github.event.inputs.duration || '2m' }}
-          K6_BASE_URL: ${{ secrets.LOAD_TEST_BASE_URL || 'http://localhost:3001' }}
+          K6_BASE_URL: ${{ secrets.LOAD_TEST_BASE_URL || 'http://localhost:3000/api/v1' }}
+          K6_RESULTS_DIR: results
+          K6_RUN_ID: ${{ github.run_id }}
 
       - name: Upload results
         if: always()

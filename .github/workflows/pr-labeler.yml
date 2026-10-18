@@ -1,0 +1,22 @@
+name: PR Labeler
+
+# Applies area labels (area:frontend, area:backend, area:soroban, area:docs)
+# based on the paths changed in a pull request.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    name: Apply area labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label pull request by changed paths
+        uses: actions/labeler@v5
+        with:
+          sync-labels: true

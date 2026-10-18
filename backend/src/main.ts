@@ -1,8 +1,5 @@
-import {
-  ClassSerializerInterceptor,
-  Logger,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
+import { createValidationPipe } from './common/pipes/validation.pipe';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
@@ -76,13 +73,7 @@ async function bootstrap() {
       credentials: true,
     });
 
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      }),
-    );
+    app.useGlobalPipes(createValidationPipe());
 
     // Honours @Exclude() on entity fields for anything that still gets serialised.
     app.useGlobalInterceptors(

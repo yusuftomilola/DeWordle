@@ -20,6 +20,7 @@ import {
 import { EnrichedWord } from '../../utils/dictionary.helper';
 import { WordScheduler } from './word.scheduler';
 import { CreateWordDto } from './dto/create-word.dto';
+import { ValidateWordDto } from './dto/validate-word.dto';
 import { WordResponseDto } from './dto/word-response.dto';
 import { WordValidationProvider } from './providers/word-validation-provider';
 import { EnrichedWordsProvider } from './providers/enriched-words';
@@ -152,7 +153,7 @@ export class WordsController {
   }
 
   @Post('validate')
-  async validateWord(@Body('word') word: string) {
+  async validateWord(@Body() { word }: ValidateWordDto) {
     // No validation logic here — service will handle errors
     return await this.wordValidationProvider.validateWord(word);
   }

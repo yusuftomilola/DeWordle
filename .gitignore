@@ -44,3 +44,6 @@ target/
 
 # Vercel
 .vercel
+
+# Snapshots written by the gas benchmark tests
+soroban/contracts/*/test_snapshots/bench_*.json

@@ -14,6 +14,7 @@ import { PasswordReset } from './entities/password-reset.entity';
 import { EmailService } from './email.service';
 import { User } from './entities/user.entity';
 import { RefreshTokenService } from './refresh-token.service';
+import { AccountLockoutService } from './account-lockout.service';
 import * as crypto from 'crypto';
 
 const ACCESS_TOKEN_EXPIRY = '15m';
@@ -30,6 +31,7 @@ export class AuthService {
     private readonly passwordResetRepo: Repository<PasswordReset>,
     private readonly emailService: EmailService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly accountLockout: AccountLockoutService,
   ) {}
 
   /**
@@ -188,15 +190,21 @@ export class AuthService {
   }> {
     const { email, password } = loginDto;
 
-    const user = await this.userService.findByEmail(email.toLowerCase().trim());
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    const normalizedEmail = email.toLowerCase().trim();
+    const attemptCtx = { ipAddress, userAgent };
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // Lock / rate-limit check runs before any credential work.
+    await this.accountLockout.assertCanAttempt(normalizedEmail);
+
+    const user = await this.userService.findByEmail(normalizedEmail);
+    // Unknown emails are counted too so lockout state does not reveal
+    // whether an account exists.
+    const isMatch = user ? await bcrypt.compare(password, user.password) : false;
+    if (!user || !isMatch) {
+      await this.accountLockout.recordFailure(normalizedEmail, attemptCtx);
       throw new UnauthorizedException('Invalid credentials');
     }
+    await this.accountLockout.recordSuccess(normalizedEmail);
 
     const access_token = this.generateAccessToken(
       user.id,
@@ -277,6 +285,13 @@ export class AuthService {
    */
   async logout(refreshToken: string): Promise<void> {
     await this.refreshTokenService.revokeRefreshToken(refreshToken);
+  }
+
+  /**
+   * Admin override for brute-force lockouts
+   */
+  async unlockAccount(email: string, adminEmail: string): Promise<boolean> {
+    return this.accountLockout.unlock(email, adminEmail);
   }
 
   /**
