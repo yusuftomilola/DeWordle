@@ -16,6 +16,8 @@ export const ALLOWED_TOPICS = new Set([
   'guess_submitted',
   'session_finalized',
   'reward_claimed',
+  // The rewards contract publishes this event under the topic `claimed`.
+  'claimed',
   'achievement_unlocked',
 ]);
 
