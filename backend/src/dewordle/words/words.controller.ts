@@ -25,6 +25,7 @@ import { WordResponseDto } from './dto/word-response.dto';
 import { WordValidationProvider } from './providers/word-validation-provider';
 import { EnrichedWordsProvider } from './providers/enriched-words';
 import { Word } from '../../entities/word.entity';
+import { toWordDto, type WordDto } from '../../common/dto/response-mappers';
 
 @Controller('words')
 export class WordsController {
@@ -101,7 +102,7 @@ export class WordsController {
     description: 'No daily word found for today.',
   })
   async getDailyWord() {
-    return this.wordsService.getTodaysWord();
+    return toWordDto(await this.wordsService.getTodaysWord());
   }
 
   @Post('daily/trigger')
@@ -147,8 +148,8 @@ export class WordsController {
   @Post()
   @ApiOperation({ summary: 'Create a new word with difficulty' })
   @ApiResponse({ status: 201, type: WordResponseDto })
-  create(@Body() dto: CreateWordDto) {
-    return this.wordsService.createWord(dto);
+  async create(@Body() dto: CreateWordDto) {
+    return toWordDto(await this.wordsService.createWord(dto));
   }
 
   @Post('validate')
@@ -176,7 +177,7 @@ export class WordsController {
   @ApiNotFoundResponse({
     description: 'The requested word was not found',
   })
-  async getWord(@Param('text') text: string): Promise<Word> {
-    return this.enrichedWordsProvider.getWord(text);
+  async getWord(@Param('text') text: string): Promise<WordDto> {
+    return toWordDto(await this.enrichedWordsProvider.getWord(text));
   }
 }

@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
+import { toTestEntityDto } from './common/dto/response-mappers';
 
 @Controller()
 export class AppController {
@@ -27,6 +28,7 @@ export class AppController {
 
   @Get('test-entities')
   async getTestEntities() {
-    return this.appService.getAllTestEntities();
+    const entities = await this.appService.getAllTestEntities();
+    return entities.map(toTestEntityDto);
   }
 }

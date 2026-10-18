@@ -10,6 +10,7 @@ import { AchievementCelebration } from "@/components/AchievementCelebration";
 import { ZoomRoot } from "@/components/ZoomRoot";
 import { NO_FLASH_SCRIPT } from "@/lib/theme";
 import { OnboardingProvider } from "@/providers/onboarding-provider";
+import { buildCsp, cspOptionsFromEnv } from "@/lib/csp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,6 +69,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+        {/* Same policy as the middleware header; see src/lib/csp.ts */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content={buildCsp({ ...cspOptionsFromEnv(process.env), forMeta: true })}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${inter.variable} ${robotoMono.variable} ${jakartaSans.variable} ${clashDisplay.variable} antialiased hide-scrollbar`}

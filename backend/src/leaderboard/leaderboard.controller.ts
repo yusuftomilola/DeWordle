@@ -3,6 +3,7 @@ import { LeaderboardService } from './leaderboard.service';
 import { Game } from '../games/entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
+import { toLeaderboardEntryDto } from '../common/dto/response-mappers';
 
 @Controller('leaderboard')
 export class LeaderboardController {
@@ -33,10 +34,11 @@ export class LeaderboardController {
       where: { slug: gameSlug },
     });
     if (!game) return [];
-    return this.leaderboardService.getGameLeaderboard(
+    const entries = await this.leaderboardService.getGameLeaderboard(
       game,
       Number(skip),
       Number(take),
     );
+    return entries.map(toLeaderboardEntryDto);
   }
 }

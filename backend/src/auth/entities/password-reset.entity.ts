@@ -5,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import { User } from './user.entity';
 
 @Entity()
@@ -12,6 +13,7 @@ export class PasswordReset {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Exclude()
   @Column()
   tokenHash: string;
 

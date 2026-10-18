@@ -25,6 +25,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { toPublicUserDto, toUserDto } from '../common/dto/response-mappers';
 
 @ApiTags('Users')
 @Controller('users')
@@ -32,13 +33,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return toUserDto(await this.userService.create(createUserDto));
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    // Public listing: no emails or wallet addresses.
+    return (await this.userService.findAll()).map(toPublicUserDto);
   }
 
   /**
@@ -49,7 +51,7 @@ export class UserController {
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findById(id);
     if (!user) throw new NotFoundException(`User ${id} not found`);
-    return user;
+    return toPublicUserDto(user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -77,15 +79,19 @@ export class UserController {
     @Request() req: ExpressRequest & { user: { id: number } },
     @Body() updateProfileDto: UpdateProfileDto,
   ) {
-    return this.userService.updateProfile(req.user.id, updateProfileDto);
+    return toUserDto(
+      await this.userService.updateProfile(req.user.id, updateProfileDto),
+    );
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.update(id, updateUserDto);
+    const updated = await this.userService.update(id, updateUserDto);
+    if (!updated) throw new NotFoundException(`User ${id} not found`);
+    return toUserDto(updated);
   }
 
   @Delete(':id')

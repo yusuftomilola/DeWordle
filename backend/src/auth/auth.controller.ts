@@ -32,6 +32,7 @@ import { UnlockAccountDto } from './dto/unlock-account.dto';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorators';
 import { AUTH_THROTTLE } from '../common/guards/throttle.config';
+import { toAuthSessionDto } from '../common/dto/response-mappers';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -363,7 +364,8 @@ export class AuthController {
   async getSessions(
     @Request() req: ExpressRequest & { user: { id: number; email: string } },
   ) {
-    return this.authService.getSessions(req.user.email);
+    const sessions = await this.authService.getSessions(req.user.email);
+    return sessions.map(toAuthSessionDto);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

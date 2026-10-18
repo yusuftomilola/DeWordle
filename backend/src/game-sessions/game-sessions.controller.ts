@@ -15,6 +15,7 @@ import { GameSessionsService } from './game-sessions.service';
 import { User } from '../auth/entities/user.entity';
 import { GameSession } from './entities/game-session.entity';
 import { CreateGuessDto } from './dto/create-guess.dto';
+import { toGameSessionDto } from '../common/dto/response-mappers';
 
 @Controller('sessions')
 export class GameSessionsController {
@@ -26,9 +27,9 @@ export class GameSessionsController {
    */
   @UseGuards(JwtAuthGuard)
   @Post()
-  createAuth(@Body() dto: CreateSessionDto, @Req() req: Request) {
+  async createAuth(@Body() dto: CreateSessionDto, @Req() req: Request) {
     const user = req.user as User;
-    return this.sessionService.create(dto, user);
+    return toGameSessionDto(await this.sessionService.create(dto, user));
   }
 
   /**
@@ -39,8 +40,8 @@ export class GameSessionsController {
    * @returns Created session without user association
    */
   @Post('guest')
-  createGuest(@Body() dto: CreateSessionDto) {
-    return this.sessionService.create(dto, null);
+  async createGuest(@Body() dto: CreateSessionDto) {
+    return toGameSessionDto(await this.sessionService.create(dto, null));
   }
 
   /**
@@ -48,9 +49,11 @@ export class GameSessionsController {
    */
   @UseGuards(JwtAuthGuard)
   @Get('my-sessions')
-  getMySessions(@Req() req: Request) {
+  async getMySessions(@Req() req: Request) {
     const user = req.user as User;
-    return this.sessionService.getUserSessions(user);
+    return (await this.sessionService.getUserSessions(user)).map(
+      toGameSessionDto,
+    );
   }
 
   /**
@@ -58,8 +61,10 @@ export class GameSessionsController {
    * No authentication required
    */
   @Get('guest-sessions')
-  getGuestSessions(@Query('guestId') guestId: string) {
-    return this.sessionService.getUserSessions(null, guestId);
+  async getGuestSessions(@Query('guestId') guestId: string) {
+    return (await this.sessionService.getUserSessions(null, guestId)).map(
+      toGameSessionDto,
+    );
   }
 
   /**

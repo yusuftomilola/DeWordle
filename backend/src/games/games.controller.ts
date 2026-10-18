@@ -16,6 +16,7 @@ import { Roles } from 'src/auth/decorators/roles.decorators';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { toGameDto } from '../common/dto/response-mappers';
 
 @Controller('games')
 export class GamesController {
@@ -25,28 +26,32 @@ export class GamesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
-  create(@Body() dto: CreateGameDto) {
-    return this.gamesService.create(dto);
+  async create(@Body() dto: CreateGameDto) {
+    return toGameDto(await this.gamesService.create(dto));
   }
 
   @Get()
-  findAll() {
-    return this.gamesService.findAll();
+  async findAll() {
+    return (await this.gamesService.findAll()).map(toGameDto);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateGameDto) {
-    return this.gamesService.update(id, dto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateGameDto,
+  ) {
+    return toGameDto(await this.gamesService.update(id, dto));
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.gamesService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.gamesService.remove(id);
+    return { id, deleted: true };
   }
 }
