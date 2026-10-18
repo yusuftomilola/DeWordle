@@ -54,6 +54,9 @@ The `/onchain/` directory contains outdated legacy code and is no longer maintai
 - Include tests where behavior changes - all PRs must pass CI
 - Follow the PR template and complete the checklist
 
+## Releases
+Versioning rules, pre-release naming and the release checklist are in [docs/RELEASING.md](./docs/RELEASING.md).
+
 ## Reference
 
 - New to the terminology? See the [Glossary](./docs/GLOSSARY.md).

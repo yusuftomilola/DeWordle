@@ -8,3 +8,4 @@ export * from "./core-game-client";
 export * from "./rewards-client";
 export * from "./achievements-client";
 export * from "./admin-registry-client";
+export * from "./contract-compat";

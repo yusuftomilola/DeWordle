@@ -6,6 +6,7 @@ version = 4
 name = "achievements"
 version = "0.1.0"
 dependencies = [
+ "dewordle-utils",
  "soroban-sdk",
 ]
 
@@ -13,6 +14,7 @@ dependencies = [
 name = "admin-registry"
 version = "0.1.0"
 dependencies = [
+ "dewordle-utils",
  "soroban-sdk",
 ]
 

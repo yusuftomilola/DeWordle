@@ -9,6 +9,7 @@ import type {
 } from "./types";
 import type { ContractRegistry, SorobanNetworkConfig } from "./network";
 import { resolveContractId } from "./registry";
+import { CompatibilityGuard, type CompatibilityOptions } from "./contract-compat";
 import { buildContractTx, simulateAndAssemble } from "./tx-builder";
 
 /**
@@ -25,19 +26,34 @@ const bytes32 = (hex: string) => nativeToScVal(Buffer.from(hex, "hex"), { type: 
 export interface CoreGameClientOptions {
   contractId: string;
   network: SorobanNetworkConfig;
+  /** SDK/contract compatibility check settings. */
+  compatibility?: CompatibilityOptions;
 }
 
 export class CoreGameClient {
   private readonly server: Server;
+  private readonly compat: CompatibilityGuard;
 
   constructor(private readonly options: CoreGameClientOptions) {
     this.server = new Server(options.network.rpcUrl);
+    this.compat = new CompatibilityGuard({
+      contractName: "core_game",
+      contractId: options.contractId,
+      server: this.server,
+      network: options.network,
+      options: options.compatibility,
+    });
   }
 
-  static fromRegistry(network: SorobanNetworkConfig, registry: ContractRegistry) {
+  static fromRegistry(
+    network: SorobanNetworkConfig,
+    registry: ContractRegistry,
+    compatibility?: CompatibilityOptions,
+  ) {
     return new CoreGameClient({
       contractId: resolveContractId(registry, "core_game"),
       network,
+      compatibility,
     });
   }
 
@@ -50,6 +66,7 @@ export class CoreGameClient {
     dayId: number,
     nonce: number,
   ): Promise<TxBuildResult> {
+    await this.compat.ensure();
     const account = await this.server.getAccount(sourcePublicKey);
 
     const tx = await buildContractTx({
@@ -68,6 +85,7 @@ export class CoreGameClient {
     sourcePublicKey: string,
     input: SubmitGuessInput,
   ): Promise<TxBuildResult> {
+    await this.compat.ensure();
     const account = await this.server.getAccount(sourcePublicKey);
 
     const tx = await buildContractTx({
@@ -93,6 +111,7 @@ export class CoreGameClient {
    * Returns null if the day is not found or the response cannot be parsed.
    */
   async getDayConfig(dayId: number): Promise<DayConfig | null> {
+    await this.compat.ensure();
     try {
       const account = new Account(READ_ONLY_SOURCE_KEY, "0");
       const tx = await buildContractTx({
@@ -117,6 +136,7 @@ export class CoreGameClient {
    * Returns null if not found or unparseable.
    */
   async getSession(sessionId: string): Promise<Session | null> {
+    await this.compat.ensure();
     try {
       const account = new Account(READ_ONLY_SOURCE_KEY, "0");
       const tx = await buildContractTx({

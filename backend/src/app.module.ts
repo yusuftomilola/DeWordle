@@ -27,6 +27,7 @@ import { CacheMetricsService } from './common/cache-metrics.service';
 import { CacheLoggerService } from './common/cache-logger.service';
 import { VersioningModule } from './common/versioning.module';
 import { JobModule } from './common/job.module';
+import { DigestModule } from './digest/digest.module';
 import { PoolPressureService } from './database/pool-pressure.service';
 
 @Module({
@@ -75,6 +76,7 @@ import { PoolPressureService } from './database/pool-pressure.service';
     ScheduleModule.forRoot(),
     EventEmitterModule.forRoot(),
     GameSessionsModule,
+    DigestModule,
     // Issue #1221: TypeORM options now come from the dedicated
     // database config factory (src/config/database.config.ts).
     TypeOrmModule.forRootAsync({

@@ -4,6 +4,7 @@ pub mod fixtures;
 
 use dewordle_auth::{require_admin, set_admin};
 use dewordle_types::{DayConfig, GuessResult, PlayerStreak, Session, SessionStatus};
+use dewordle_utils::metadata::{self, ContractMetadata, MetadataDefaults};
 use dewordle_utils::{current_day_id, ReentrancyGuard};
 use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, panic_with_error, Address, BytesN, Env,
@@ -50,6 +51,14 @@ pub struct GameConfig {
     pub status: bool,
 }
 
+/// Names of the public entrypoints; hashed into `get_metadata().abi_hash`.
+/// Update this list (and bump the version) whenever the public ABI changes.
+const METADATA_DEFAULTS: MetadataDefaults = MetadataDefaults {
+    version: 3,
+    abi_descriptor: "create_session\nfinalize_session\nget_day_config\nget_game_config\nget_metadata\nget_rotate_schedule\nget_session\nget_streak\ninit\nis_nonce_used\nis_paused\npause\nset_day_config\nset_rotate_schedule\nsubmit_guess\nupdate_metadata\nversion",
+    min_sdk_version: "0.1.0",
+};
+
 #[contract]
 pub struct CoreGameContract;
 
@@ -65,6 +74,7 @@ impl CoreGameContract {
             .instance()
             .set(&Symbol::new(&env, "initialized"), &true);
         env.storage().instance().set(&DataKey::Paused, &false);
+        metadata::store_defaults(&env, &METADATA_DEFAULTS);
         env.events()
             .publish((Symbol::new(&env, "core_game"), Symbol::new(&env, "initialized")), admin);
     }
@@ -285,6 +295,29 @@ impl CoreGameContract {
         env.storage()
             .persistent()
             .has(&DataKey::SessionNonce(player, nonce))
+    }
+
+    /// Version, ABI hash and minimum SDK version, for compatibility checks.
+    pub fn get_metadata(env: Env) -> ContractMetadata {
+        metadata::read_or_default(&env, &METADATA_DEFAULTS)
+    }
+
+    /// Admin-only: record the new metadata after an upgrade.
+    pub fn update_metadata(
+        env: Env,
+        version: u32,
+        abi_hash: BytesN<32>,
+        min_sdk_version: soroban_sdk::String,
+    ) {
+        require_admin(&env);
+        metadata::update(
+            &env,
+            &ContractMetadata {
+                version,
+                abi_hash,
+                min_sdk_version,
+            },
+        );
     }
 
     pub fn version(env: Env) -> u32 {

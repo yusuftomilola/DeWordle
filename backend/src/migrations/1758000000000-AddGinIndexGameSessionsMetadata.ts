@@ -3,6 +3,9 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class AddGinIndexGameSessionsMetadata1758000000000 implements MigrationInterface {
   name = 'AddGinIndexGameSessionsMetadata1758000000000';
 
+  // CREATE/DROP INDEX CONCURRENTLY cannot run inside a transaction block.
+  transaction = false;
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_game_sessions_metadata_gin

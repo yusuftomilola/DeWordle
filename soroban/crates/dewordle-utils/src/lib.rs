@@ -2,6 +2,7 @@
 
 use soroban_sdk::Env;
 
+pub mod metadata;
 pub mod reentrancy;
 pub use reentrancy::{with_reentrancy_guard, GuardError, ReentrancyGuard};
 

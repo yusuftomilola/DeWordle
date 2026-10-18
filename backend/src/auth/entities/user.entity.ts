@@ -68,6 +68,13 @@ export class User {
   @Column({ nullable: true })
   walletAddress: string;
 
+  @ApiProperty({
+    description: 'Whether the user receives the weekly digest email',
+    default: true,
+  })
+  @Column({ default: true })
+  digestOptIn: boolean;
+
   @ApiPropertyOptional({
     description: 'URL to user avatar image',
     example: 'https://example.com/avatar.jpg',
